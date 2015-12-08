@@ -1,0 +1,2 @@
+IBM Websphere Cookbook CHANGELOG
+========================
