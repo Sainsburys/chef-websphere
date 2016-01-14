@@ -1,12 +1,15 @@
 # Websphere Cookbook
 
 ## Scope
-This cookbook installs Oracle Websphere Server.
-It does not install or manage any services.
+This cookbook configures Websphere Application Server (WAS) cells profiles, nodes, appservers, clusters and web servers. It has been tested using a distributed environment using a deployment manager for management. It has NOT been tested using standalone//unmanaged nodes and app servers.
+
+You will first need to install websphere using the ibm_installmgr cookbook (See Usage and embedded test cookbook for examples)
+It has only been tested with Websphere ND 8.5
 
 ## Requirements
-* Chef 12 or higher
-* Network accessible artifact repository
+* Chef 12.5 or higher
+* Installation Media for Installation manager either local or via a url, and Media or repositories for any other packages like WAS ND, IHS etc.
+* You will need to install Websphere Network Deployment version using the ibm_installmgr cookbook.  See test/fixtures/cookbooks/webshpere-test/recipes/was_install.rb for an example.
 
 ## Platform
 * Centos 6
@@ -15,31 +18,40 @@ It does not install or manage any services.
 ## Usage
 
 ### Resources
-```
-websphere '8.5' do
-  ownername 'websphere'
-  groupname 'websphere_admin'
+
+### websphere_profile
+
+Creates a Websphere profile of type appserver or custom.
+
+
+##### Example
+```ruby
+websphere_profile 'Deployment Manager' do
+
 end
 ```
-### Attributes
-```
-node['common_artifact_repo'] = 'https://artifact.server/software'
-```
 
-### Common Artifact Repository
-This cookbook uses a common artifact repository pattern.
-Artifacts urls will be generated in the following manner:
+##### Parameters
 
-node['common_artifact_repo'] + vendor + product + version + file_as_named_by_vendor
+- `profile_type` String, required: true, default: nil, Must be one of: appserver|custom|cell|deploymgr|proxy|job The admin profile is not supported as you managed the appserver through Chef.
+- `websphere_root` String, default: '/opt/ibm/Websphere/server/'
+- `profile_path` String, default: lazy { "#{websphere_root}/profiles" }
+- `manage_profiles_sh` String, default: lazy { "#{websphere_root}/bin/manageprofiles.sh" }
+- `admin_user` String, default: nil  Applies to all profiles except custom profile.
+- `admin_password` String, default: nil.
+- `ports_allocation` String, default: recommended. Must be one of: default|recommended|file . If you choose file you must set the ports_file parameter. File is not currently working.
+- `ports_file` String, default: nil This is not yet working. Path to a ports file.
+- ``
 
-eg. the above resource & attribute will attempt to retrieve artifacts from the following
-locations:
-```
-https://artifact.server/software/ibm/websphere/<version>/<jar_name>.jar
-```
+##### Actions
 
-Artifact urls can be overridden by specifying installer_url on the
-resource.
+- `:create` - Creates or Updates profile
+
+- `:start` - Starts a profile.
+
+- `:delete` - deletes profile
+
+
 
 ## License and Author
 

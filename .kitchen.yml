@@ -1,0 +1,21 @@
+driver:
+  name: vagrant
+  #require_chef_omnibus: latest
+  customize:
+    memory: 4096
+
+provisioner:
+  name: chef_zero
+  attributes:
+    websphere-test:
+      passport_advantage:
+        user: <%= ENV['PASSPORTADV_USER'] %>
+        password: <%= ENV['PASSPORTADV_PW'] %>
+
+platforms:
+  - name: centos-6.7
+
+suites:
+  - name: was_cluster
+    run_list:
+      - recipe[websphere-test::was_cluster]

@@ -1,0 +1,24 @@
+DEPENDENCIES
+  ibm-installmgr
+    git: git@github.com:JSainsburyPLC/ibm-installmgr
+    revision: f15912239bf517ca3c8c8cd75d44601a4d318147
+  ibm-websphere
+    path: .
+    metadata: true
+  websphere-test
+    path: test/fixtures/cookbooks/websphere-test
+
+GRAPH
+  7-zip (1.0.2)
+    windows (>= 1.2.2)
+  build-essential (2.4.0)
+    7-zip (>= 0.0.0)
+  chef_handler (1.3.0)
+  ibm-installmgr (1.0.1)
+  ibm-websphere (0.0.1)
+    ibm-installmgr (>= 0.0.0)
+  websphere-test (0.0.1)
+    build-essential (>= 0.0.0)
+    ibm-websphere (>= 0.0.0)
+  windows (1.39.2)
+    chef_handler (>= 0.0.0)

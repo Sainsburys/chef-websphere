@@ -1,0 +1,21 @@
+# # Rubocop,  we're buddies and all,  but we're going to have to disagree on the following -
+#
+# # Increase line length, we're not on VT220s anymore
+LineLength:
+  Max: 180
+
+##  don't need class documentation header for custom resources.
+Documentation:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/ClassLength:
+  Max: 130
+
+Metrics/MethodLength:
+  Max: 20
+
+Lint/ParenthesesAsGroupedExpression:
+  Enabled: false
