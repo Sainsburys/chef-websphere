@@ -1,0 +1,82 @@
+#!/bin/sh -e
+#
+# The next two entries are for use with Redhat and
+# similar distributions
+#
+# chkconfig: 2345 98 02
+# description: Starts and stops the IBM HTTPS Server
+#
+### BEGIN INIT INFO
+# Provides:          ibm-http
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Required-Stop:     $local_fs $remote_fs $network $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start/stop IBM HTTP Server
+### END INIT INFO
+#
+# IBM HTTP	This init.d script starts the IBM HTTP Server
+#           and is a subset of the Apache equivalent.
+
+ENV="env -i LANG=C PATH=<%= @ihs_root %>/bin:/usr/bin:/bin"
+
+set -e
+
+apachectl=<%= @ihs_root %>/bin/apachectl
+httpd=<%= @ihs_root %>/bin/httpd
+
+if [ ! -x ${httpd} ] ; then
+	echo "No IBM HTTP Server executable available"
+	exit 0
+fi
+
+if [ ! -x ${apachectl} ] ; then
+	echo "No IBM HTTP Server startup script available"
+	exit 0
+fi
+
+# . /lib/lsb/init-functions
+. /etc/init.d/functions
+
+test -f /etc/default/rcS && . /etc/default/rcS
+
+IBMHTTPCTL="$ENV $apachectl"
+
+case $1 in
+	start)
+		log_daemon_msg "Starting web server" "IBM HTTP"
+		if $IBMHTTPCTL start; then
+			log_end_msg 0
+		else
+			log_end_msg 1
+		fi
+	;;
+	stop)
+		log_daemon_msg "Stopping web server" "IBM HTTP"
+		if $IBMHTTPCTL graceful-stop; then
+			log_end_msg 0
+		else
+			log_end_msg 1
+		fi
+	;;
+	reload | force-reload)
+		log_daemon_msg "Reloading web server config" "IBM HTTP"
+		if $IBMHTTPCTL graceful $2 ; then
+			log_end_msg 0
+		else
+			log_end_msg 1
+		fi
+	;;
+	restart)
+		log_daemon_msg "Restarting web server" "IBM HTTP"
+		if $IBMHTTPCTL restart; then
+			log_end_msg 0
+		else
+			log_end_msg 1
+		fi
+	;;
+	*)
+		log_success_msg "Usage: /etc/init.d/ibm-http {start|stop|restart|reload}"
+		exit 1
+	;;
+esac

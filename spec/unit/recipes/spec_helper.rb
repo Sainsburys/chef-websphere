@@ -1,11 +1,9 @@
 require 'chefspec'
-require 'chef/sugar'
-require 'chefspec/server'
 require 'chefspec/berkshelf'
 
 RSpec.configure do |config|
   config.platform = 'centos'
-  config.version = '6.4'
+  config.version = '6.6'
   config.log_level = :error
   # Prohibit using the should syntax
   config.expect_with :rspec do |spec|
@@ -16,7 +14,10 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = 'random'
-
-  # ChefSpec configuration
-  config.log_level = :fatal
 end
+
+def stub_commands
+  stub_command('which sudo').and_return('/usr/bin/sudo')
+end
+
+at_exit { ChefSpec::Coverage.report! }
