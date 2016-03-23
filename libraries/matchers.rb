@@ -1,20 +1,20 @@
 if defined?(ChefSpec)
 
-  # dmgr_profile
-  def create_dmgr_profile(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:dmgr_profile, :create, resource_name)
+  # websphere_dmgr
+  def create_websphere_dmgr(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:websphere_dmgr, :create, resource_name)
   end
 
-  def start_dmgr_profile(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:dmgr_profile, :start, resource_name)
+  def start_websphere_dmgr(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:websphere_dmgr, :start, resource_name)
   end
 
-  def stop_dmgr_profile(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:dmgr_profile, :stop, resource_name)
+  def stop_websphere_dmgr(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:websphere_dmgr, :stop, resource_name)
   end
 
-  def delete_dmgr_profile(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:dmgr_profile, :delete, resource_name)
+  def delete_websphere_dmgr(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:websphere_dmgr, :delete, resource_name)
   end
 
   # websphere_profile

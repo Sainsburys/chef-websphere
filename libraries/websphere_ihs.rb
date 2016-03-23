@@ -26,8 +26,8 @@ module WebsphereCookbook
     property :ihs_admin_port, String, default: '8008'
 
     # 1. install required packages for wctcmd tool on centos 6
-    # 2. run pct tool
-    # 3. copy configure script file and run if necessary
+    # 2. install web definition by running wctcmd pct tool
+    # 3. execute equivalient to contents of configure script file
     # 4. ensure module is added to apache and restart
 
     action :create do

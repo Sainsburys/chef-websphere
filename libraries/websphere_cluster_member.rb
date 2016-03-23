@@ -14,7 +14,6 @@ module WebsphereCookbook
     property :resources_scope, String, default: 'both', regex: /^(both|server|cluster)$/
     property :generate_unique_ports, [TrueClass, FalseClass], default: true
     property :attributes, [Hash, nil], default: nil
-    # property :prefer_local, [TrueClass, FalseClass], default: true
 
     # creates a new profile or augments/updates if profile exists.
     action :create do

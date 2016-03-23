@@ -18,11 +18,11 @@
 require_relative 'websphere_base'
 
 module WebsphereCookbook
-  class DmgrProfile < WebsphereBase
+  class WebsphereDmgr < WebsphereBase
     require_relative 'helpers'
     include WebsphereHelpers
 
-    resource_name :dmgr_profile
+    resource_name :websphere_dmgr
 
     property :profile_name, String, name_property: true
     property :profile_path, String, default: lazy { "#{websphere_root}/profiles/#{profile_name}" }
