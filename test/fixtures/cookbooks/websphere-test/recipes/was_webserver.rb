@@ -1,7 +1,7 @@
 
 include_recipe 'websphere-test::was_install'
 
-dmgr_profile 'Dmgr01' do
+websphere_dmgr 'Dmgr01' do
   cell_name 'MyNewCell'
   admin_user 'admin'
   admin_password 'admin'

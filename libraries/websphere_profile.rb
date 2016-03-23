@@ -16,10 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'dmgr_profile'
+require_relative 'websphere_dmgr'
 
 module WebsphereCookbook
-  class WebsphereProfile < DmgrProfile
+  class WebsphereProfile < WebsphereDmgr
     require_relative 'helpers'
     include WebsphereHelpers
 

@@ -6,7 +6,7 @@ describe 'websphere-test::was_cluster' do
   cached(:chef_run) do
     stub_commands
     ChefSpec::ServerRunner.new(
-      step_into: %w(dmgr_profile),
+      step_into: %w(websphere_dmgr),
       platform: 'centos',
       version: '6.6'
     ) do |node|
