@@ -4,6 +4,9 @@ websphere_dmgr 'Dmgr01' do
   cell_name 'MyNewCell'
   admin_user 'admin'
   admin_password 'admin'
+  security_attributes ({
+    'newvalue' => "[['appEnabled','true']]"
+  })
   action [:create, :start]
 end
 
