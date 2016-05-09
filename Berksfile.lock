@@ -15,7 +15,7 @@ GRAPH
     7-zip (>= 0.0.0)
   chef_handler (1.3.0)
   ibm-installmgr (1.0.1)
-  ibm-websphere (0.0.1)
+  ibm-websphere (0.0.2)
     ibm-installmgr (>= 0.0.0)
   websphere-test (0.0.1)
     build-essential (>= 0.0.0)

@@ -1,7 +1,4 @@
-#
-# Cookbook Name:: websphere
-# Resource:: websphere-server
-#
+
 # Copyright (C) 2015 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 require_relative 'websphere_base'
 
 module WebsphereCookbook
@@ -31,6 +29,7 @@ module WebsphereCookbook
     property :cell_name, [String, nil], default: nil
     property :profile_templates_dir, String, default: lazy { "#{websphere_root}/profileTemplates" }
     property :java_sdk, [String, nil], default: nil # javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
+    property :security_attributes, [Hash, nil], default: nil # these are set when the Dmgr is started
 
     # TODO:  Include the below properties
     # property :ports_allocation, String, default: 'recommended', regex: /^(recommended|default|file|starting)$/
@@ -75,6 +74,16 @@ module WebsphereCookbook
       # end
       # start_profile(profile_name, bin_dir, "./startManager.sh -profileName #{profile_name}", [0, 255])
       start_manager(profile_name)
+
+      # set attributes on dmgr
+      ruby_block 'set security attributes' do
+        block do
+          object_id = get_id('/Security:/')
+          update_attributes(security_attributes, object_id)
+        end
+        action :run
+        # subscribes :run, "execute[addNode #{profile_path}/bin]", :delayed
+      end
     end
 
     action :stop do
@@ -83,17 +92,15 @@ module WebsphereCookbook
       end
     end
 
-    action :delete do
-      update_registry
-      if profile_exists?(profile_name)
-        stop_profile(profile_name, bin_dir, "./stopManager.sh -profileName #{profile_name} -username #{admin_user} -password #{admin_password}")
-        delete_profile(profile_name, profile_path)
-      end
-    end
-
-    # need to wrap helper methods in class_eval
-    # so they're available in the action.
-    # action_class.class_eval do
+    # action :delete do
+    #   update_registry
+    #   if profile_exists?(profile_name)
+    #     #stop_profile_node(profile_name, bin_dir, "./stopManager.sh -profileName #{profile_name} -username #{admin_user} -password #{admin_password}")
+    #     # service node_name do
+    #     #   action :stop
+    #     # end
+    #     delete_profile(profile_name, profile_path)
+    #   end
     # end
   end
 end

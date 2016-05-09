@@ -34,6 +34,12 @@ describe command('/opt/IBM/Websphere/AppServer/bin/wsadmin.sh -lang jython -conn
   its(:stdout) { should match(%r{ClusterServer2\(cells/MyNewCell/nodes/CustomProfile2_node/servers/ClusterServer2}) }
 end
 
+# check dmgr security attribtue is set
+describe command('/opt/IBM/Websphere/AppServer/bin/wsadmin.sh -lang jython -conntype SOAP -host localhost -user admin '\
+  '-password admin -c "AdminTask.isAppSecurityEnabled()"') do
+  its(:stdout) { should match(/true/) }
+end
+
 services = %w(Dmgr01 AppProfile1_node AppProfile2_node CustomProfile1_node CustomProfile2_node)
 services.each do |service|
   describe service(service) do
