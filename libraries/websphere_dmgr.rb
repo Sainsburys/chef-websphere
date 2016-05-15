@@ -82,7 +82,7 @@ module WebsphereCookbook
           update_attributes(security_attributes, object_id)
         end
         action :run
-        # subscribes :run, "execute[addNode #{profile_path}/bin]", :delayed
+        only_if { security_attributes }
       end
     end
 

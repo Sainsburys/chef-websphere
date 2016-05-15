@@ -6,7 +6,7 @@ describe 'websphere-test::was_cluster' do
   cached(:chef_run) do
     stub_commands
     ChefSpec::ServerRunner.new(
-      step_into: %w(websphere_dmgr),
+      step_into: %w(websphere_dmgr websphere_profile websphere_cluster websphere_cluster_member websphere_ihs websphere_app),
       platform: 'centos',
       version: '6.6'
     ) do |node|
@@ -25,6 +25,10 @@ describe 'websphere-test::was_cluster' do
 
   it 'creates an init script with attributes' do
     expect(chef_run).to create_template('/etc/init.d/Dmgr01')
+  end
+
+  it 'runs a ruby_block to set security attributes' do
+    expect(chef_run).to run_ruby_block('set security attributes')
   end
 
   it 'enables dmgr as a service' do
