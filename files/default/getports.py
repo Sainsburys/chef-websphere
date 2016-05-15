@@ -1,7 +1,10 @@
 import java
 import sys
-nodeName = sys.argv[0]
-nodeName = '' if nodeName.nil?
+if len(sys.argv) > 0:
+    nodeName = sys.argv[0]
+else:
+    nodeName = ''
+
 lineSeparator = java.lang.System.getProperty('line.separator')
 
 # get Node
