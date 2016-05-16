@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v0.0.4
+--------------------
+- minor update to ihs integration tests
+
 v0.0.3
 --------------------
 - bug fix for when security attributes=nil

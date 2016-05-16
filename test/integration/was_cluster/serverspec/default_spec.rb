@@ -105,7 +105,12 @@ describe file('/opt/IBM/Websphere/Plugins/logs/config/configure_IHS_webserver.lo
   its(:content) { should match(/Configuration Completed Successfully/) }
 end
 
+describe file('/opt/IBM/HTTPServer/logs/postinstall/postinstall.log') do
+  its(:content) { should match(/INSTCONFSUCCESS/) }
+end
+
 describe file('/opt/IBM/Websphere/Plugins/logs/config/installIHSPlugin.log') do
+  its(:content) { should match(/Install complete/) }
   its(:content) { should_not match(/Could not locate config file/) }
 end
 
