@@ -5,8 +5,8 @@ module WebsphereCookbook
 
     resource_name :websphere_ihs
     property :webserver_name, String, name_property: true
-    property :plg_root, String, default: '/opt/IBM/Websphere/Plugins'
-    property :wct_root, String, default: '/opt/IBM/Websphere/Toolbox'
+    property :plg_root, String, default: '/opt/IBM/WebSphere/Plugins'
+    property :wct_root, String, default: '/opt/IBM/WebSphere/Toolbox'
     property :wct_tool_root, String, default: lazy { "#{wct_root}/WCT" }
     property :config_type, String, default: 'local_distributed', regex: /^(local_distributed|remote)$/ # currently only tested for local_distributed
     property :profile_name, String, required: true

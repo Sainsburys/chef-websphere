@@ -47,7 +47,7 @@ As well as the below example, see test/fixtures/cookbooks/webshpere-test/recipes
 
   ibm_package 'WAS ND install' do
     package 'com.ibm.websphere.ND.v85'
-    install_dir '/opt/IBM/Websphere/AppServer'
+    install_dir '/opt/IBM/WebSphere/AppServer'
     repositories ['/my/path/to/local/install/media']
     action :install
   end
@@ -73,7 +73,7 @@ end
 
 ##### Parameters
 
-- `websphere_root`, String, default: '/opt/IBM/Websphere/AppServer', The was install root
+- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
 - `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
 - `admin_user`, [String, nil], default: nil, The dmgr user.  
 - `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
@@ -116,7 +116,7 @@ end
 
 ##### Parameters
 
-- `websphere_root`, String, default: '/opt/IBM/Websphere/AppServer', The was install root
+- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
 - `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
 - `admin_user`, [String, nil], default: nil, The dmgr user.  
 - `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
@@ -154,7 +154,7 @@ end
 
 ##### Parameters
 
-- `websphere_root`, String, default: '/opt/IBM/Websphere/AppServer', The was install root
+- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
 - `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
 - `admin_user`, [String, nil], default: nil, The dmgr user.  
 - `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
@@ -199,7 +199,7 @@ end
 
 ##### Parameters
 
-- `websphere_root`, String, default: '/opt/IBM/Websphere/AppServer', The was install root
+- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
 - `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
 - `admin_user`, [String, nil], default: nil, The dmgr user.  
 - `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
@@ -238,7 +238,7 @@ end
 
 ##### Parameters
 
-- `websphere_root`, String, default: '/opt/IBM/Websphere/AppServer', The was install root
+- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
 - `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
 - `admin_user`, [String, nil], default: nil, The dmgr user.  
 - `admin_password`, [String, nil], default: nil, The dmgr password.
@@ -279,15 +279,15 @@ end
 
 ##### Parameters
 
-- `websphere_root`, String, default: '/opt/IBM/Websphere/AppServer', The was install root
+- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
 - `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
 - `admin_user`, [String, nil], default: nil, The dmgr user.  
 - `admin_password`, [String, nil], default: nil, The dmgr password.
 - `dmgr_host`, String, default: 'localhost', The dmgr host to federate to.
 - `dmgr_port`, [String, nil], default: nil, The dmgr port to federate to.
 - `webserver_name`, String, name_property: true
-- `plg_root`, String, default: '/opt/IBM/Websphere/Plugins'
-- `wct_root`, String, default: '/opt/IBM/Websphere/Toolbox'
+- `plg_root`, String, default: '/opt/IBM/WebSphere/Plugins'
+- `wct_root`, String, default: '/opt/IBM/WebSphere/Toolbox'
 - `wct_tool_root`, String, default: lazy { "#{wct_root}/WCT" }
 - `config_type`, String, default: 'local_distributed', Can only be local_distributed or remote.
 - `profile_name`, String, required: true

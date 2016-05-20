@@ -1,11 +1,3 @@
-# install java
-# node.default['java']['jdk_version'] = '7'
-# #node.default['java']['install_flavor'] = 'oracle'
-# node.default['java']['oracle']['accept_oracle_download_terms'] = true
-# node.default['java']['ark_timeout'] = 1200
-# node.default['java']['install_flavor'] = 'openjdk'
-#
-# include_recipe 'java'
 
 # install for RHEL 6 based on
 # http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.installation.nd.doc/ae/tins_linuxsetup_rhel6.html?cp=SSAW57_8.5.5%2F1-5-0-4-2-2
@@ -23,7 +15,7 @@ end
 
 ibm_package 'WAS ND install' do
   package 'com.ibm.websphere.ND.v85_8.5.5000.20130514_1044,core.feature,ejbdeploy,thinclient,embeddablecontainer,com.ibm.sdk.6_64bit'
-  install_dir '/opt/IBM/Websphere/AppServer'
+  install_dir '/opt/IBM/WebSphere/AppServer'
   repositories ['/opt/ibm-media/WASND']
   action :install
 end
@@ -39,7 +31,7 @@ end
 
 ibm_fixpack 'WAS ND Fixpack 3' do
   package 'com.ibm.websphere.ND.v85_8.5.5008.20151112_0939,core.feature,ejbdeploy,thinclient,embeddablecontainer,com.ibm.sdk.6_64bit'
-  install_dir '/opt/IBM/Websphere/AppServer'
+  install_dir '/opt/IBM/WebSphere/AppServer'
   repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.ND.v85']
   master_pw_file '/root/MyMasterPassFile'
   secure_storage_file '/root/MySecureStorageFile'
@@ -48,7 +40,7 @@ end
 
 ibm_package 'IBM Java 7.1' do
   package 'com.ibm.websphere.IBMJAVA.v71_7.1.3010.20151112_0058'
-  install_dir '/opt/IBM/Websphere/AppServer'
+  install_dir '/opt/IBM/WebSphere/AppServer'
   repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.IBMJAVA.v71']
   master_pw_file '/root/MyMasterPassFile'
   secure_storage_file '/root/MySecureStorageFile'
@@ -58,11 +50,11 @@ end
 ibm_package 'PLG Plugins install' do
   package 'com.ibm.websphere.PLG.v85,core.feature,com.ibm.jre.6_64bit'
   # packages ['com.ibm.websphere.PLG.v85,core.feature,com.ibm.jre.6_64bit']
-  install_dir '/opt/IBM/Websphere/Plugins'
+  install_dir '/opt/IBM/WebSphere/Plugins'
   repositories ['/opt/ibm-media/WASND_SUPPL']
   # repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.PLG.v85']
   properties ({
-    'eclipseLocation' => '/opt/ibm/Websphere/Plugins',
+    'eclipseLocation' => '/opt/ibm/WebSphere/Plugins',
     'user.import.profile' => 'false',
     'cic.selector.nl' => 'en'
   })
@@ -98,11 +90,11 @@ ibm_package 'WCT Toolbox install' do
   package 'com.ibm.websphere.WCT.v85,core.feature,pct'
   # package 'com.ibm.websphere.WCT.v85,core.feature,pct,zpmt,zmmt'
   # package 'com.ibm.websphere.WCT.v85_8.5.5000.20130514_1044'
-  install_dir '/opt/IBM/Websphere/Toolbox'
+  install_dir '/opt/IBM/WebSphere/Toolbox'
   # repositories ['/opt/ibm-media/WASND_SUPPL']
   repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.WCT.v85']
   properties ({
-    'eclipseLocation' => '/opt/IBM/Websphere/Toolbox',
+    'eclipseLocation' => '/opt/IBM/WebSphere/Toolbox',
     'user.import.profile' => 'false',
     'user.select.64bit.image.com.ibm.websphere.WCT.v85' => 'true',
     'cic.selector.nl' => 'en'

@@ -21,7 +21,7 @@ describe command('/opt/IBM/InstallationManager/eclipse/tools/imcl listInstalledP
   its(:stdout) { should match(/com.ibm.websphere.WCT.v85.*/) }
 end
 
-describe command('/opt/IBM/Websphere/AppServer/bin/wsadmin.sh -lang jython -conntype SOAP -host localhost -user admin -password '\
+describe command('/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -lang jython -conntype SOAP -host localhost -user admin -password '\
   'admin -c "AdminServerManagement.listServers(\'\', \'\')"') do
   its(:stdout) { should match(%r{dmgr\(cells/MyNewCell/nodes/Dmgr01_node/servers}) }
   its(:stdout) { should match(%r{nodeagent\(cells/MyNewCell/nodes/AppProfile1_node/servers/nodeagent}) }
@@ -35,7 +35,7 @@ describe command('/opt/IBM/Websphere/AppServer/bin/wsadmin.sh -lang jython -conn
 end
 
 # check dmgr security attribtue is set
-describe command('/opt/IBM/Websphere/AppServer/bin/wsadmin.sh -lang jython -conntype SOAP -host localhost -user admin '\
+describe command('/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -lang jython -conntype SOAP -host localhost -user admin '\
   '-password admin -c "AdminTask.isAppSecurityEnabled()"') do
   its(:stdout) { should match(/true/) }
 end
@@ -48,7 +48,7 @@ services.each do |service|
   end
 end
 
-describe file('/opt/IBM/Websphere/AppServer/profiles/Dmgr01/config/cells/MyNewCell/nodes/AppProfile1_node/servers/AppProfile1_server/server.xml') do
+describe file('/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/config/cells/MyNewCell/nodes/AppProfile1_node/servers/AppProfile1_server/server.xml') do
   its(:content) { should match(/maximumStartupAttempts="2"/) }
   its(:content) { should match(/pingTimeout="99"/) }
   its(:content) { should match(/pingInterval="666"/) }
@@ -65,17 +65,17 @@ ports.each do |p|
 end
 
 # java tests
-describe command('/opt/IBM/Websphere/AppServer/bin/managesdk.sh -listEnabledProfile -profileName AppProfile1') do
+describe command('/opt/IBM/WebSphere/AppServer/bin/managesdk.sh -listEnabledProfile -profileName AppProfile1') do
   its(:stdout) { should match(/Server AppProfile1_server SDK name: 1.7.1_64/) }
 end
 
 # cluster tests
-describe command('/opt/IBM/Websphere/AppServer/bin/wsadmin.sh -lang jython -conntype SOAP -host localhost '\
+describe command('/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -lang jython -conntype SOAP -host localhost '\
   '-user admin -password admin -c "AdminClusterManagement.checkIfClusterExists(\'MyCluster\')"') do
   its(:stdout) { should match(/true/) }
 end
 
-describe command('/opt/IBM/Websphere/AppServer/bin/wsadmin.sh -lang jython -conntype SOAP -host localhost -user admin -password admin '\
+describe command('/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -lang jython -conntype SOAP -host localhost -user admin -password admin '\
   '-c "AdminClusterManagement.listClusterMembers(\'MyCluster\')"') do
   its(:stdout) { should match(/cluster MyCluster has 2 members/) }
   its(:stdout) { should match(/Cluster member: ClusterServer1/) }
@@ -96,12 +96,12 @@ describe command('curl https://localhost:9443/hello -ik') do
 end
 
 # webserver tests
-describe command('/opt/IBM/Websphere/Toolbox/WCT/wctcmd.sh -tool pct -listDefinitionLocations') do
+describe command('/opt/IBM/WebSphere/Toolbox/WCT/wctcmd.sh -tool pct -listDefinitionLocations') do
   its(:stdout) { should match(/Name: MyWebserver1/) }
-  its(:stdout) { should match(%r{Path: /opt/IBM/Websphere/Plugins}) }
+  its(:stdout) { should match(%r{Path: /opt/IBM/WebSphere/Plugins}) }
 end
 
-describe file('/opt/IBM/Websphere/Plugins/logs/config/configure_IHS_webserver.log') do
+describe file('/opt/IBM/WebSphere/Plugins/logs/config/configure_IHS_webserver.log') do
   its(:content) { should match(/Configuration Completed Successfully/) }
 end
 
@@ -109,22 +109,22 @@ describe file('/opt/IBM/HTTPServer/logs/postinstall/postinstall.log') do
   its(:content) { should match(/INSTCONFSUCCESS/) }
 end
 
-describe file('/opt/IBM/Websphere/Plugins/logs/config/installIHSPlugin.log') do
+describe file('/opt/IBM/WebSphere/Plugins/logs/config/installIHSPlugin.log') do
   its(:content) { should match(/Install complete/) }
   its(:content) { should_not match(/Could not locate config file/) }
 end
 
 ## plugin config has propogated
 cfg_files = %w(
-  /opt/IBM/Websphere/Plugins/config/MyWebserver1/plugin-cfg.xml
-  /opt/IBM/Websphere/Plugins/config/templates/plugin-cfg.xml
-  /opt/IBM/Websphere/AppServer/profiles/AppProfile1/config/cells/MyNewCell/nodes/AppProfile1_node/servers/MyWebserver1/plugin-cfg.xml
-  /opt/IBM/Websphere/AppServer/profiles/AppProfile1/config/cells/plugin-cfg.xml
-  /opt/IBM/Websphere/AppServer/profiles/CustomProfile2/config/cells/plugin-cfg.xml
-  /opt/IBM/Websphere/AppServer/profiles/AppProfile2/config/cells/plugin-cfg.xml
-  /opt/IBM/Websphere/AppServer/profiles/Dmgr01/config/cells/MyNewCell/nodes/AppProfile1_node/servers/MyWebserver1/plugin-cfg.xml
-  /opt/IBM/Websphere/AppServer/profiles/Dmgr01/config/cells/plugin-cfg.xml
-  /opt/IBM/Websphere/AppServer/profiles/CustomProfile1/config/cells/plugin-cfg.xml
+  /opt/IBM/WebSphere/Plugins/config/MyWebserver1/plugin-cfg.xml
+  /opt/IBM/WebSphere/Plugins/config/templates/plugin-cfg.xml
+  /opt/IBM/WebSphere/AppServer/profiles/AppProfile1/config/cells/MyNewCell/nodes/AppProfile1_node/servers/MyWebserver1/plugin-cfg.xml
+  /opt/IBM/WebSphere/AppServer/profiles/AppProfile1/config/cells/plugin-cfg.xml
+  /opt/IBM/WebSphere/AppServer/profiles/CustomProfile2/config/cells/plugin-cfg.xml
+  /opt/IBM/WebSphere/AppServer/profiles/AppProfile2/config/cells/plugin-cfg.xml
+  /opt/IBM/WebSphere/AppServer/profiles/Dmgr01/config/cells/MyNewCell/nodes/AppProfile1_node/servers/MyWebserver1/plugin-cfg.xml
+  /opt/IBM/WebSphere/AppServer/profiles/Dmgr01/config/cells/plugin-cfg.xml
+  /opt/IBM/WebSphere/AppServer/profiles/CustomProfile1/config/cells/plugin-cfg.xml
 )
 
 cfg_files.each do |f|
@@ -133,14 +133,14 @@ cfg_files.each do |f|
   end
 end
 
-describe command('/opt/IBM/Websphere/AppServer/bin/wsadmin.sh -lang jython -conntype SOAP -host localhost -user admin '\
+describe command('/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -lang jython -conntype SOAP -host localhost -user admin '\
   '-password admin -c "AdminServerManagement.listServers(\'WEB_SERVER\', \'\')"') do
   its(:stdout) { should match(%r{MyWebserver1\(cells/MyNewCell/nodes/AppProfile1_node/servers/MyWebserver1}) }
 end
 
 describe file('/opt/IBM/HTTPServer/conf/httpd.conf') do
-  its(:content) { should match(%r{LoadModule was_ap22_module /opt/IBM/Websphere/Plugins/bin/64bits/mod_was_ap22_http.so}) }
-  its(:content) { should match(%r{WebSpherePluginConfig /opt/IBM/Websphere/Plugins/config/MyWebserver1/plugin-cfg.xml}) }
+  its(:content) { should match(%r{LoadModule was_ap22_module /opt/IBM/WebSphere/Plugins/bin/64bits/mod_was_ap22_http.so}) }
+  its(:content) { should match(%r{WebSpherePluginConfig /opt/IBM/WebSphere/Plugins/config/MyWebserver1/plugin-cfg.xml}) }
 end
 
 describe port(80) do

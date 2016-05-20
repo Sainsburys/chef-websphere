@@ -1,6 +1,11 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v0.0.5
+--------------------
+- Change default was root to /opt/IBM/WebSphere/Appserver
+- add save to various wsadmin commands.
+
 v0.0.4
 --------------------
 - minor update to ihs integration tests

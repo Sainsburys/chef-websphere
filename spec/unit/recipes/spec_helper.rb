@@ -19,7 +19,7 @@ end
 def stub_commands
   stub_command('which sudo').and_return('/usr/bin/sudo')
   # allow(File).to receive(:exist?).and_call_original
-  # allow(File).to receive(:exist?).with('/opt/IBM/Websphere/AppServer/profiles/AppProfile1/config/cells').and_return(true)
+  # allow(File).to receive(:exist?).with('/opt/IBM/WebSphere/AppServer/profiles/AppProfile1/config/cells').and_return(true)
 end
 
 at_exit { ChefSpec::Coverage.report! }
