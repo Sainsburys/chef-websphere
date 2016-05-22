@@ -23,7 +23,7 @@ module WebsphereCookbook
     include WebsphereHelpers
 
     resource_name :websphere_base
-    property :websphere_root, String, default: '/opt/IBM/Websphere/AppServer'
+    property :websphere_root, String, default: '/opt/IBM/WebSphere/AppServer'
     property :bin_dir, String, default: lazy { "#{websphere_root}/bin" }
     property :admin_user, [String, nil], default: nil
     property :admin_password, [String, nil], default: nil
@@ -43,7 +43,7 @@ module WebsphereCookbook
         execute "manage_profiles #{cmd} #{profile_name}" do
           cwd bin_dir
           command command
-          sensitive true
+          sensitive false
           action :run
         end
       end
@@ -151,6 +151,7 @@ module WebsphereCookbook
           # sensitive true TODO: uncomment this and add unit test
           action :run
         end
+        save_config
       end
 
       # see here for the caveats and operations performed by remove_node:
@@ -234,6 +235,7 @@ module WebsphereCookbook
           command cmd
           action :run
         end
+        save_config
       end
 
       # executes wsadmin commands and captures stdout, return values, errors etc.
@@ -401,6 +403,11 @@ module WebsphereCookbook
         end
       end
 
+      def save_config
+        cmd = "AdminConfig.save()"
+        wsadmin_exec("wsadmin save config", cmd)
+      end
+
       def start_server(nde_name, serv_name)
         cmd = "AdminServerManagement.startSingleServer('#{nde_name}', '#{serv_name}')"
         wsadmin_exec("wsadmin start server: #{serv_name} on node #{nde_name}", cmd, [0, 103])
@@ -475,6 +482,7 @@ module WebsphereCookbook
         cmd = "AdminConfig.modify('#{config_id}', #{attr_key_val_list})"
         Chef::Log.warn("Modifying #{config_id}' to #{attr_key_val_list}")
         wsadmin_exec("wsadmin modify config_id: #{config_id}", cmd)
+        save_config
       end
 
       # updates attributes of an object.
@@ -513,6 +521,7 @@ module WebsphereCookbook
         cmd << ", '-MapWebModToVH', [['.*', '.*', 'default_host']]" if map_web_mod_to_vh
         cmd << '])'
         wsadmin_exec("wsadmin deploy #{appl_file} to cluster #{clus_name}", cmd)
+        save_config
       end
     end
   end
