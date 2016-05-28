@@ -7,7 +7,7 @@ module WebsphereCookbook
       return ' ' if mycmd.error?
       str = mycmd.stdout.match(/PROFILE_COMMAND_SDK = (.*) \n/).captures.first
       return ' ' if str.nil?
-      Chef::Log.warn("profile: #{profile_name} is running Java #{str}")
+      Chef::Log.debug("profile: #{profile_name} is running Java #{str}")
       str
     end
 
