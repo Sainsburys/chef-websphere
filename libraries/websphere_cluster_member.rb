@@ -39,6 +39,8 @@ module WebsphereCookbook
         end
         action :run
       end
+      node.default['ibm-websphere']['endpoints'] = get_ports()
+      #Chef::Log.debug("endpoints set #{node['ibm-websphere']['endpoints'][server_node][server_name]}")
     end
 
     action :start do
@@ -46,6 +48,9 @@ module WebsphereCookbook
       sleep(30) if !server_exists?(server_node, server_name) || !member?(cluster_name, server_name)
       sleep(30) if !server_exists?(server_node, server_name) || !member?(cluster_name, server_name)
       start_server(server_node, server_name) if server_exists?(server_node, server_name) || member?(cluster_name, server_name)
+      #node.normal['ibm-websphere']['endpoints'][server_name] = get_ports(server_node,server_name)
+      node.default['ibm-websphere']['endpoints'] = get_ports()
+      #Chef::Log.debug("endpoints set #{node['ibm-websphere']['endpoints'][server_node][server_name]}")
     end
 
     action :delete do

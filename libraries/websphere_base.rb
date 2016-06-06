@@ -48,26 +48,24 @@ module WebsphereCookbook
         end
       end
 
-      # returns a hash of enpoint => port for a node
+      # returns a hash of enpoint => port for a server
+      # if server is nil it returns an array of all servers endpoints and ports
       # returns nil if error
-      def get_ports(nde_name, bin_directory = bin_dir)
-        cookbook_file "#{bin_directory}/getports.py" do
-          source 'getports.py'
+      def get_ports(srvr_name='', bin_directory='/opt/IBM/WebSphere/AppServer/bin')
+        cookbook_file "#{bin_directory}/server_ports.py" do
+          cookbook 'ibm-websphere'
+          source 'server_ports.py'
           mode '0755'
           action :create
         end
 
-        cmd = "-f getports.py #{nde_name}"
+        cmd = "-f server_ports.py #{srvr_name}"
         mycmd = wsadmin_returns(cmd)
         return nil if mycmd.error?
-        str = mycmd.stdout.match(/(!!)(.*?)(!!)/m)[2]
+        str = mycmd.stdout.match(/===(.*?)===/m)
         return nil if str.nil?
-        portsarray = str.strip.split("\n")
-        endpoints = {}
-        portsarray.each do |p|
-          ports_array = p.split(',')
-          endpoints[ports_array[0]] = ports_array[1]
-        end
+        json_str = str[1].strip.gsub("'", '"') # strip and replace ' with " so it's a valid json str
+        endpoints = JSON.parse(json_str)
         endpoints
       end
 
@@ -112,7 +110,7 @@ module WebsphereCookbook
 
       # use to setup a nodeagent or dmgr as an init.d service
       # server_name should be 'dmgr' or 'nodeagent'
-      def enable_as_service(service_name, srvr_name, prof_path)
+      def enable_as_service(service_name, srvr_name, prof_path, runas='root')
         # if dplymgr user and password set, then add as additional args for stop.
         stop_args = admin_user && admin_password ? "-username #{admin_user} -password #{admin_password}" : ''
         # admin_user && admin_password ? start_args = "-username #{admin_user} -password #{admin_password}" : start_args = ''
@@ -128,7 +126,7 @@ module WebsphereCookbook
             was_root: bin_dir,
             stop_args: stop_args,
             start_args: '',
-            runas_user: 'root'
+            runas_user: runas
           )
         end
 
@@ -201,11 +199,11 @@ module WebsphereCookbook
         return false if profiles_array.nil?
         profiles_array.each do |p|
           if p_name == p
-            Chef::Log.warn("Profile #{p_name} exists")
+            Chef::Log.debug("Profile #{p_name} exists")
             return true
           end
         end
-        Chef::Log.warn("Profile #{p_name} does NOT exist")
+        Chef::Log.debug("Profile #{p_name} does NOT exist")
         false
       end
 
@@ -250,7 +248,7 @@ module WebsphereCookbook
         mycmd = Mixlib::ShellOut.new(wsadmin_cmd, cwd: bin_directory)
         mycmd.run_command
 
-        Chef::Log.warn("wsadmin_returns cmd: #{cmd} stdout: #{mycmd.stdout} stderr: #{mycmd.stderr}")
+        Chef::Log.debug("wsadmin_returns cmd: #{cmd} stdout: #{mycmd.stdout} stderr: #{mycmd.stderr}")
         mycmd
       end
 
@@ -279,10 +277,10 @@ module WebsphereCookbook
         cmd = "-c \"AdminClusterManagement.checkIfClusterMemberExists('#{clus_name}', '#{serv_name}')\""
         mycmd = wsadmin_returns(cmd)
         if mycmd.stdout.include?("\n'true'\n")
-          Chef::Log.warn("Server: #{serv_name} IS a member of cluster: #{clus_name}")
+          Chef::Log.debug("Server: #{serv_name} IS a member of cluster: #{clus_name}")
           return true
         end
-        Chef::Log.warn("Server: #{serv_name} is NOT a member of cluster: #{clus_name}")
+        Chef::Log.debug("Server: #{serv_name} is NOT a member of cluster: #{clus_name}")
         false
       end
 
@@ -320,7 +318,7 @@ module WebsphereCookbook
           cluster = c.split('(')[0]
           cluster_array << cluster
         end
-        Chef::Log.warn("getclusters() result #{cluster_array}")
+        Chef::Log.debug("getclusters() result #{cluster_array}")
         cluster_array
       end
 
@@ -339,7 +337,7 @@ module WebsphereCookbook
           server = s.split('(')[0]
           members << server
         end
-        Chef::Log.warn("get_cluster_members() result #{members}")
+        Chef::Log.debug("get_cluster_members() result #{members}")
       end
 
       # returns true if server exists on node.
@@ -368,7 +366,7 @@ module WebsphereCookbook
           node = raw_server.match(%r{(?<=nodes\/).*?(?=\/servers)}).to_s
           hash_array << { 'server' => server, 'node' => node }
         end
-        Chef::Log.warn("get_servers() result #{hash_array}")
+        Chef::Log.debug("get_servers() result #{hash_array}")
         hash_array
       end
 
@@ -377,10 +375,10 @@ module WebsphereCookbook
       def federated?(p_path, node_name1)
         current_cell = profile_cell(p_path)
         if ::File.exist?("#{p_path}/config/cells/#{current_cell}/nodes/#{node_name1}/servers/nodeagent/server.xml")
-          Chef::Log.warn("#{node_name1} is federated")
+          Chef::Log.debug("#{node_name1} is federated")
           return true
         else
-          Chef::Log.warn("#{node_name1} is NOT federated")
+          Chef::Log.debug("#{node_name1} is NOT federated")
           return false
         end
       end
@@ -392,7 +390,7 @@ module WebsphereCookbook
         wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
         wsadmin_cmd << "-user #{admin_user} -password #{admin_password} " if admin_user && admin_password
         wsadmin_cmd << "-c \"#{cmd}\""
-        Chef::Log.warn("wsadmin_exec running cmd: #{wsadmin_cmd}")
+        Chef::Log.debug("wsadmin_exec running cmd: #{wsadmin_cmd}")
 
         execute "wsadmin #{label}" do
           cwd bin_directory
@@ -480,7 +478,7 @@ module WebsphereCookbook
       # attr_key_val_list is a string with key, value pairs eg: "[['userID', 'newID'], ['password', 'newPW']]"
       def modify_object(config_id, attr_key_val_list, _bin_directory = bin_dir)
         cmd = "AdminConfig.modify('#{config_id}', #{attr_key_val_list})"
-        Chef::Log.warn("Modifying #{config_id}' to #{attr_key_val_list}")
+        Chef::Log.debug("Modifying #{config_id}' to #{attr_key_val_list}")
         wsadmin_exec("wsadmin modify config_id: #{config_id}", cmd)
         save_config
       end
@@ -506,7 +504,7 @@ module WebsphereCookbook
               update_attributes(val, parent_attr_id)
             end
           else
-            Chef::Log.warn("Setting attributes on #{parent}")
+            Chef::Log.debug("Setting attributes on #{parent}")
             modify_object(parent, val)
           end
         end

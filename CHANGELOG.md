@@ -1,6 +1,11 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v0.0.6
+--------------------
+- get_ports function to set server endpoints as attributes.
+- change logging from warn to debug to reduce noise 
+
 v0.0.5
 --------------------
 - Change default was root to /opt/IBM/WebSphere/Appserver

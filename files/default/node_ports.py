@@ -1,16 +1,21 @@
 import java
 import sys
-if len(sys.argv) > 0:
-    nodeName = sys.argv[0]
+import re
+if len(sys.argv) == 2:
+   nodeName = sys.argv[0]
+   serverName = sys.argv[1]
+elif len(sys.argv) == 1:
+   nodeName = sys.argv[0]
 else:
-    nodeName = ''
+   nodeName = ''
+   serverName = ''
 
 lineSeparator = java.lang.System.getProperty('line.separator')
 
 # get Node
-nodeMatcher = '/Node:%s/' % (nodeName)
-NodeIDs = AdminConfig.getid(nodeMatcher)
-arrayNodeIDs = NodeIDs.split(lineSeparator)
+nodeMatcher = '/Node:%s/Server:%s' % (nodeName, serverName)
+serverIDs = AdminConfig.getid(nodeMatcher)
+arrayServerIDs = serverIDs.split(lineSeparator)
 
 # get Ports
 EndPointIDs = AdminConfig.getid('/EndPoint:/')
