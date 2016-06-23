@@ -32,7 +32,8 @@ module WebsphereCookbook
 
     action :create do
       if platform_family?('rhel')
-        pkgs = %w(glibc glibc.i686 libgcc libgcc.i686)
+        #pkgs = %w(glibc glibc.i686 libgcc libgcc.i686)
+        pkgs = %w(glibc.i686 glibc libgcc.i686)
         pkgs.each do |pkg|
           package pkg
         end
@@ -53,10 +54,12 @@ module WebsphereCookbook
       service 'ibm-httpd' do
         action :enable
       end
+      save_config
     end
 
     action :delete do
       delete_web_definition if web_definition_exists?
+      save_config
       # TODO: delete server as well?
     end
 

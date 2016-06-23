@@ -95,6 +95,26 @@ module WebsphereCookbook
         end
       end
 
+      # performs a node sync from the nodes own bin dir
+      # stops all servers if stop_servers=true
+      # restarts nodeagent if restart=true
+      def sync_node(profile_bin, stop_servers, restart)
+
+        cmd = "./syncNode.sh #{dmgr_host}"
+        cmd << " #{dmgr_port}" if dmgr_port
+        cmd << " -username #{admin_user} -password #{admin_password}" if admin_user && admin_password
+        cmd << " -stopservers" if stop_servers
+        cmd << " -restart" if restart
+
+        execute "sync node on profile: #{profile_bin}" do
+          cwd profile_bin
+          command cmd
+          returns [0]
+          action :run
+          # sensitive true   # TODO: uncomment this 
+        end
+      end
+
       # starts a dmgr node.
       # requires path to profiles own bin dir
       # TODO: add check if node or server are already started first.
@@ -409,6 +429,11 @@ module WebsphereCookbook
       def start_server(nde_name, serv_name)
         cmd = "AdminServerManagement.startSingleServer('#{nde_name}', '#{serv_name}')"
         wsadmin_exec("wsadmin start server: #{serv_name} on node #{nde_name}", cmd, [0, 103])
+      end
+
+      def start_all_servers(nde_name)
+        cmd = "AdminServerManagement.startAllServers('#{nde_name}')"
+        wsadmin_exec("wsadmin start all servers on node #{nde_name}", cmd, [0, 103])
       end
 
       def stop_server(nde_name, serv_name)

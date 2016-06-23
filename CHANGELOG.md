@@ -1,10 +1,18 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v0.1.0
+--------------------
+- added sync_node feature
+- added save config for some changes.
+- added start_all_servers in node
+- fixed cluster ripplestart and added cluster startSingleServer and stop
+- bug fix for libgcc.i686 conflict version with libgcc
+
 v0.0.6
 --------------------
 - get_ports function to set server endpoints as attributes.
-- change logging from warn to debug to reduce noise 
+- change logging from warn to debug to reduce noise
 
 v0.0.5
 --------------------

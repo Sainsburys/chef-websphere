@@ -162,7 +162,7 @@ websphere_cluster_member 'ClusterServer1' do
         'newvalue' => "[['maximumStartupAttempts', '2'], ['pingInterval', '222'], ['autoRestart', 'true'], ['nodeRestartState', 'PREVIOUS']]"
       },
       'jvmEntries' => {
-        'newvalue' => "[['debugMode', 'true']]"
+        'newvalue' => "[['debugMode', 'true'], ['initialHeapSize', 1024], ['maximumHeapSize', 3072]]"
       }
     }
   })
