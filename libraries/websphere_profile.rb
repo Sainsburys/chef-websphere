@@ -103,5 +103,15 @@ module WebsphereCookbook
         cleanup_node(node_name) if federated
       end
     end
+
+    action :sync do
+      # syncs node config to dmgr. shutsdown servers if needed and restart node agent.
+      sync_node("#{profile_path}/bin", true, true)
+    end
+
+    action :start_all_servers do
+      start_all_servers(profile_name)
+    end
+
   end
 end

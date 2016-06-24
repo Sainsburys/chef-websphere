@@ -56,7 +56,7 @@ module WebsphereCookbook
     action :delete do
       # TODO: delete server using the object id so you don't need as many inputs to delete it.
       delete_cluster_member(cluster_name, server_name, server_node, session_replication) if server_exists?(server_node, server_name) && member?(cluster_name, server_name)
-
+      
       # if no more cluster members, delete cluster so it can be recreated with new template
       # delete_cluster(cluster_name) unless get_cluster_members(cluster_name).count > 0
     end

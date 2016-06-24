@@ -41,13 +41,19 @@ module WebsphereCookbook
     end
 
     action :ripple_start do
-      cmd = "AdminClusterManagement.rippleStartSingleCluster(#{cluster_name})"
+      cmd = "AdminClusterManagement.rippleStartSingleCluster('#{cluster_name}')"
       wsadmin_exec("wasadmin ripple_restart cluster: #{cluster_name} ", cmd)
     end
 
     action :start do
-      cmd = "AdminClusterManagement.rippleStartSingleCluster(#{cluster_name})"
-      wsadmin_exec("wasadmin ripple_restart cluster: #{cluster_name} ", cmd)
+      cmd = "AdminClusterManagement.startSingleCluster('#{cluster_name}')"
+      wsadmin_exec("wasadmin start cluster: #{cluster_name} ", cmd, [0, 103])
     end
+
+    action :stop do
+      cmd = "AdminClusterManagement.stopSingleCluster('#{cluster_name}')"
+      wsadmin_exec("wasadmin stop cluster: #{cluster_name} ", cmd, [0, 103])
+    end
+
   end
 end

@@ -57,6 +57,10 @@ describe file('/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/config/cells/MyNewCe
   its(:content) { should match(/debugMode="true"/) }
 end
 
+describe file('/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/config/cells/MyNewCell/nodes/CustomProfile1_node/servers/ClusterServer1/server.xml') do
+  its(:content) { should match(/<jvmEntries.*initialHeapSize="1024".*maximumHeapSize="3072".*debugMode="true"/) }
+end
+
 ports = %w(9043)
 ports.each do |p|
   describe port(p) do
