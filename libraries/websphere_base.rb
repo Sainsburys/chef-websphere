@@ -111,7 +111,7 @@ module WebsphereCookbook
           command cmd
           returns [0]
           action :run
-          # sensitive true   # TODO: uncomment this 
+          # sensitive true   # TODO: uncomment this
         end
       end
 
@@ -546,6 +546,7 @@ module WebsphereCookbook
         wsadmin_exec("wsadmin deploy #{appl_file} to cluster #{clus_name}", cmd)
         save_config
       end
+
     end
   end
 end
