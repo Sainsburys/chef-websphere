@@ -1,6 +1,14 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v0.2.0
+--------------------
+- added websphere_wsadmin resource for convenience
+- added jms_provider resource
+- added ibm_cert resource
+
+
+
 v0.1.0
 --------------------
 - added sync_node feature
