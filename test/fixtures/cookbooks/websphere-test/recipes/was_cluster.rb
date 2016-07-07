@@ -244,3 +244,22 @@ websphere_app 'sample_app' do
   admin_password 'admin'
   action [:stop, :start]
 end
+
+# create and delete virtual host aliases
+websphere_vhost_alias 'test add vhost alias' do
+  vhost_name 'default_host'
+  alias_host  '*'
+  alias_port  '11111'
+  admin_user 'admin'
+  admin_password 'admin'
+  action :create
+end
+
+websphere_vhost_alias 'test delete vhost alias' do
+  vhost_name 'default_host'
+  alias_host  '*'
+  alias_port  '33333'
+  admin_user 'admin'
+  admin_password 'admin'
+  action [:create, :delete]
+end

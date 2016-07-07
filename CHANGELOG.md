@@ -1,13 +1,17 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v0.3.0
+--------------------
+- added vhost_alias resource
+- added another sync_node option that doesn't restart nodeagent or servers
+- changed extract_cert default filename extension to .cer
+
 v0.2.0
 --------------------
 - added websphere_wsadmin resource for convenience
 - added jms_provider resource
 - added ibm_cert resource
-
-
 
 v0.1.0
 --------------------

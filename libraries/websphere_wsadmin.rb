@@ -32,12 +32,11 @@ module WebsphereCookbook
     property :sensitive, [TrueClass, FalseClass], default: false
 
     action :run do
-
       wsadmin_cmd = './wsadmin.sh -lang jython -conntype SOAP '
       wsadmin_cmd << "-host #{dmgr_host} " if dmgr_host
       wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
       wsadmin_cmd << "-user #{admin_user} -password #{admin_password} " if admin_user && admin_password
-      wsadmin_cmd << "-f \"#{file}\"" if file
+      wsadmin_cmd << "-f #{file}" if file
       wsadmin_cmd << "-c \"#{script}\"" if script && file.nil?
 
       execute "wsadmin #{label}" do

@@ -63,19 +63,22 @@ module WebsphereCookbook
     end
 
     action :start do
-      execute "start webserver #{webserver_name}" do
-        cwd ihs_install_root
-        command "#{ihs_install_root}/bin/apachectl start"
-        action :run
-      end
+      #cmd = "AdminTask.startMiddlewareServer('[-serverName #{webserver_name} -nodeName #{node_name} ]')"
+      start_server(node_name, webserver_name)
+      # execute "start webserver #{webserver_name}" do
+      #   cwd ihs_install_root
+      #   command "#{ihs_install_root}/bin/apachectl start"
+      #   action :run
+      # end
     end
 
     action :stop do
-      execute "start webserver #{webserver_name}" do
-        cwd ihs_install_root
-        command "#{ihs_install_root}/bin/apachectl stop"
-        action :run
-      end
+      # execute "start webserver #{webserver_name}" do
+      #   cwd ihs_install_root
+      #   command "#{ihs_install_root}/bin/apachectl stop"
+      #   action :run
+      # end
+      stop_server(node_name, webserver_name)
     end
 
     # need to wrap helper methods in class_eval

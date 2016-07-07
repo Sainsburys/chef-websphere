@@ -104,9 +104,14 @@ module WebsphereCookbook
       end
     end
 
-    action :sync do
+    action :sync_and_restart do
       # syncs node config to dmgr. shutsdown servers if needed and restart node agent.
-      sync_node("#{profile_path}/bin", true, true)
+      sync_node_sh("#{profile_path}/bin", true, true)
+    end
+
+    action :sync do
+      # syncs nodes without restarting nodeagent or servers
+      sync_node_wsadmin(node_name, "#{profile_path}/bin")
     end
 
     action :start_all_servers do
