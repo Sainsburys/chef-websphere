@@ -98,7 +98,7 @@ module WebsphereCookbook
       # performs a node sync from the nodes own bin dir
       # stops all servers if stop_servers=true
       # restarts nodeagent if restart=true
-      def sync_node(profile_bin, stop_servers, restart)
+      def sync_node_sh(profile_bin, stop_servers, restart)
 
         cmd = "./syncNode.sh #{dmgr_host}"
         cmd << " #{dmgr_port}" if dmgr_port
@@ -113,6 +113,18 @@ module WebsphereCookbook
           action :run
           # sensitive true   # TODO: uncomment this
         end
+      end
+
+      def sync_node_wsadmin(nde_name='all', bin_directory='/opt/IBM/WebSphere/AppServer/bin')
+        cookbook_file "#{bin_directory}/sync_node.py" do
+          cookbook 'ibm-websphere'
+          source 'sync_node.py'
+          mode '0755'
+          action :create
+        end
+
+        cmd = "-f #{bin_directory}/sync_node.py #{nde_name}"
+        wsadmin_exec("wsadmin syncNode #{nde_name}", cmd, [0, 103])
       end
 
       # starts a dmgr node.
@@ -410,6 +422,23 @@ module WebsphereCookbook
         wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
         wsadmin_cmd << "-user #{admin_user} -password #{admin_password} " if admin_user && admin_password
         wsadmin_cmd << "-c \"#{cmd}\""
+        Chef::Log.debug("wsadmin_exec running cmd: #{wsadmin_cmd}")
+
+        execute "wsadmin #{label}" do
+          cwd bin_directory
+          command wsadmin_cmd
+          returns return_codes
+          # sensitive true TODO: MUST uncomment this before merging and have an accompaniying unit test
+          action :run
+        end
+      end
+
+      def wsadmin_exec_file(label, cmd, return_codes = [0], bin_directory = bin_dir)
+        wsadmin_cmd = './wsadmin.sh -lang jython -conntype SOAP '
+        wsadmin_cmd << "-host #{dmgr_host} " if dmgr_host
+        wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
+        wsadmin_cmd << "-user #{admin_user} -password #{admin_password} " if admin_user && admin_password
+        wsadmin_cmd << "-f #{cmd}"
         Chef::Log.debug("wsadmin_exec running cmd: #{wsadmin_cmd}")
 
         execute "wsadmin #{label}" do
