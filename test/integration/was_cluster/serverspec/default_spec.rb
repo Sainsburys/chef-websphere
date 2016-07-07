@@ -158,3 +158,9 @@ end
 describe process('httpd') do
   it { should be_running }
 end
+
+# virtual host tests
+describe file('/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/config/cells/MyNewCell/virtualhosts.xml') do
+  its(:content) { should match(%r{<aliases.* hostname="\*" port="11111"/>}) }
+  its(:content) { should_not match(%r{<aliases.* hostname="\*" port="33333"/>}) }
+end
