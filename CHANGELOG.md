@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v0.3.1
+--------------------
+- bugfix for federating and existing node that isn't yet federated.
+
 v0.3.0
 --------------------
 - added vhost_alias resource

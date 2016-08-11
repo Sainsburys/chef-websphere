@@ -53,7 +53,7 @@ module WebsphereCookbook
 
     action :federate do
       federated = federated?(profile_path, node_name)
-      if profile_exists?(profile_name) && !federated
+      if profile_exists?(profile_name) and !federated
         add_node("#{profile_path}/bin")
 
         enable_as_service(node_name, 'nodeagent', profile_path)
