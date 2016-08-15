@@ -53,7 +53,9 @@ module WebsphereCookbook
       service 'ibm-httpd' do
         action :enable
       end
+
       save_config
+      sync_node_wsadmin(node_name)
     end
 
     action :delete do
@@ -63,21 +65,16 @@ module WebsphereCookbook
     end
 
     action :start do
-      #cmd = "AdminTask.startMiddlewareServer('[-serverName #{webserver_name} -nodeName #{node_name} ]')"
-      start_server(node_name, webserver_name)
-      # execute "start webserver #{webserver_name}" do
-      #   cwd ihs_install_root
-      #   command "#{ihs_install_root}/bin/apachectl start"
-      #   action :run
-      # end
+      i = 0 # safety timeout break
+      until server_exists?(node_name, webserver_name)
+        sleep(5) # ensure webserver has been created first
+        i += 1
+        break if i >= 8
+      end
+      start_server(node_name, webserver_name, return_codes=[0, 103])
     end
 
     action :stop do
-      # execute "start webserver #{webserver_name}" do
-      #   cwd ihs_install_root
-      #   command "#{ihs_install_root}/bin/apachectl stop"
-      #   action :run
-      # end
       stop_server(node_name, webserver_name)
     end
 
