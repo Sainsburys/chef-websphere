@@ -422,7 +422,7 @@ module WebsphereCookbook
         wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
         wsadmin_cmd << "-user #{admin_user} -password #{admin_password} " if admin_user && admin_password
         wsadmin_cmd << "-c \"#{cmd}\""
-        Chef::Log.debug("wsadmin_exec running cmd: #{wsadmin_cmd}")
+        Chef::Log.debug("wsadmin_exec running cmd: #{wsadmin_cmd} return_codes #{return_codes}")
 
         execute "wsadmin #{label}" do
           cwd bin_directory
@@ -455,9 +455,9 @@ module WebsphereCookbook
         wsadmin_exec("wsadmin save config", cmd)
       end
 
-      def start_server(nde_name, serv_name)
+      def start_server(nde_name, serv_name, return_codes=[0,103])
         cmd = "AdminServerManagement.startSingleServer('#{nde_name}', '#{serv_name}')"
-        wsadmin_exec("wsadmin start server: #{serv_name} on node #{nde_name}", cmd, [0, 103])
+        wsadmin_exec("wsadmin start server: #{serv_name} on node #{nde_name}", cmd, return_codes)
       end
 
       def start_all_servers(nde_name)
