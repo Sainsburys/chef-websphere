@@ -65,8 +65,13 @@ module WebsphereCookbook
     end
 
     action :start do
-      sleep(20) # ensure webserver has been created first
-      start_server(node_name, webserver_name, return_codes=[0])
+      i = 0 # safety timeout break
+      until server_exists?(node_name, webserver_name)
+        sleep(5) # ensure webserver has been created first
+        i += 1
+        break if i >= 8
+      end
+      start_server(node_name, webserver_name, return_codes=[0, 103])
     end
 
     action :stop do

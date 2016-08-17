@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v0.3.3
+--------------------
+- cleaner bugfix for starting webserver after it has just been created to allow time to propagate.
+
 v0.3.2
 --------------------
 - bugfix for starting webserver after it has just been created to allow time to propagate.
