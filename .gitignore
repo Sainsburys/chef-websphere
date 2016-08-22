@@ -5,7 +5,7 @@
 .*.sw[a-z]
 *.un~
 pkg/
-*.ignore
+*ignore*
 
 # Berkshelf
 .vagrant

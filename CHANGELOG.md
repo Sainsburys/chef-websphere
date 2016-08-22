@@ -1,6 +1,11 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+
+v0.4.0
+--------------------
+- new resources for jms destination and jms connection factory. Integration tests for all jms resources.
+
 v0.3.3
 --------------------
 - cleaner bugfix for starting webserver after it has just been created to allow time to propagate.

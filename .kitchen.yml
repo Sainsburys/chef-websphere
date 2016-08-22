@@ -11,9 +11,12 @@ provisioner:
       passport_advantage:
         user: <%= ENV['PASSPORTADV_USER'] %>
         password: <%= ENV['PASSPORTADV_PW'] %>
-
+      aws:
+        access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
+        access_key_secret: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
+        region: <%= ENV['AWS_REGION'] %>
 platforms:
-  - name: centos-6.7
+  - name: opscode-centos-6.7
 
 suites:
   - name: was_cluster
@@ -22,3 +25,6 @@ suites:
   - name: ibm_certs
     run_list:
       - recipe[websphere-test::ibm_certs]
+  - name: was_jms
+    run_list:
+      - recipe[websphere-test::was_jms]

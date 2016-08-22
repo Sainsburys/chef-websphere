@@ -19,28 +19,42 @@
 require_relative 'websphere_base'
 
 module WebsphereCookbook
-  class WebsphereJms < WebsphereBase
+  class WebsphereJmsProvider < WebsphereBase
     require_relative 'helpers'
     include WebsphereHelpers
 
     resource_name :websphere_jms_provider
     property :provider_name, String, name_property: true
-    property :scope, [String, nil], default: nil, required: true # eg 'Cell=Cell1'
+    property :scope, String, required: true # eg 'Cell=Cell1'
     property :context_factory, [String, nil], default: nil
     property :url, [String, nil], default: nil
-    property :classpath_jars, Array, default: nil # full path to each jar
+    property :classpath_jars, [Array, nil], default: nil # full path to each jar
     property :description, [String, nil], default: nil
 
     action :create do
-      cmd = "AdminJMS.createJMSProviderAtScope('#{scope}', '#{provider_name}', "\
-        "'#{context_factory}', '#{url}', [['classpath', '#{classpath_jars.join(';')}'], ['description', '#{description}']])"
+      unless jms_provider_exists?(provider_name)
+        cmd = "AdminJMS.createJMSProviderAtScope('#{scope}', '#{provider_name}', "\
+          "'#{context_factory}', '#{url}', [['classpath', '#{classpath_jars.join(';')}'], ['description', '#{description}']])"
 
-      wsadmin_exec("Create JMS Provider #{provider_name}", cmd)
+          wsadmin_exec("Create JMS Provider #{provider_name}", cmd)
+      end
     end
 
     action :delete do
       # TODO:
     end
 
+    # need to wrap helper methods in class_eval
+    # so they're available in the action.
+    action_class.class_eval do
+
+      def jms_provider_exists?(provider_name)
+        cmd = "-c \"AdminJMS.listJMSProviders('#{provider_name}')\""
+        mycmd = wsadmin_returns(cmd)
+        return true if mycmd.stdout.include?("\[\'#{provider_name}")
+        false
+      end
+
+    end
   end
 end
