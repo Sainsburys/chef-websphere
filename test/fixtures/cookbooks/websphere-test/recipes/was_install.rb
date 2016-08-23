@@ -1,4 +1,7 @@
 
+include_recipe 'chef-sugar'
+include_recipe 'websphere-test::was_media' if ec2?
+
 # install for RHEL 6 based on
 # http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.installation.nd.doc/ae/tins_linuxsetup_rhel6.html?cp=SSAW57_8.5.5%2F1-5-0-4-2-2
 package ['glibc', 'compat-libstdc++-33', 'compat-db']
@@ -16,7 +19,7 @@ end
 ibm_package 'WAS ND install' do
   package 'com.ibm.websphere.ND.v85_8.5.5000.20130514_1044,core.feature,ejbdeploy,thinclient,embeddablecontainer,com.ibm.sdk.6_64bit'
   install_dir '/opt/IBM/WebSphere/AppServer'
-  repositories ['/opt/ibm-media/WASND']
+  repositories [node['websphere-test']['repo_dir']]
   action :install
 end
 
@@ -51,7 +54,7 @@ ibm_package 'PLG Plugins install' do
   package 'com.ibm.websphere.PLG.v85,core.feature,com.ibm.jre.6_64bit'
   # packages ['com.ibm.websphere.PLG.v85,core.feature,com.ibm.jre.6_64bit']
   install_dir '/opt/IBM/WebSphere/Plugins'
-  repositories ['/opt/ibm-media/WASND_SUPPL']
+  repositories [node['websphere-test']['suppl_repo']]
   # repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.PLG.v85']
   properties ({
     'eclipseLocation' => '/opt/ibm/WebSphere/Plugins',
@@ -67,7 +70,7 @@ end
 ibm_package 'IHS install' do
   package 'com.ibm.websphere.IHS.v85,core.feature,arch.64bit'
   install_dir '/opt/IBM/HTTPServer'
-  repositories ['/opt/ibm-media/WASND_SUPPL']
+  repositories [node['websphere-test']['suppl_repo']]
   properties ({
     'eclipseLocation' => '/opt/IBM/HTTPServer',
     'user.import.profile' => 'false',

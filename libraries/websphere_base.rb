@@ -32,6 +32,7 @@ module WebsphereCookbook
 
     # you need at least one action here to allow the action_class.class_eval block to work
     action :dummy do
+      Chef::Application.fatal!("You must specify an action for this resource, as there is no default resource.")
     end
 
     # need to wrap helper methods in class_eval

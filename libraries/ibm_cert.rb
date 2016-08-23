@@ -27,7 +27,7 @@ module WebsphereCookbook
     property :size, String, default: '2048', regex: /^(2048|1024|512)$/
     property :expire, String, default: '3600', required: true
     property :extract_to, String, default: lazy { "#{::File.dirname(kdb)}/#{label}.cer" } # used by the extract action only. extracts to given file in ascii format
-    property :add_cert, String, default: nil # path to certificate to add to kdb, only used in add.
+    property :add_cert, [String, nil], default: nil # path to certificate to add to kdb, only used in add.
     property :default_cert, String, default: 'no', regex: /^(yes|no)$/
     property :ikeycmd, String, default: lazy { "#{websphere_root}/java/jre/bin/ikeycmd" }
     property :owned_by, String, default: 'root'
