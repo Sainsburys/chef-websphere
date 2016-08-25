@@ -44,7 +44,7 @@ module WebsphereCookbook
     # [['type','QUEUE'],['connectionPool',[['connectionTimeout','180'],['maxConnections','10'],['minConnections','1'],['reapTime','180'],['unusedTimeout','1800'],['agedTimeout','0'],['purgePolicy','FailingConnectionOnly']]]])
 
     action :create do
-      unless jms_conn_factory_exists?(conn_factory_name)
+      unless jms_conn_factory_exists?
         cmd = "AdminJMS.createGenericJMSConnectionFactoryAtScope('#{scope}', "\
           "'#{jms_provider}',  '#{conn_factory_name}', '#{jndi_name}', '#{ext_jndi_name}', [['type', '#{type}']"
         cmd << ", ['connectionPool', [['connectionTimeout','#{conn_pool_timeout}'],['maxConnections','#{conn_pool_max}'],['minConnections','#{conn_pool_min}'],"\
@@ -53,17 +53,17 @@ module WebsphereCookbook
         cmd << ", ['category', '#{category}']" if category
         cmd << "])"
 
-        wsadmin_exec("Create JMS connection factory #{ext_jndi_name}", cmd)
+        wsadmin_exec("Create JMS connection factory #{conn_factory_name}", cmd)
       end
     end
 
     # need to wrap helper methods in class_eval
     # so they're available in the action.
     action_class.class_eval do
-      def jms_conn_factory_exists?(conn_factory_name)
+      def jms_conn_factory_exists?
         cmd = "-c \"AdminJMS.listGenericJMSConnectionFactories('#{conn_factory_name}')\""
         mycmd = wsadmin_returns(cmd)
-        return true if mycmd.stdout.include?("\[\'\"#{conn_factory_name}\(")
+        return true if mycmd.stdout.include?("#{conn_factory_name}\(")
         false
       end
     end

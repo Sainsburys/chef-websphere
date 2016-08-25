@@ -32,7 +32,7 @@ module WebsphereCookbook
     property :description, [String, nil], default: nil
 
     action :create do
-      unless jms_provider_exists?(provider_name)
+      unless jms_provider_exists?
         cmd = "AdminJMS.createJMSProviderAtScope('#{scope}', '#{provider_name}', "\
           "'#{context_factory}', '#{url}', [['classpath', '#{classpath_jars.join(';')}'], ['description', '#{description}']])"
 
@@ -48,10 +48,10 @@ module WebsphereCookbook
     # so they're available in the action.
     action_class.class_eval do
 
-      def jms_provider_exists?(provider_name)
+      def jms_provider_exists?
         cmd = "-c \"AdminJMS.listJMSProviders('#{provider_name}')\""
         mycmd = wsadmin_returns(cmd)
-        return true if mycmd.stdout.include?("\[\'#{provider_name}")
+        return true if mycmd.stdout.include?("#{provider_name}\(")
         false
       end
 
