@@ -2,6 +2,11 @@ IBM Websphere Cookbook CHANGELOG
 ========================
 
 
+v0.4.1
+--------------------
+- fix bug in jms regex check if exists.
+- jms resource fix to avoid custom resource variable scope conflicts.
+
 v0.4.0
 --------------------
 - new resources for jms destination and jms connection factory. Integration tests for all jms resources.

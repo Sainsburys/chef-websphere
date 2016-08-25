@@ -34,14 +34,14 @@ module WebsphereCookbook
     property :category, [String, nil], default: nil
 
     action :create do
-      unless jms_dest_exists?(jms_dest_name)
+      unless jms_dest_exists?
         cmd = "AdminJMS.createGenericJMSDestinationAtScope('#{scope}', '#{jms_provider}', "\
           "'#{jms_dest_name}',  '#{jndi_name}', '#{ext_jndi_name}', [['type', '#{type}']"
           cmd << ", ['description', '#{description}']" if description
           cmd << ", ['category', '#{category}']" if category
           cmd << "])"
 
-          wsadmin_exec("Create JMS destination #{ext_jndi_name}", cmd)
+          wsadmin_exec("Create JMS destination #{jms_dest_name} #{type}", cmd)
       end
     end
 
@@ -52,10 +52,10 @@ module WebsphereCookbook
     # need to wrap helper methods in class_eval
     # so they're available in the action.
     action_class.class_eval do
-      def jms_dest_exists?(dest_name)
-        cmd = "-c \"AdminJMS.listGenericJMSDestinations('#{dest_name}')\""
+      def jms_dest_exists?
+        cmd = "-c \"AdminJMS.listGenericJMSDestinations('#{jms_dest_name}')\""
         mycmd = wsadmin_returns(cmd)
-        return true if mycmd.stdout.include?("\[\'\"#{dest_name}\(")
+        return true if mycmd.stdout.include?("#{jms_dest_name}\(")
         false
       end
     end
