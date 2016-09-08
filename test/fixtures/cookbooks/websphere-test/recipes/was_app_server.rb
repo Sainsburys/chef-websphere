@@ -32,7 +32,7 @@ websphere_app_server 'app_server1' do
 end
 
 websphere_app_server 'app_server2' do
-  server_node 'Custom_node'
+  node_name 'Custom_node'
   admin_user 'admin'
   admin_password 'admin'
   action [:create, :start, :delete]

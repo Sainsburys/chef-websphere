@@ -1,6 +1,9 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v0.5.0
+--------------------
+- new app server resource
 
 v0.4.1
 --------------------
