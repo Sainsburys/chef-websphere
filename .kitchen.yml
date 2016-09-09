@@ -22,6 +22,9 @@ suites:
   - name: was_cluster
     run_list:
       - recipe[websphere-test::was_cluster]
+  - name: was_app_server
+    run_list:
+      - recipe[websphere-test::was_app_server]
   - name: ibm_certs
     run_list:
       - recipe[websphere-test::ibm_certs]
