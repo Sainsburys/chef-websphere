@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v0.5.1
+--------------------
+- p12 keystores allowed in ibm_cert resource
+
 v0.5.0
 --------------------
 - new app server resource

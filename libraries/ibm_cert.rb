@@ -21,7 +21,7 @@ module WebsphereCookbook
     resource_name :ibm_cert
     property :label, String, name_property: true
     property :dn, String, required: true # eg "CN=mydomain.com,O=MyOrg,C=UK"
-    property :kdb, String, required: true, regex: /.*\.kdb/ # path to kdb file. Will create if it doesn't exist. File must end in .kdb
+    property :kdb, String, required: true, regex: /.*(\.kdb|\.p12)/ # path to keystore file. Will create if it doesn't exist. File must end in .kdb or .p12
     property :kdb_password, String, required: true
     property :algorithm, String, default: 'SHA256WithRSA'
     property :size, String, default: '2048', regex: /^(2048|1024|512)$/
