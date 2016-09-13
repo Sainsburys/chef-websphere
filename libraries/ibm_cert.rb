@@ -29,12 +29,11 @@ module WebsphereCookbook
     property :extract_to, String, default: lazy { "#{::File.dirname(kdb)}/#{label}.cer" } # used by the extract action only. extracts to given file in ascii format
     property :add_cert, [String, nil], default: nil # path to certificate to add to kdb, only used in add.
     property :default_cert, String, default: 'no', regex: /^(yes|no)$/
-    property :ikeycmd, String, default: lazy { "#{websphere_root}/java/jre/bin/ikeycmd" }
+    property :ikeycmd, String, default: lazy { "/opt/IBM/WebSphere/AppServer/java/jre/bin/ikeycmd" }
     property :owned_by, String, default: 'root'
     property :sensitive_exec, [TrueClass, FalseClass], default: true # for debug purposes
 
     action :create do
-
       create_kdb
       cmd = "#{ikeycmd} -cert -create -db #{kdb} -pw #{kdb_password} -sig_alg #{algorithm} -size #{size} "\
         "-expire #{expire} -dn #{dn} -label #{label} -default_cert #{default_cert}"
@@ -47,7 +46,6 @@ module WebsphereCookbook
       end
 
       set_perms
-
     end
 
     action :extract do
@@ -65,7 +63,6 @@ module WebsphereCookbook
     end
 
     action :add do
-
       execute "add cert #{label} to #{kdb}" do
         command "#{ikeycmd} -cert -add -pw #{kdb_password} -label #{label} -trust enable -file #{add_cert} -db #{kdb}"
         sensitive sensitive_exec
