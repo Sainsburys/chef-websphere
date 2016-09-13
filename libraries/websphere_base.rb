@@ -266,7 +266,7 @@ module WebsphereCookbook
           command cmd
           action :run
         end
-        save_config
+        #save_config
       end
 
       # executes wsadmin commands and captures stdout, return values, errors etc.
