@@ -33,11 +33,13 @@ module WebsphereCookbook
       unless cluster_exists?(cluster_name)
         cmd = "AdminClusterManagement.createClusterWithoutMember('#{cluster_name}')"
         wsadmin_exec("wasadmin createClusterWithoutMember #{cluster_name}", cmd)
+        save_config
       end
     end
 
     action :delete do
       delete_cluster(cluster_name) if cluster_exists?(cluster_name)
+      save_config
     end
 
     action :ripple_start do

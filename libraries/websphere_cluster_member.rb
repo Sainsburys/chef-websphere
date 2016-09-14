@@ -34,13 +34,14 @@ module WebsphereCookbook
       # set attributes on server
       ruby_block 'set clustered server attributes' do
         block do
-          server_id = get_id("/Server:#{server_name}/")
+          server_id = get_id("/Node:#{server_node}/Server:#{server_name}/")
           update_attributes(attributes, server_id) if !server_id.nil? && attributes
         end
         action :run
       end
       node.default['ibm-websphere']['endpoints'] = get_ports()
       #Chef::Log.debug("endpoints set #{node['ibm-websphere']['endpoints'][server_node][server_name]}")
+      save_config
     end
 
     action :start do
@@ -56,7 +57,7 @@ module WebsphereCookbook
     action :delete do
       # TODO: delete server using the object id so you don't need as many inputs to delete it.
       delete_cluster_member(cluster_name, server_name, server_node, session_replication) if server_exists?(server_node, server_name) && member?(cluster_name, server_name)
-      
+      save_config
       # if no more cluster members, delete cluster so it can be recreated with new template
       # delete_cluster(cluster_name) unless get_cluster_members(cluster_name).count > 0
     end

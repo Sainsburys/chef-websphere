@@ -22,7 +22,7 @@ module WebsphereCookbook
       # set attributes on server
       ruby_block "set server #{server_name} attributes" do
         block do
-          server_id = get_id("/Server:#{server_name}/")
+          server_id = get_id("/Node:#{node_name}/Server:#{server_name}/")
           update_attributes(attributes, server_id) if !server_id.nil? && attributes
         end
         action :run
