@@ -5,7 +5,7 @@ describe command('/opt/IBM/WebSphere/Plugins/java/jre/bin/ikeycmd -cert -list -d
   its(:stdout) { should match(/myotherdomain.com/) }
 end
 
-files = %w(keystore.kdb keystore.rdb keystore.sth mydomain.com.arm)
+files = %w(keystore.kdb keystore.rdb keystore.sth mydomain.com.cer)
 files.each do |f|
   describe file("/root/keystores/#{f}") do
     it { should exist }
