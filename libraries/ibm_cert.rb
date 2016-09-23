@@ -68,6 +68,7 @@ module WebsphereCookbook
         sensitive sensitive_exec
         action :run
         only_if { ::File.exist?(kdb) && ::File.exist?(add_cert) }
+        not_if { cert_in_keystore? }
       end
     end
 
@@ -99,6 +100,14 @@ module WebsphereCookbook
           cwd root_dir
           command "chown #{owned_by} #{root_dir}/* && chmod 600 #{root_dir}/*"
         end
+      end
+
+      def cert_in_keystore?
+        cmd = "#{ikeycmd} -cert -list -pw #{kdb_password} -label #{label} -db #{kdb}"
+        mycmd = Mixlib::ShellOut.new(cmd, cwd: ::File.dirname(kdb))
+        mycmd.run_command
+        return false if mycmd.error?
+        return true
       end
 
     end

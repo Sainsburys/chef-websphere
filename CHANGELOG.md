@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v0.5.2
+--------------------
+- fix bug when adding a cert that's already in keystore.
+
 v0.5.1
 --------------------
 - p12 keystores allowed in ibm_cert resource

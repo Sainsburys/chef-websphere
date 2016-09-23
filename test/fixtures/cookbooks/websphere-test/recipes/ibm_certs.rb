@@ -48,7 +48,7 @@ ibm_cert 'mydomain.com' do
   action [:create, :extract]
 end
 
-cookbook_file '/root/keystores/cert_to_import' do
+cookbook_file '/root/keystores/cert_to_import.cer' do
   source 'myotherdomain.cert'
 end
 
