@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v0.6.0
+--------------------
+- new websphere env variable resource.
+
 v0.5.2
 --------------------
 - fix bug when adding a cert that's already in keystore.
