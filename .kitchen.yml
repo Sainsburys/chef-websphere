@@ -28,6 +28,6 @@ suites:
   - name: ibm_certs
     run_list:
       - recipe[websphere-test::ibm_certs]
-  - name: was_jms
+  - name: was_jms_env
     run_list:
-      - recipe[websphere-test::was_jms]
+      - recipe[websphere-test::was_jms_env]

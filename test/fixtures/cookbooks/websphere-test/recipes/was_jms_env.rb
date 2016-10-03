@@ -41,3 +41,11 @@ websphere_jms_conn_factory 'My Queue Conection Factory' do
   admin_password 'admin'
   action [:create]
 end
+
+websphere_env 'TESTING_1234' do
+  scope 'Cell=MyNewCell'
+  value '/some/value'
+  admin_user 'admin'
+  admin_password 'admin'
+  action :set
+end
