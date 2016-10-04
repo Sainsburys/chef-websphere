@@ -55,7 +55,7 @@ end
 ibm_cert 'myotherdomain.com' do
   kdb '/root/keystores/keystore.kdb'
   kdb_password 'dummy'
-  add_cert '/root/keystores/cert_to_import'
+  add_cert '/root/keystores/cert_to_import.cer'
   sensitive_exec false
   ikeycmd '/opt/IBM/WebSphere/Plugins/java/jre/bin/ikeycmd'
   action :add
