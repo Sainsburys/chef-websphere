@@ -23,7 +23,7 @@ websphere_profile 'AppProfile1' do
         'newvalue' => "[['maximumStartupAttempts', '2'], ['pingTimeout', '99'], ['pingInterval', '666'], ['autoRestart', 'false'], ['nodeRestartState', 'RUNNING']]"
       },
       'jvmEntries' => {
-        'newvalue' => "[['debugMode', 'true']]"
+        'newvalue' => "[['debugMode', 'true']], [['systemProperties',[['name','nirvana.provider.url'],['value','testing']]]"
       }
     }
   })

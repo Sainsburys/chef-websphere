@@ -24,7 +24,7 @@ websphere_app_server 'app_server1' do
         'newvalue' => "[['maximumStartupAttempts', '2'], ['pingInterval', '222'], ['autoRestart', 'true'], ['nodeRestartState', 'PREVIOUS']]"
       },
       'jvmEntries' => {
-        'newvalue' => "[['debugMode', 'true']]"
+        'newvalue' => "[['debugMode', 'true'], ['systemProperties',[[['name','my_custom_websphere_variable'],['value','testing2']]]]]"
       }
     }
   })

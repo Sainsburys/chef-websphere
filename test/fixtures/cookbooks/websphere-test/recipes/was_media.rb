@@ -24,10 +24,6 @@ end
 
 # WASND_SUPPL Media
 split_array = node['websphere-test']['suppl_s3_zip'].split('/') # need to split the s3 path bucket/path_to_file to use in resource.
-Chef::Log.warn("blah  file: #{node['websphere-test']['zip_file']} bucket: #{split_array.first} "\
-  "path: #{split_array[1..-1].join('/')} id: #{node['websphere-test']['aws']['access_key_id']} "\
-  "key: #{node['websphere-test']['aws']['access_key_secret']}")
-
 aws_s3_file node['websphere-test']['suppl_zip_file'] do
   bucket split_array.first
   remote_path split_array[1..-1].join('/')
