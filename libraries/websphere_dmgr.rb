@@ -96,7 +96,7 @@ module WebsphereCookbook
       # syncs all nodes without restarting nodeagent or servers
       sync_node_wsadmin('all')
     end
-    
+
     # action :delete do
     #   update_registry
     #   if profile_exists?(profile_name)

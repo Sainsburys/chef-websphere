@@ -53,7 +53,7 @@ module WebsphereCookbook
       wsadmin_cmd << "-host #{dmgr_host} " if dmgr_host
       wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
       wsadmin_cmd << "-user #{admin_user} -password #{admin_password} " if admin_user && admin_password
-      wsadmin_cmd << "-c \"AdminConfig.save()\""
+      wsadmin_cmd << '-c "AdminConfig.save()"'
 
       execute "wsadmin #{label}" do
         cwd bin_dir
@@ -66,8 +66,6 @@ module WebsphereCookbook
     # need to wrap helper methods in class_eval
     # so they're available in the action.
     action_class.class_eval do
-
-
     end
   end
 end

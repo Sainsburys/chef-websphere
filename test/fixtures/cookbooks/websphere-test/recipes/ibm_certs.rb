@@ -20,7 +20,7 @@ end
 ibm_package 'PLG Plugins install' do
   package 'com.ibm.websphere.PLG.v85,core.feature,com.ibm.jre.6_64bit'
   install_dir '/opt/IBM/WebSphere/Plugins'
-  #repositories ['/opt/ibm-media/WASND_SUPPL']
+  # repositories ['/opt/ibm-media/WASND_SUPPL']
   repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.PLG.v85']
   properties ({
     'eclipseLocation' => '/opt/ibm/WebSphere/Plugins',

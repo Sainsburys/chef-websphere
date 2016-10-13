@@ -36,25 +36,19 @@ module WebsphereCookbook
         cmd = "AdminJMS.createJMSProviderAtScope('#{scope}', '#{provider_name}', "\
           "'#{context_factory}', '#{url}', [['classpath', '#{classpath_jars.join(';')}'], ['description', '#{description}']])"
 
-          wsadmin_exec("Create JMS Provider #{provider_name}", cmd)
+        wsadmin_exec("Create JMS Provider #{provider_name}", cmd)
       end
-    end
-
-    action :delete do
-      # TODO:
     end
 
     # need to wrap helper methods in class_eval
     # so they're available in the action.
     action_class.class_eval do
-
       def jms_provider_exists?
         cmd = "-c \"AdminJMS.listJMSProviders('#{provider_name}')\""
         mycmd = wsadmin_returns(cmd)
         return true if mycmd.stdout.include?("#{provider_name}\(")
         false
       end
-
     end
   end
 end

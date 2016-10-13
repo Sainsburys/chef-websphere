@@ -37,16 +37,12 @@ module WebsphereCookbook
       unless jms_dest_exists?
         cmd = "AdminJMS.createGenericJMSDestinationAtScope('#{scope}', '#{jms_provider}', "\
           "'#{jms_dest_name}',  '#{jndi_name}', '#{ext_jndi_name}', [['type', '#{type}']"
-          cmd << ", ['description', '#{description}']" if description
-          cmd << ", ['category', '#{category}']" if category
-          cmd << "])"
+        cmd << ", ['description', '#{description}']" if description
+        cmd << ", ['category', '#{category}']" if category
+        cmd << '])'
 
-          wsadmin_exec("Create JMS destination #{jms_dest_name} #{type}", cmd)
+        wsadmin_exec("Create JMS destination #{jms_dest_name} #{type}", cmd)
       end
-    end
-
-    action :delete do
-      # TODO:
     end
 
     # need to wrap helper methods in class_eval
@@ -59,6 +55,5 @@ module WebsphereCookbook
         false
       end
     end
-
   end
 end

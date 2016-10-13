@@ -40,8 +40,10 @@ module WebsphereCookbook
     property :conn_aged_timeout, String, default: '0'
     property :conn_purge_policy, String, default: 'FailingConnectionOnly', regex: /^(FailingConnectionOnly|EntirePool)$/
 
-    # AdminJMS.createGenericJMSConnectionFactoryAtScope("Cell="+cellname+",Cluster="+clustername+"", "WebMethodsUMProvider", "QueueConnectionFactory", "QueueConnectionFactory", "Identity_CF",
-    # [['type','QUEUE'],['connectionPool',[['connectionTimeout','180'],['maxConnections','10'],['minConnections','1'],['reapTime','180'],['unusedTimeout','1800'],['agedTimeout','0'],['purgePolicy','FailingConnectionOnly']]]])
+    # AdminJMS.createGenericJMSConnectionFactoryAtScope("Cell="+cellname+",Cluster="+clustername+"", "WebMethodsUMProvider",
+    # "QueueConnectionFactory", "QueueConnectionFactory", "Identity_CF",
+    # [['type','QUEUE'],['connectionPool',[['connectionTimeout','180'],['maxConnections','10'],['minConnections','1'],
+    #  ['reapTime','180'],['unusedTimeout','1800'],['agedTimeout','0'],['purgePolicy','FailingConnectionOnly']]]])
 
     action :create do
       unless jms_conn_factory_exists?
@@ -51,7 +53,7 @@ module WebsphereCookbook
           "['reapTime','#{conn_pool_reap_time}'],['unusedTimeout','#{conn_pool_unused_timeout}'],['agedTimeout','#{conn_aged_timeout}'],['purgePolicy','#{conn_purge_policy}']]]"
         cmd << ", ['connectionPool', '#{description}']" if description
         cmd << ", ['category', '#{category}']" if category
-        cmd << "])"
+        cmd << '])'
 
         wsadmin_exec("Create JMS connection factory #{conn_factory_name}", cmd)
       end
@@ -67,6 +69,5 @@ module WebsphereCookbook
         false
       end
     end
-
   end
 end

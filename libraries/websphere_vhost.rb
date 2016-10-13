@@ -20,7 +20,6 @@ require_relative 'websphere_base'
 
 module WebsphereCookbook
   class WebsphereHostAlias < WebsphereBase
-
     resource_name :websphere_vhost_alias
     property :vhost_name, String, required: true
     property :alias_host, String, required: true # eg 'Cell=Cell1'
@@ -37,7 +36,7 @@ module WebsphereCookbook
     # need to wrap helper methods in class_eval
     # so they're available in the action.
     action_class.class_eval do
-      def vhost_alias(action_to_take, vhost_name, alias_host, alias_port, bin_directory='/opt/IBM/WebSphere/AppServer/bin')
+      def vhost_alias(action_to_take, vhost_name, alias_host, alias_port, bin_directory = '/opt/IBM/WebSphere/AppServer/bin')
         cookbook_file "#{bin_directory}/virtual_host_alias.py" do
           cookbook 'ibm-websphere'
           source 'virtual_host_alias.py'
@@ -49,6 +48,5 @@ module WebsphereCookbook
         wsadmin_exec_file("wsadmin #{action} virutal host alias to #{vhost_name}", cmd, [0])
       end
     end
-
   end
 end
