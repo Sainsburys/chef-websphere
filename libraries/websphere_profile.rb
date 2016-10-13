@@ -52,7 +52,7 @@ module WebsphereCookbook
 
     action :federate do
       federated = federated?(profile_path, node_name)
-      if profile_exists?(profile_name) and !federated
+      if profile_exists?(profile_name) && !federated
         add_node("#{profile_path}/bin")
         enable_as_service(node_name, 'nodeagent', profile_path)
       end
@@ -111,6 +111,5 @@ module WebsphereCookbook
     action :start_all_servers do
       start_all_servers(profile_name)
     end
-
   end
 end

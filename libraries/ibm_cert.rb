@@ -17,7 +17,6 @@
 
 module WebsphereCookbook
   class WebsphereKdb < Chef::Resource
-
     resource_name :ibm_cert
     property :label, String, name_property: true
     property :dn, String, required: true # eg "CN=mydomain.com,O=MyOrg,C=UK"
@@ -29,7 +28,7 @@ module WebsphereCookbook
     property :extract_to, String, default: lazy { "#{::File.dirname(kdb)}/#{label}.cer" } # used by the extract action only. extracts to given file in ascii format
     property :add_cert, [String, nil], default: nil # path to certificate to add to kdb, only used in add.
     property :default_cert, String, default: 'no', regex: /^(yes|no)$/
-    property :ikeycmd, String, default: lazy { "/opt/IBM/WebSphere/AppServer/java/jre/bin/ikeycmd" }
+    property :ikeycmd, String, default: lazy { '/opt/IBM/WebSphere/AppServer/java/jre/bin/ikeycmd' }
     property :owned_by, String, default: 'root'
     property :sensitive_exec, [TrueClass, FalseClass], default: true # for debug purposes
 
@@ -75,7 +74,6 @@ module WebsphereCookbook
     # need to wrap helper methods in class_eval
     # so they're available in the action.
     action_class.class_eval do
-
       def create_kdb
         dir = ::File.dirname(kdb)
 
@@ -96,7 +94,7 @@ module WebsphereCookbook
 
       def set_perms
         root_dir = ::File.dirname(kdb)
-        execute "set perms" do
+        execute 'set perms' do
           cwd root_dir
           command "chown #{owned_by} #{root_dir}/* && chmod 600 #{root_dir}/*"
         end
@@ -107,9 +105,8 @@ module WebsphereCookbook
         mycmd = Mixlib::ShellOut.new(cmd, cwd: ::File.dirname(kdb))
         mycmd.run_command
         return false if mycmd.error?
-        return true
+        true
       end
-
     end
   end
 end

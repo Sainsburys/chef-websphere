@@ -29,9 +29,8 @@ module WebsphereCookbook
     property :value, [String, nil], default: nil
 
     action :set do
-      cmd  = "AdminTask.setVariable('[ -scope #{scope} -variableName \\'#{variable_name}\\' -variableValue \\'#{value}\\']')"
+      cmd = "AdminTask.setVariable('[ -scope #{scope} -variableName \\'#{variable_name}\\' -variableValue \\'#{value}\\']')"
       wsadmin_exec("Set websphere env variable #{variable_name}", cmd)
     end
-
   end
 end

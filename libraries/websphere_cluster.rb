@@ -56,6 +56,5 @@ module WebsphereCookbook
       cmd = "AdminClusterManagement.stopSingleCluster('#{cluster_name}')"
       wsadmin_exec("wasadmin stop cluster: #{cluster_name} ", cmd, [0, 103])
     end
-
   end
 end

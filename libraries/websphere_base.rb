@@ -32,7 +32,7 @@ module WebsphereCookbook
 
     # you need at least one action here to allow the action_class.class_eval block to work
     action :dummy do
-      Chef::Application.fatal!("You must specify an action for this resource, as there is no default resource.")
+      Chef::Application.fatal!('You must specify an action for this resource, as there is no default resource.')
     end
 
     # need to wrap helper methods in class_eval
@@ -52,7 +52,7 @@ module WebsphereCookbook
       # returns a hash of enpoint => port for a server
       # if server is nil it returns an array of all servers endpoints and ports
       # returns nil if error
-      def get_ports(srvr_name='', bin_directory='/opt/IBM/WebSphere/AppServer/bin')
+      def get_ports(srvr_name = '', bin_directory = '/opt/IBM/WebSphere/AppServer/bin')
         cookbook_file "#{bin_directory}/server_ports.py" do
           cookbook 'ibm-websphere'
           source 'server_ports.py'
@@ -65,7 +65,7 @@ module WebsphereCookbook
         return nil if mycmd.error?
         str = mycmd.stdout.match(/===(.*?)===/m)
         return nil if str.nil?
-        json_str = str[1].strip.gsub("'", '"') # strip and replace ' with " so it's a valid json str
+        json_str = str[1].strip.tr("'", '"') # strip and replace ' with " so it's a valid json str
         endpoints = JSON.parse(json_str)
         endpoints
       end
@@ -100,12 +100,11 @@ module WebsphereCookbook
       # stops all servers if stop_servers=true
       # restarts nodeagent if restart=true
       def sync_node_sh(profile_bin, stop_servers, restart)
-
         cmd = "./syncNode.sh #{dmgr_host}"
         cmd << " #{dmgr_port}" if dmgr_port
         cmd << " -username #{admin_user} -password #{admin_password}" if admin_user && admin_password
-        cmd << " -stopservers" if stop_servers
-        cmd << " -restart" if restart
+        cmd << ' -stopservers' if stop_servers
+        cmd << ' -restart' if restart
 
         execute "sync node on profile: #{profile_bin}" do
           cwd profile_bin
@@ -116,7 +115,7 @@ module WebsphereCookbook
         end
       end
 
-      def sync_node_wsadmin(nde_name='all', bin_directory='/opt/IBM/WebSphere/AppServer/bin')
+      def sync_node_wsadmin(nde_name = 'all', bin_directory = '/opt/IBM/WebSphere/AppServer/bin')
         cookbook_file "#{bin_directory}/sync_node.py" do
           cookbook 'ibm-websphere'
           source 'sync_node.py'
@@ -143,7 +142,7 @@ module WebsphereCookbook
 
       # use to setup a nodeagent or dmgr as an init.d service
       # server_name should be 'dmgr' or 'nodeagent'
-      def enable_as_service(service_name, srvr_name, prof_path, runas='root')
+      def enable_as_service(service_name, srvr_name, prof_path, runas = 'root')
         # if dplymgr user and password set, then add as additional args for stop.
         stop_args = admin_user && admin_password ? "-username #{admin_user} -password #{admin_password}" : ''
         # admin_user && admin_password ? start_args = "-username #{admin_user} -password #{admin_password}" : start_args = ''
@@ -266,7 +265,7 @@ module WebsphereCookbook
           command cmd
           action :run
         end
-        #save_config
+        # save_config
       end
 
       # executes wsadmin commands and captures stdout, return values, errors etc.
@@ -452,11 +451,11 @@ module WebsphereCookbook
       end
 
       def save_config
-        cmd = "AdminConfig.save()"
-        wsadmin_exec("wsadmin save config", cmd)
+        cmd = 'AdminConfig.save()'
+        wsadmin_exec('wsadmin save config', cmd)
       end
 
-      def start_server(nde_name, serv_name, return_codes=[0,103])
+      def start_server(nde_name, serv_name, return_codes = [0, 103])
         cmd = "AdminServerManagement.startSingleServer('#{nde_name}', '#{serv_name}')"
         wsadmin_exec("wsadmin start server: #{serv_name} on node #{nde_name}", cmd, return_codes)
       end
@@ -576,7 +575,6 @@ module WebsphereCookbook
         wsadmin_exec("wsadmin deploy #{appl_file} to cluster #{clus_name}", cmd)
         save_config
       end
-
     end
   end
 end

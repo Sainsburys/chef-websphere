@@ -72,7 +72,7 @@ module WebsphereCookbook
         i += 1
         break if i >= 8
       end
-      start_server(node_name, webserver_name, return_codes=[0, 103])
+      start_server(node_name, webserver_name, [0, 103])
     end
 
     action :stop do
@@ -101,7 +101,8 @@ module WebsphereCookbook
       end
 
       # This method runs configureWebserverDefinition.jacl script passing in paramaters.
-      # wsadmin.sh -user WASadminUsername -password WASadminPassword -f ${WAS_HOME}/bin/configureWebserverDefinition.jacl webserverName webserverType webserverInstallLocation webserverConfigFile webserverPort
+      # wsadmin.sh -user WASadminUsername -password WASadminPassword -f ${WAS_HOME}/bin/configureWebserverDefinition.jacl
+      #  webserverName webserverType webserverInstallLocation webserverConfigFile webserverPort
       #   mapApplications pluginInstallLocation webserverNodeType webserverNodeName webserverHostName webserverOS adminPort adminUserID adminPassword
       # Details of each attribute:
       # WASadminUsername         : User Name for WAS Adminstration
@@ -125,7 +126,8 @@ module WebsphereCookbook
         # run configure script on dmgr
 
         # /opt/IBM/WebSphere/AppServer/profiles/A1_profile/bin/wsadmin.sh -profileName A1_profile -user idadmin -password 99Pr0blems
-        # -f '/opt/IBM/WebSphere/AppServer/bin/configureWebserverDefinition.jacl' Webserver01 IHS '/opt/IBM/HTTPServer' '/opt/IBM/HTTPServer/servers/Webserver01/conf/httpd-Webserver01.conf' 1143 MAP_ALL
+        # -f '/opt/IBM/WebSphere/AppServer/bin/configureWebserverDefinition.jacl' Webserver01 IHS '/opt/IBM/HTTPServer'
+        #     '/opt/IBM/HTTPServer/servers/Webserver01/conf/httpd-Webserver01.conf' 1143 MAP_ALL
         # '/opt/IBM/WebSphere/Plugins' managed ip-10-1-1-191_Node01 ibm-ihs-managed-centos-6 linux
 
         configure_cmd = "#{profile_path}/bin/wsadmin.sh -profileName #{profile_name} "\
