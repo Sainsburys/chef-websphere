@@ -384,19 +384,19 @@ end
 
 ##### Parameters
 
-- label, String, name_property: true
-- dn, String, required: true eg "CN=mydomain.com,O=MyOrg,C=UK"
-- kdb, String, required: true, regex: Path to keystore file. Will create if it doesn't exist. File must end in .kdb or .p12
-- kdb_password, String, required: true
-- algorithm, String, default: 'SHA256WithRSA'
-- size, String, default: '2048', Can be 2048, 1024 or 512
-- expire, String, default: '3600', required: true
-- extract_to, String, Used by the extract action only. Extracts in ASCII to a file <label>.cer next to the keystore file location by default. #{label}.cer" } .
-- add_cert, [String, nil], default: nil  path to certificate to add to keystore, only used in add.
-- default_cert, String, default: 'no'. Can be yes or no
-- ikeycmd, String, default: /opt/IBM/WebSphere/AppServer/java/jre/bin/ikeycmd path to ikeycmd tool.
-- owned_by, String, default: 'root'
-- sensitive_exec, [TrueClass, FalseClass], default: true # for debug purposes only.
+- `label`, String, name_property: true
+- `dn`, String, required: true eg "CN=mydomain.com,O=MyOrg,C=UK"
+- `kdb`, String, required: true, regex: Path to keystore file. Will create if it doesn't exist. File must end in .kdb or .p12
+- `kdb_password`, String, required: true
+- `algorithm`, String, default: 'SHA256WithRSA'
+- `size`, String, default: '2048', Can be 2048, 1024 or 512
+- `expire`, String, default: '3600', required: true
+- `extract_to`, String, Used by the extract action only. Extracts in ASCII to a file <label>.cer next to the keystore file location by default. #{label}.cer" } .
+- `add_cert`, [String, nil], default: nil  path to certificate to add to keystore, only used in add.
+- `default_cert`, String, default: 'no'. Can be yes or no
+- `ikeycmd`, String, default: /opt/IBM/WebSphere/AppServer/java/jre/bin/ikeycmd path to ikeycmd tool.
+- `owned_by`, String, default: 'root'
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # for debug purposes only.
 
 ##### Actions
 
@@ -490,21 +490,21 @@ end
 
 ##### Parameters
 
-conn_factory_name, String, name_property: true
-scope, String, required: true eg 'Cell=MyCell,Cluster=MyCluster'
-jndi_name, String, required: true
-ext_jndi_name, String, required: true
-jms_provider, String, required: true
-type, String, required: true, Can be only QUEUE, TOPIC or UNIFIED
-description, [String, nil], default: nil
-category, [String, nil], default: nil
-conn_pool_timeout, String, default: '180'
-conn_pool_min, String, default: '1'
-conn_pool_max, String, default: '10'
-conn_pool_reap_time, String, default: '180'
-conn_pool_unused_timeout, String, default: '1800'
-conn_aged_timeout, String, default: '0'
-conn_purge_policy, String, default: 'FailingConnectionOnly' can be only FailingConnectionOnly or EntirePool
+- `conn_factory_name`, String, name_property: true
+- `scope`, String, required: true eg 'Cell=MyCell,Cluster=MyCluster'
+- `jndi_name`, String, required: true
+- `ext_jndi_name`, String, required: true
+- `jms_provider`, String, required: true
+- `type`, String, required: true, Can be only QUEUE, TOPIC or UNIFIED
+- `description`, [String, nil], default: nil
+- `category`, [String, nil], default: nil
+- `conn_pool_timeout`, String, default: '180'
+- `conn_pool_min`, String, default: '1'
+- `conn_pool_max`, String, default: '10'
+- `conn_pool_reap_time`, String, default: '180'
+- `conn_pool_unused_timeout`, String, default: '1800'
+- `conn_aged_timeout`, String, default: '0'
+- `conn_purge_policy`, String, default: 'FailingConnectionOnly' can be only FailingConnectionOnly or EntirePool
 
 ##### Actions
 
@@ -533,14 +533,14 @@ end
 
 ##### Parameters
 
-jms_dest_name, String, name_property: true
-jndi_name, String, required: true
-ext_jndi_name, String, required: true
-scope, String, required: true eg 'Cell=MyCell,Cluster=MyCluster'
-jms_provider, String, required: true
-type, String, required: true, Can be QUEUE, TOPIC or UNIFIED
-description, [String, nil], default: nil
-category, [String, nil], default: nil
+- `jms_dest_name`, String, name_property: true
+- `jndi_name`, String, required: true
+- `ext_jndi_name`, String, required: true
+- `scope`, String, required: true eg 'Cell=MyCell,Cluster=MyCluster'
+- `jms_provider`, String, required: true
+- `type`, String, required: true, Can be QUEUE, TOPIC or UNIFIED
+- `description`, [String, nil], default: nil
+- `category`, [String, nil], default: nil
 
 
 ##### Actions
@@ -572,11 +572,11 @@ end
 
 ##### Parameters
 
-label, String, name_property: true just a label to make the execute resource name unique
-script, [String, nil], default: nil. The command for wsadmin to run.  If a file is given this will be ignored, and only the file will be executed.
-file, [String, nil], default: nil The script file for wsadmin to run.
-return_codes, Array, default: [0]. Return codes to allow.
-sensitive, [TrueClass, FalseClass], default: false. For security to hide passwords form output if necessary.
+- `label`, String, name_property: true just a label to make the execute resource name unique
+- `script`, [String, nil], default: nil. The command for wsadmin to run.  If a file is given this will be ignored, and only the file will be executed.
+- `file`, [String, nil], default: nil The script file for wsadmin to run.
+- `return_codes`, Array, default: [0]. Return codes to allow.
+- `sensitive`, [TrueClass, FalseClass], default: false. For security to hide passwords form output if necessary.
 
 
 ## License and Author
