@@ -45,7 +45,7 @@ module WebsphereCookbook
       template '/etc/init.d/ibm-httpd' do
         mode '0755'
         source 'ihs_init.d.erb'
-        cookbook 'ibm-websphere'
+        cookbook 'websphere'
         variables(
           ihs_root: ihs_install_root
         )

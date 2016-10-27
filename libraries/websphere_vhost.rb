@@ -38,7 +38,7 @@ module WebsphereCookbook
     action_class.class_eval do
       def vhost_alias(action_to_take, vhost_name, alias_host, alias_port, bin_directory = '/opt/IBM/WebSphere/AppServer/bin')
         cookbook_file "#{bin_directory}/virtual_host_alias.py" do
-          cookbook 'ibm-websphere'
+          cookbook 'websphere'
           source 'virtual_host_alias.py'
           mode '0755'
           action :create

@@ -26,8 +26,8 @@ module WebsphereCookbook
         end
         action :run
       end
-      node.default['ibm-websphere']['endpoints'] = get_ports # TODO: change this to not use node attributes somehow
-      # Chef::Log.debug("endpoints set #{node['ibm-websphere']['endpoints'][server_node][server_name]}")
+      node.default['websphere']['endpoints'] = get_ports # TODO: change this to not use node attributes somehow
+      # Chef::Log.debug("endpoints set #{node['websphere']['endpoints'][server_node][server_name]}")
     end
 
     action :start do
@@ -39,8 +39,8 @@ module WebsphereCookbook
       end
       start_server(node_name, server_name, [0, 103])
 
-      node.default['ibm-websphere']['endpoints'] = get_ports
-      # Chef::Log.debug("endpoints set #{node['ibm-websphere']['endpoints'][server_node][server_name]}")
+      node.default['websphere']['endpoints'] = get_ports
+      # Chef::Log.debug("endpoints set #{node['websphere']['endpoints'][server_node][server_name]}")
     end
 
     action :delete do

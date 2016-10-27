@@ -2,8 +2,6 @@
 
 ## Scope
 
-**NOTE: This cookbook is still in Beta.**
-
 This cookbook installs and configures Websphere Application Server Network Deployment (WAS-ND). It has only been tested with a Deployment Manager and Managed nodes.
 
 So far it has only been tested with Websphere ND 8.5.

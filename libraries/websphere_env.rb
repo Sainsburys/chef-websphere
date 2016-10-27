@@ -37,6 +37,5 @@ module WebsphereCookbook
       cmd = "AdminTask.removeVariable('[ -scope #{scope} -variableName \\'#{variable_name}\\']')"
       wsadmin_exec("Remove websphere env variable #{variable_name}", cmd)
     end
-
   end
 end
