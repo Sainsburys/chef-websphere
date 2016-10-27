@@ -9,8 +9,6 @@ addons:
     packages:
       - chefdk
 
-install: echo "skip bundle install"
-
 services: docker
 
 env:
@@ -31,7 +29,6 @@ script:
   - rubocop
   - foodcritic --version
   - foodcritic . --exclude spec
-  - bundle exec rspec
   - KITCHEN_YAML=.kitchen.dokken.yml kitchen verify ${INSTANCE}
 
 after_script:
