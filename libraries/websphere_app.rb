@@ -46,7 +46,6 @@ module WebsphereCookbook
       unless get_id("/Deployment:#{app_name}/")
         cmd = "AdminApp.install('#{app_file}', ['-appname', '#{app_name}', '-node', '#{node_name}', '-server', '#{server_name}', '-MapWebModToVH', [['.*', '.*', 'default_host']]"
         cmd << ", '-contextroot', '/'" if context_root
-        # cmd << ", '-nodeployejb', '-nopreCompileJSPs', '-nouseMetaDataFromBinary' "
         cmd << '])'
         wsadmin_exec("install application #{app_name} to server #{server_name}", cmd)
       end
