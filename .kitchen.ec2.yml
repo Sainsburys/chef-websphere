@@ -14,8 +14,8 @@ driver:
   tags:
     Owner: lachlan.munro
     Email: lachlan.munro@sainsburys.co.uk
-    Description: ibm-websphere cookbook test kitchen instance
-    Name: test-kitchen-ibm-websphere
+    Description: websphere cookbook test kitchen instance
+    Name: test-kitchen-websphere
     Costcentre: Identity
     Project: Identity
     Environment: dev

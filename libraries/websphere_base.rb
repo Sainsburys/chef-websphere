@@ -54,7 +54,7 @@ module WebsphereCookbook
       # returns nil if error
       def get_ports(srvr_name = '', bin_directory = '/opt/IBM/WebSphere/AppServer/bin')
         cookbook_file "#{bin_directory}/server_ports.py" do
-          cookbook 'ibm-websphere'
+          cookbook 'websphere'
           source 'server_ports.py'
           mode '0755'
           action :create
@@ -117,7 +117,7 @@ module WebsphereCookbook
 
       def sync_node_wsadmin(nde_name = 'all', bin_directory = '/opt/IBM/WebSphere/AppServer/bin')
         cookbook_file "#{bin_directory}/sync_node.py" do
-          cookbook 'ibm-websphere'
+          cookbook 'websphere'
           source 'sync_node.py'
           mode '0755'
           action :create
@@ -150,7 +150,7 @@ module WebsphereCookbook
         template "/etc/init.d/#{service_name}" do
           mode '0755'
           source 'node_service_init.d.erb'
-          cookbook 'ibm-websphere'
+          cookbook 'websphere'
           variables(
             service_name: service_name,
             server_name: srvr_name,
