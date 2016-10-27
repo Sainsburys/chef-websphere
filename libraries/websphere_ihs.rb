@@ -138,7 +138,7 @@ module WebsphereCookbook
         execute "run webserver #{webserver_name} configure script" do
           cwd "#{profile_path}/bin"
           command configure_cmd
-          # sensitive true TODO: MUST uncomment this before merging and have an accompaniying unit test
+          sensitive true
           action :run
         end
       end
@@ -155,7 +155,7 @@ module WebsphereCookbook
         execute "create webserver definition: #{webserver_name}" do
           cwd wct_tool_root
           command cmd
-          # sensitive true TODO: MUST uncomment this before merging and have an accompaniying unit test
+          sensitive true
           action :run
         end
       end

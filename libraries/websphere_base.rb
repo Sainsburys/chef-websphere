@@ -44,7 +44,7 @@ module WebsphereCookbook
         execute "manage_profiles #{cmd} #{profile_name}" do
           cwd bin_dir
           command command
-          sensitive false
+          sensitive true
           action :run
         end
       end
@@ -78,7 +78,7 @@ module WebsphereCookbook
           cwd profile_bin
           command cmd
           returns [0, 246, 255]
-          # sensitive true   # TODO: uncomment this
+          sensitive true
           action :run
         end
       end
@@ -111,7 +111,7 @@ module WebsphereCookbook
           command cmd
           returns [0]
           action :run
-          # sensitive true   # TODO: uncomment this
+          sensitive true
         end
       end
 
@@ -178,7 +178,7 @@ module WebsphereCookbook
         execute "addNode #{profile_bin_dir}" do
           cwd profile_bin_dir
           command cmd
-          # sensitive true TODO: uncomment this and add unit test
+          sensitive true
           action :run
         end
         save_config
@@ -204,7 +204,6 @@ module WebsphereCookbook
       def cleanup_node(nde_name)
         cmd = "./cleanupNode.sh #{nde_name} #{dmgr_host}"
         cmd << " #{dmgr_port}" if dmgr_port
-        # cmd << " -profileName #{dmgr_name}" # hoping we don't need the dmgr's profileName for simplicity
         cmd << " -username #{admin_user} -password #{admin_password}" if admin_user && admin_password
         execute "cleanupNode node: #{nde_name} dmgr: #{dmgr_host}" do
           cwd bin_dir
@@ -244,7 +243,7 @@ module WebsphereCookbook
           cwd bin_dir
           command "./manageprofiles.sh -delete -profileName #{p_name} && "\
             './manageprofiles.sh -validateAndUpdateRegistry'
-          returns [0, 2] # TODO: find out why there are always minor errors when deleting a profile.
+          returns [0, 2]
           action :run
         end
 
@@ -428,7 +427,7 @@ module WebsphereCookbook
           cwd bin_directory
           command wsadmin_cmd
           returns return_codes
-          # sensitive true TODO: MUST uncomment this before merging and have an accompaniying unit test
+          sensitive true
           action :run
         end
       end
@@ -445,7 +444,7 @@ module WebsphereCookbook
           cwd bin_directory
           command wsadmin_cmd
           returns return_codes
-          # sensitive true TODO: MUST uncomment this before merging and have an accompaniying unit test
+          sensitive true
           action :run
         end
       end

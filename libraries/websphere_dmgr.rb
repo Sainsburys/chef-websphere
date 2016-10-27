@@ -31,20 +31,6 @@ module WebsphereCookbook
     property :java_sdk, [String, nil], default: nil # javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
     property :security_attributes, [Hash, nil], default: nil # these are set when the Dmgr is started
 
-    # TODO:  Include the below properties
-    # property :ports_allocation, String, default: 'recommended', regex: /^(recommended|default|file|starting)$/
-    # property :ports_file, String, default: nil
-    # property :enable_service, [TrueClass, FalseClass], default: false #Enables the creation of a Linux service.
-    # property :performance_tuning, String, default: 'standard', regex: /^(standard|development|production)$/
-    # property :webserver_check, [TrueClass, FalseClass], default: false
-    # property :webserver_hostname, String, default: nil
-    # property :webserver_install_path, String, default: nil
-    # property :webserver_name, String, default: nil
-    # property :webserver_os, default: 'linux', regex: /^(windows|linux)$/
-    # property :webserver_plugin_path, String, default: nil
-    # property :webserver_port, Fixnum, default: 80
-    # property :webserver_type, String, default: 'ihs', regex: /^(ihs|iis|apache)$/
-
     # creates a new profile or augments/updates if profile exists.
     action :create do
       p_exists = profile_exists?(profile_name)
