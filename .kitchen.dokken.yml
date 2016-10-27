@@ -1,0 +1,32 @@
+driver:
+  name: dokken
+  require_chef_omnibus: latest
+  privileged: true # because Docker and SystemD/Upstart
+
+verifier:
+  root_path: '/opt/verifier'
+  sudo: false
+
+transport:
+  name: dokken
+
+provisioner:
+  name: dokken
+  attributes:
+    ibm-im-test:
+      passport_advantage:
+        user: <%= ENV['PASSPORTADV_USER'] %>
+        password: <%= ENV['PASSPORTADV_PW'] %>
+
+platforms:
+- name: centos-6
+  driver:
+    image: centos:6
+- name: centos-7
+  driver:
+    image: centos:7
+
+suites:
+  - name: was_cluster
+    run_list:
+      - recipe[websphere-test::was_cluster]
