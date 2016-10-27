@@ -24,7 +24,7 @@ module WebsphereCookbook
     include WebsphereHelpers
 
     resource_name :websphere_profile
-    property :profile_type, String, default: 'appserver', regex: /^(appserver|custom)$/
+    property :profile_type, String, default: 'custom', regex: /^(appserver|custom)$/
     property :attributes, [Hash, nil], default: nil # these are only set if the node is federated.
     # creates a new profile or augments/updates if profile exists.
 
