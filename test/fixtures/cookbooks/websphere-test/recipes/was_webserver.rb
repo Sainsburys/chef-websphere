@@ -1,5 +1,6 @@
 
-include_recipe 'websphere-test::was_install'
+include_recipe 'websphere-test::was_install_basic'
+include_recipe 'websphere-test::ihs_install'
 
 websphere_dmgr 'Dmgr01' do
   cell_name 'MyNewCell'
@@ -9,50 +10,26 @@ websphere_dmgr 'Dmgr01' do
 end
 
 # create additional Custom Node to use in cluster
-websphere_profile 'CustomNode01' do
+websphere_profile 'Custom01' do
   profile_type 'custom'
   admin_user 'admin'
   admin_password 'admin'
   action [:create, :federate]
 end
 
-websphere_profile 'AppServer12' do
+websphere_ihs 'MyWebserver1' do
+  config_type 'local_distributed'
+  profile_name 'Custom01'
+  node_name 'Custom01_node'
+  map_to_apps true
+  ihs_port '80'
   admin_user 'admin'
   admin_password 'admin'
-  attributes ({
-    'processDefinitions' => {
-      'monitoringPolicy' => {
-        'newvalue' => "[['nodeRestartState', 'RUNNING']]"
-      }
-    }
-  })
-  action [:create, :federate]
+  action [:create, :start]
 end
 
-websphere_profile 'AppServer13' do
-  admin_user 'admin'
-  admin_password 'admin'
-  java_sdk '1.6_64'
-  attributes ({
-    'processDefinitions' => {
-      'monitoringPolicy' => {
-        'newvalue' => "[['maximumStartupAttempts', '3'], ['pingTimeout', '99'], ['pingInterval', '666'], ['autoRestart', 'false'], ['nodeRestartState', 'RUNNING']]"
-      },
-      'jvmEntries' => {
-        'newvalue' => "[['debugMode', 'true']]"
-      }
-    }
-  })
-  action [:create, :federate]
+log 'test restarting webserver' do
+  message 'test restarting webserver'
+  level :info
+  notifies :restart, 'websphere_ihs[MyWebserver1]', :immediately
 end
-
-# # deploy an application on the managed appserver, start it and stop it. start it again.
-# websphere_app 'sample_app' do
-#   app_file '/tmp/sample.war'
-#   server_name 'AppServer12_server'
-#   node_name 'AppServer12_node'
-#   websphere_root '/opt/IBM/websphere/server'
-#   admin_user 'admin'
-#   admin_password 'admin'
-#   action [:deploy_to_server, :start]
-# end

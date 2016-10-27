@@ -1,6 +1,7 @@
 
 
 default['websphere-test']['unzip_dir'] = '/opt/IBM/ibm-media'
+default['websphere-test']['was_s3_bucket'] = 's3://ibm-media/websphere'
 default['websphere-test']['s3_zip'] = 'ibm-media/WASND_v8.5.5.zip'
 default['websphere-test']['zip_sha265'] = 'ea0d16d2115c6d8852fb54bc626285721e98831c2e8c2b3552f78c0e27666af5'
 default['websphere-test']['zip_file'] = '/opt/IBM/ibm-media/WASND_v8.5.5.zip'
@@ -12,4 +13,6 @@ default['websphere-test']['suppl_zip_file'] = '/opt/IBM/ibm-media/WASND_SUPPL.zi
 default['websphere-test']['suppl_unzip_dir'] = '/opt/IBM/ibm-media'
 default['websphere-test']['suppl_repo'] = '/opt/IBM/ibm-media/WASND_SUPPL'
 default['websphere-test']['fixpack_package'] = 'com.ibm.websphere.ND.v85_8.5.5008.20151112_0939,core.feature,ejbdeploy,thinclient,embeddablecontainer,com.ibm.sdk.6_64bit'
+default['websphere-test']['fixpack_repo'] = '/opt/IBM/ibm-media/8.5.5-WS-WAS-FP0000010'
+# default['websphere-test']['java_package'] = 'com.ibm.websphere.IBMJAVA.v71_7.1.3010.20151112_0058'
 default['websphere-test']['java_package'] = 'com.ibm.websphere.IBMJAVA.v71_7.1.3010.20151112_0058'

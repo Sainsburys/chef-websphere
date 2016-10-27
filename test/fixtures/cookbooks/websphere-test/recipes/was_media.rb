@@ -17,6 +17,7 @@ aws_s3_file node['websphere-test']['zip_file'] do
   action :create_if_missing
 end
 
+package 'unzip'
 execute 'unzip WASND media' do
   command "unzip -o #{node['websphere-test']['zip_file']} -d #{node['websphere-test']['unzip_dir']}"
   not_if { ::File.exist?("#{node['websphere-test']['repo_dir']}/repository.config") }

@@ -1,5 +1,7 @@
 # Websphere Cookbook
 
+[![Build Status](https://travis-ci.org/Sainsburys/chef-websphere.svg?branch=master)](https://travis-ci.org/Sainsburys/chef-websphere)
+
 ## Scope
 
 This cookbook installs and configures Websphere Application Server Network Deployment (WAS-ND). It has only been tested with a Deployment Manager and Managed nodes.
@@ -304,7 +306,7 @@ end
 
 ### websphere_ihs
 
-Deploys an ihs webserver to an existing profile/node.  It currently only supports managed ihs webservers.
+Deploys an ihs webserver to an existing profile/node.  It currently only supports `managed` ihs webservers.
 
 ##### Example
 ```ruby

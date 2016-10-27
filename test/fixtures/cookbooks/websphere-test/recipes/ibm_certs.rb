@@ -14,7 +14,7 @@ ibm_secure_storage_file '/root/MySecureStorageFile' do
   passport_advantage true
   username node['websphere-test']['passport_advantage']['user']
   password node['websphere-test']['passport_advantage']['password']
-  sensitive_exec false
+  sensitive_exec true
 end
 
 ibm_package 'PLG Plugins install' do

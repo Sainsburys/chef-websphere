@@ -1,6 +1,6 @@
 
 node.default['build-essential']['compile_time'] = true
-include_recipe 'build-essential'
+# include_recipe 'build-essential'
 
 pkgs = %w(
   glibc.i686

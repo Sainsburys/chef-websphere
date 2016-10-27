@@ -1,0 +1,64 @@
+---
+driver:
+  name: ec2
+  region: eu-west-1
+  aws_ssh_key_id: travis-ci
+  instance_type: t2.large
+  # temp vpc
+  security_group_ids: [ sg-abfe3ecc ]
+  subnet_id: subnet-40706619
+  associate_public_ip: true
+  iam_profile_name: id-chef
+
+  tags:
+    Owner: travis-ci
+    Email: infradev@sainsburys.co.uk
+    Description: chef-websphere cookbook test kitchen instance
+    Name: kitchen-chef-websphere
+    Costcentre: Identity
+    Project: Identity
+    Environment: dev
+
+provisioner:
+  name: chef_zero
+  require_chef_omnibus: '12.10.24'
+  attributes:
+    websphere-test:
+      passport_advantage:
+        user: <%= ENV['PASSPORTADV_USER'] %>
+        password: <%= ENV['PASSPORTADV_PW'] %>
+      aws:
+        access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
+        access_key_secret: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
+        region: <%= ENV['AWS_REGION'] %>
+
+platforms:
+  - name: centos-6
+    driver:
+      image_id: ami-d0ecbba3 #  | centos base ami-edb9069e with baked ibm media and partition resizable
+      block_device_mappings:
+        - device_name: /dev/sda1
+          ebs:
+            volume_size: 30
+            delete_on_termination: true
+
+
+transport:
+  ssh_key: travis-ci.pem
+
+suites:
+  - name: was-cluster
+    run_list:
+      - recipe[websphere-test::was_cluster]
+  - name: ibm-certs
+    run_list:
+      - recipe[websphere-test::ibm_certs]
+  - name: was-jms-env-vhost
+    run_list:
+      - recipe[websphere-test::was_jms_env_vhost]
+  - name: was-app-server
+    run_list:
+      - recipe[websphere-test::was_app_server]
+  - name: was-webserver
+    run_list:
+      - recipe[websphere-test::was_webserver]
