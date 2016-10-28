@@ -29,7 +29,7 @@ script:
   - rubocop
   - foodcritic --version
   - foodcritic . --exclude spec
-  - KITCHEN_YAML=.kitchen.dokken.yml kitchen verify ${INSTANCE}
+  - KITCHEN_YAML=.kitchen.dokken.yml kitchen verify was-cluster-centos-6
 
 after_script:
   - docker images
