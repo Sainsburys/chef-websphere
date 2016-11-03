@@ -1,0 +1,90 @@
+{
+  "_comments": "Packer Template for Identity base Centos image",
+  "variables": {
+    "aws_access_key_id": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
+    "env_home": "{{env `HOME`}}",
+    "chef_version": "12.10.24",
+    "env_passport_adv_user": "{{env `PASSPORTADV_USER`}}",
+    "env_passport_adv_pass": "{{env `PASSPORTADV_PW`}}"
+  },
+
+  "builders": [
+  { "type": "amazon-ebs",
+      "communicator": "ssh",
+      "ssh_keypair_name": "travis-ci",
+      "ssh_private_key_file": "{{user `env_home`}}/.ssh/travis-ci.pem",
+      "ssh_username": "centos",
+      "ssh_pty": true,
+      "access_key": "{{user `aws_access_key_id`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "eu-west-1",
+      "source_ami": "ami-edb9069e",
+      "instance_type": "t2.large",
+      "ami_name": "chef-websphere-media-{{timestamp}}",
+      "vpc_id": "vpc-30dc3454",
+      "subnet_id": "subnet-40706619",
+      "security_group_id": "sg-abfe3ecc",
+      "tags": {
+        "Name": "chef-websphere-ami-{{timestamp}}",
+        "Description": "CentOS 6.7 HVM base image with growable root and websphere media baked in"
+      },
+      "launch_block_device_mappings": [
+      {
+          "device_name": "/dev/sda1",
+          "volume_size": "40",
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ]
+    }
+  ],
+
+  "provisioners" : [
+    { "type": "file",
+      "source": "scripts/cloud-init-growpart",
+      "destination": "/tmp/06-growpart.cfg"
+    },
+    { "type": "shell",
+      "inline": [
+        "sleep 30",
+        "sudo yum install -y epel-release",
+        "sudo yum install -y cloud-init dracut-modules-growroot cloud-utils-growpart wget unzip",
+        "sudo mv /tmp/06-growpart.cfg /etc/cloud/cloud.cfg.d",
+        "sudo yum -y update",
+        "sudo dracut --force",
+        "sudo yum clean all",
+        "wget http://s3.amazonaws.com/ec2-downloads/ec2-ami-tools.zip",
+        "sudo mkdir -p /usr/local/ec2",
+        "sudo unzip ec2-ami-tools.zip -d /usr/local/ec2",
+        "sudo mkdir -p /etc/chef/ohai/hints",
+        "sudo curl -L opscode.com/chef/install.sh -o /tmp/chef_install.sh",
+        "sudo bash /tmp/chef_install.sh -v {{user `chef_version`}}",
+        "sudo yum -y update",
+        "sudo reboot"
+      ],
+      "only": [ "amazon-ebs" ]
+    },
+    {
+      "type": "chef-solo",
+      "pause_before": "90s",
+      "cookbook_paths": ["../../../", "berks-cookbooks"],
+      "run_list": [
+        "recipe[websphere-test::was_media]"
+      ],
+      "json": {
+        "websphere-test": {
+          "passport_advantage": {
+            "user": "{{user `env_passport_adv_user`}}",
+            "password": "{{user `env_passport_adv_pass`}}"
+          },
+          "aws": {
+            "access_key_id": "{{user `aws_access_key_id`}}",
+            "access_key_secret": "{{user `aws_secret_key`}}",
+            "region": "eu-west-1"
+          }
+        }
+      }
+    }
+  ]
+}

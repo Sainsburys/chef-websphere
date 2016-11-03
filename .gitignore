@@ -21,6 +21,7 @@ bin/*
 .coverage/*
 .kitchen/
 .kitchen.local.yml
+test/fixtures/packer/berks-cookbooks/*
 
 # Secrets
 .encrypted_data_bag_secret

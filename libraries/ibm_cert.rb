@@ -104,8 +104,13 @@ module WebsphereCookbook
         cmd = "#{ikeycmd} -cert -list -pw #{kdb_password} -label #{label} -db #{kdb}"
         mycmd = Mixlib::ShellOut.new(cmd, cwd: ::File.dirname(kdb))
         mycmd.run_command
-        return false if mycmd.error? || mycmd.stdout.indludes?("doesn't contain an entry with label")
-        true
+        if mycmd.stdout.include?("doesn't contain an entry with label") || mycmd.error?
+          Chef::Log.warn("certificate #{label} not found in #{kdb}")
+          return false
+        else
+          Chef::Log.warn("certificate #{label} already exists in #{kdb}")
+          return true
+        end
       end
     end
   end
