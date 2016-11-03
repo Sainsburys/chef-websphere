@@ -104,7 +104,7 @@ module WebsphereCookbook
         cmd = "#{ikeycmd} -cert -list -pw #{kdb_password} -label #{label} -db #{kdb}"
         mycmd = Mixlib::ShellOut.new(cmd, cwd: ::File.dirname(kdb))
         mycmd.run_command
-        return false if mycmd.error?
+        return false if mycmd.error? || mycmd.stdout.indludes?("doesn't contain an entry with label")
         true
       end
     end

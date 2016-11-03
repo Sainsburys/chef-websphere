@@ -6,6 +6,7 @@
 *.un~
 pkg/
 *ignore*
+*.pem
 
 # Berkshelf
 .vagrant
