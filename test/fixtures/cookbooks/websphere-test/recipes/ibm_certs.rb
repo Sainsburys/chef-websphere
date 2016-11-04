@@ -60,3 +60,17 @@ ibm_cert 'myotherdomain.com' do
   ikeycmd '/opt/IBM/WebSphere/Plugins/java/jre/bin/ikeycmd'
   action :add
 end
+
+cookbook_file '/root/keystores/cert_to_import.p12' do
+  source 'chef-websphere.p12'
+end
+
+ibm_cert 'chef-websphere-test.com' do
+  kdb '/root/keystores/keystore.kdb'
+  kdb_password 'dummy'
+  add_cert '/root/keystores/cert_to_import.p12'
+  import_password 'password'
+  sensitive_exec false
+  ikeycmd '/opt/IBM/WebSphere/Plugins/java/jre/bin/ikeycmd'
+  action [:import, :set_default]
+end
