@@ -26,7 +26,9 @@ module WebsphereCookbook
     property :size, String, default: '2048', regex: /^(2048|1024|512)$/
     property :expire, String, default: '3600', required: true
     property :extract_to, String, default: lazy { "#{::File.dirname(kdb)}/#{label}.cer" } # used by the extract action only. extracts to given file in ascii format
-    property :add_cert, [String, nil], default: nil # path to certificate to add to kdb, only used in add.
+    property :add_cert, [String, nil], default: nil # path to certificate to add/import to kdb, only used in add/import.
+    property :kdb_type, String, default: 'pkcs12' # type of key database
+    property :import_password, [String, nil], default: nil # password for import database, only used in import
     property :default_cert, String, default: 'no', regex: /^(yes|no)$/
     property :ikeycmd, String, default: lazy { '/opt/IBM/WebSphere/AppServer/java/jre/bin/ikeycmd' }
     property :owned_by, String, default: 'root'
@@ -61,9 +63,29 @@ module WebsphereCookbook
       set_perms
     end
 
+    action :set_default do
+      execute "set cert #{label} as default" do
+        command "#{ikeycmd} -cert -setdefault -pw #{kdb_password} -label #{label} -db #{kdb}"
+        sensitive sensitive_exec
+        action :run
+        only_if { cert_in_keystore? }
+      end
+    end
+
     action :add do
       execute "add cert #{label} to #{kdb}" do
         command "#{ikeycmd} -cert -add -pw #{kdb_password} -label #{label} -trust enable -file #{add_cert} -db #{kdb}"
+        sensitive sensitive_exec
+        action :run
+        only_if { ::File.exist?(kdb) && ::File.exist?(add_cert) }
+        not_if { cert_in_keystore? }
+      end
+    end
+
+    action :import do
+      execute "import key database #{label} to #{kdb}" do
+        command "#{ikeycmd} -cert -import -target #{kdb} -target_pw #{kdb_password} -type #{kdb_type} -db #{add_cert} -label #{label} -target_type cms"
+        command << " -pw #{import_password}" if import_password
         sensitive sensitive_exec
         action :run
         only_if { ::File.exist?(kdb) && ::File.exist?(add_cert) }
