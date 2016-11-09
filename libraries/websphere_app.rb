@@ -39,6 +39,7 @@ module WebsphereCookbook
     action :deploy_to_cluster do
       unless get_id("/Deployment:#{app_name}/")
         deploy_to_cluster(app_name, app_file, cluster_name, "[['.*', '.*', 'default_host']]")
+        sleep 20
       end
     end
 
@@ -47,7 +48,8 @@ module WebsphereCookbook
         cmd = "AdminApp.install('#{app_file}', ['-appname', '#{app_name}', '-node', '#{node_name}', '-server', '#{server_name}', '-MapWebModToVH', [['.*', '.*', 'default_host']]"
         cmd << ", '-contextroot', '/'" if context_root
         cmd << '])'
-        wsadmin_exec("install application #{app_name} to server #{server_name}", cmd)
+        wsadmin_exec("install application #{app_name} to server #{server_name}", cmd, [0])
+        sleep 20
       end
     end
 
@@ -56,6 +58,11 @@ module WebsphereCookbook
 
     action :start do
       # TODO: find a way to check if app is already running, instead of allowing 103 return code.
+      # give time for app to deploy
+      1.upto(8) do |_n|
+        sleep 20
+        break if get_id("/Deployment:#{app_name}/")
+      end
       if get_id("/Deployment:#{app_name}/")
         cmd = "AdminApplication.startApplicationOnAllDeployedTargets('#{app_name}', '#{node_name}')"
         cmd = "AdminApplication.startApplicationOnCluster('#{app_name}', '#{cluster_name}')" if cluster_name
@@ -66,6 +73,11 @@ module WebsphereCookbook
     end
 
     action :stop do
+      # give time for app to deploy
+      1.upto(8) do |_n|
+        sleep 20
+        break if get_id("/Deployment:#{app_name}/")
+      end
       # TODO: find a way to check if app is already stopped, instead of allowing 103 return code.
       if get_id("/Deployment:#{app_name}/")
         cmd = "AdminApplication.stopApplicationOnAllDeployedTargets('#{app_name}', '#{node_name}')"

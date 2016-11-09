@@ -1,5 +1,5 @@
 
-include_recipe 'websphere-test::was_install_small'
+include_recipe 'websphere-test::was_install_basic'
 
 websphere_dmgr 'Dmgr01' do
   cell_name 'MyNewCell'
@@ -48,4 +48,23 @@ websphere_env 'TESTING_1234' do
   admin_user 'admin'
   admin_password 'admin'
   action :set
+end
+
+# create and delete virtual host aliases
+websphere_vhost_alias 'test add vhost alias' do
+  vhost_name 'default_host'
+  alias_host  '*'
+  alias_port  '11111'
+  admin_user 'admin'
+  admin_password 'admin'
+  action :create
+end
+
+websphere_vhost_alias 'test delete vhost alias' do
+  vhost_name 'default_host'
+  alias_host  '*'
+  alias_port  '33333'
+  admin_user 'admin'
+  admin_password 'admin'
+  action [:create, :delete]
 end

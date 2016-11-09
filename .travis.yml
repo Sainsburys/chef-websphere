@@ -2,6 +2,10 @@ rvm: 2.2
 
 sudo: required
 
+branches:
+  only:
+    - "master"
+    
 addons:
   apt:
     sources:
@@ -9,32 +13,34 @@ addons:
     packages:
       - chefdk
 
-install: echo "skip bundle install"
-
-services: docker
+#services: docker
 
 env:
   matrix:
-  - INSTANCE=was_cluster-centos-6
+  - INSTANCE=was-cluster-centos-6
 
   fast_finish: true
 
 before_script:
-  - sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
+  #- sudo iptables -L DOCKER || ( echo "DOCKER iptables chain missing" ; sudo iptables -N DOCKER )
   - eval "$(/opt/chefdk/bin/chef shell-init bash)"
-  - /opt/chefdk/embedded/bin/chef gem install kitchen-dokken
+  #- /opt/chefdk/embedded/bin/chef gem install kitchen-dokken
+  - /opt/chefdk/embedded/bin/chef gem install kitchen-ec2
+  - openssl aes-256-cbc -K $encrypted_deb391b403a8_key -iv $encrypted_deb391b403a8_iv -in travis-ci.pem.enc -out travis-ci.pem -d
 
 script:
-  - bundle install
+  #- bundle install
   - /opt/chefdk/embedded/bin/chef --version
   - rubocop --version
+  - pwd
+  - ls -l
   - rubocop
   - foodcritic --version
   - foodcritic . --exclude spec
-  - bundle exec rspec
-  - KITCHEN_YAML=.kitchen.dokken.yml kitchen verify ${INSTANCE}
+  - KITCHEN_YAML=.kitchen.ec2.yml travis_wait 50 kitchen test --parallel
+  #- KITCHEN_YAML=.kitchen.dokken.yml travis_wait 50 kitchen verify ${INSTANCE}
 
 after_script:
-  - docker images
-  - docker ps -a
+  # - docker images
+  # - docker ps -a
   - cat .kitchen/logs/kitchen.log

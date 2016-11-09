@@ -30,6 +30,7 @@ module WebsphereCookbook
     property :profile_templates_dir, String, default: lazy { "#{websphere_root}/profileTemplates" }
     property :java_sdk, [String, nil], default: nil # javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
     property :security_attributes, [Hash, nil], default: nil # these are set when the Dmgr is started
+    property :run_user, String, default: 'was'
 
     # creates a new profile or augments/updates if profile exists.
     action :create do
@@ -51,7 +52,8 @@ module WebsphereCookbook
       enable_java_sdk(java_sdk, "#{profile_path}/bin", profile_name) if java_sdk && p_exists && current_java != java_sdk # only update if java version changes
 
       # run dmgr as service
-      enable_as_service(profile_name, 'dmgr', profile_path)
+      create_service_account(run_user) unless run_user == 'root'
+      enable_as_service(profile_name, 'dmgr', profile_path, run_user)
     end
 
     action :start do
@@ -83,15 +85,9 @@ module WebsphereCookbook
       sync_node_wsadmin('all')
     end
 
-    # action :delete do
-    #   update_registry
-    #   if profile_exists?(profile_name)
-    #     #stop_profile_node(profile_name, bin_dir, "./stopManager.sh -profileName #{profile_name} -username #{admin_user} -password #{admin_password}")
-    #     # service node_name do
-    #     #   action :stop
-    #     # end
-    #     delete_profile(profile_name, profile_path)
-    #   end
-    # end
+    # need to wrap helper methods in class_eval
+    # so they're available in the action.
+    action_class.class_eval do
+    end
   end
 end

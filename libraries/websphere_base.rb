@@ -167,6 +167,30 @@ module WebsphereCookbook
         end
       end
 
+      def create_service_account(user)
+        user user do
+          comment 'websphere service account'
+          home "/home/#{user}"
+          shell '/sbin/nologin'
+          not_if { user == 'root' }
+        end
+
+        directory "/home/#{user}" do
+          owner user
+          group user
+          mode '0750'
+          recursive true
+          action :create
+          not_if { user == 'root' }
+        end
+
+        # there's no perfect way to chown in chef without being explicit for each dir with the directlry resource.
+        execute 'chown websphere root for service account' do
+          command "chown -R #{user}:root #{websphere_root}"
+          action :run
+        end
+      end
+
       # federates a node to a dmgr.
       # requires path to profiles own bin dir
       def add_node(profile_bin_dir)
@@ -415,7 +439,7 @@ module WebsphereCookbook
       end
 
       # executes wsadmin commands. Doesn't capture any stdout.
-      def wsadmin_exec(label, cmd, return_codes = [0], bin_directory = bin_dir)
+      def wsadmin_exec(label, cmd, return_codes = [0], sensitive = true, bin_directory = bin_dir)
         wsadmin_cmd = './wsadmin.sh -lang jython -conntype SOAP '
         wsadmin_cmd << "-host #{dmgr_host} " if dmgr_host
         wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
@@ -427,7 +451,7 @@ module WebsphereCookbook
           cwd bin_directory
           command wsadmin_cmd
           returns return_codes
-          sensitive true
+          sensitive sensitive
           action :run
         end
       end
@@ -466,7 +490,7 @@ module WebsphereCookbook
 
       def stop_server(nde_name, serv_name)
         cmd = "AdminServerManagement.stopSingleServer('#{nde_name}', '#{serv_name}')"
-        wsadmin_exec("wsadmin stop server: #{serv_name} on node #{nde_name}", cmd)
+        wsadmin_exec("wsadmin stop server: #{serv_name} on node #{nde_name}", cmd, [0, 103])
       end
 
       def stop_all_servers(nde_name)

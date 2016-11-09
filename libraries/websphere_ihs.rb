@@ -79,6 +79,17 @@ module WebsphereCookbook
       stop_server(node_name, webserver_name)
     end
 
+    action :restart do
+      i = 0 # safety timeout break
+      until server_exists?(node_name, webserver_name)
+        sleep(5) # ensure webserver has been created first
+        i += 1
+        break if i >= 8
+      end
+      stop_server(node_name, webserver_name)
+      start_server(node_name, webserver_name, [0, 103])
+    end
+
     # need to wrap helper methods in class_eval
     # so they're available in the action.
     action_class.class_eval do
