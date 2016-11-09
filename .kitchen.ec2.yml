@@ -45,6 +45,7 @@ platforms:
 
 transport:
   ssh_key: travis-ci.pem
+  username: centos
 
 suites:
   - name: was-cluster

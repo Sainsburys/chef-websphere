@@ -4,6 +4,7 @@
 AllCops:
   Exclude:
     - '**/berks-cookbooks/*'
+    - 'vendor/**/*'
 
 # # Increase line length, we're not on VT220s anymore
 LineLength:
