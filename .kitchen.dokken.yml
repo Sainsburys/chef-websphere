@@ -1,7 +1,7 @@
 driver:
   name: dokken
   require_chef_omnibus: latest
-  privileged: true # because Docker and SystemD/Upstart
+  privileged: true
 
 verifier:
   root_path: '/opt/verifier'
@@ -13,11 +13,14 @@ transport:
 provisioner:
   name: dokken
   attributes:
-    ibm-im-test:
+    websphere-test:
       passport_advantage:
         user: <%= ENV['PASSPORTADV_USER'] %>
         password: <%= ENV['PASSPORTADV_PW'] %>
-
+      aws:
+        access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
+        access_key_secret: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
+        region: <%= ENV['AWS_REGION'] %>
 platforms:
 - name: centos-6
   driver:
@@ -27,6 +30,6 @@ platforms:
     image: centos:7
 
 suites:
-  - name: was_cluster
+  - name: was-cluster
     run_list:
       - recipe[websphere-test::was_cluster]

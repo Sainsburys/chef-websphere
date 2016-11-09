@@ -1,6 +1,6 @@
 
 include_recipe 'chef-sugar'
-include_recipe 'websphere-test::was_media' if ec2?
+include_recipe 'websphere-test::was_media' unless vagrant?
 
 # install for RHEL 6 based on
 # http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.installation.nd.doc/ae/tins_linuxsetup_rhel6.html?cp=SSAW57_8.5.5%2F1-5-0-4-2-2
