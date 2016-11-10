@@ -1,5 +1,7 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
+v1.0.0
+- released to supermarket. Travis-ci integration tests.
 
 v0.6.0
 --------------------
