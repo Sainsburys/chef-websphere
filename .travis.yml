@@ -35,7 +35,7 @@ before_script:
 
 script:
   #- KITCHEN_YAML=.kitchen.ec2.yml travis_wait 50 kitchen test --parallel
-  - KITCHEN_YAML=.kitchen.ec2.yml travis_wait 50 kitchen verify ${INSTANCE}
+  - KITCHEN_YAML=.kitchen.ec2.yml travis_wait 50 kitchen test ${INSTANCE}
 
 after_script:
   - cat .kitchen/logs/kitchen.log
