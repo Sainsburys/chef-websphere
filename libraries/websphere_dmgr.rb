@@ -48,8 +48,10 @@ module WebsphereCookbook
       end
 
       # set java sdk if set
-      current_java = current_java_sdk(profile_name)
-      enable_java_sdk(java_sdk, "#{profile_path}/bin", profile_name) if java_sdk && p_exists && current_java != java_sdk # only update if java version changes
+      if java_sdk
+        current_java = current_java_sdk(profile_name)
+        enable_java_sdk(java_sdk, "#{profile_path}/bin", profile_name) if p_exists && current_java != java_sdk
+      end
 
       # run dmgr as service
       # no need to do user things (if you installed was out of this cookbook by example)
