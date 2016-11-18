@@ -30,6 +30,7 @@ module WebsphereCookbook
     property :java_sdk, [String, nil], default: nil # javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
     property :security_attributes, [Hash, nil], default: nil # these are set when the Dmgr is started
     property :run_user, String, default: 'was'
+    property :manage_user, [TrueClass, FalseClass], default: true
 
     # creates a new profile or augments/updates if profile exists.
     action :create do
@@ -51,7 +52,10 @@ module WebsphereCookbook
       enable_java_sdk(java_sdk, "#{profile_path}/bin", profile_name) if java_sdk && p_exists && current_java != java_sdk # only update if java version changes
 
       # run dmgr as service
-      create_service_account(run_user) unless run_user == 'root'
+      # no need to do user things (if you installed was out of this cookbook by example)
+      unless run_user == 'root' || manage_user == false
+        create_service_account(run_user)
+      end
       enable_as_service(profile_name, 'dmgr', profile_path, run_user)
     end
 

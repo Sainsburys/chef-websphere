@@ -93,6 +93,7 @@ end
 - `cell_name`, [String, nil], default: nil
 - `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
 - `security_attributes`, [Hash, nil], default: nil # A hash of security attributes to apply to the dmgr
+- `manage_user`, [TrueClass, FalseClass], default: true. Should the resource create the user for you.
 
 ##### Actions
 
