@@ -25,7 +25,6 @@ module WebsphereCookbook
     property :profile_name, String, name_property: true
     property :profile_path, String, default: lazy { "#{websphere_root}/profiles/#{profile_name}" }
     property :node_name, String, default: lazy { "#{profile_name}_node" }
-    property :server_name, String, default: lazy { "#{profile_name}_server" }
     property :cell_name, [String, nil], default: nil
     property :profile_templates_dir, String, default: lazy { "#{websphere_root}/profileTemplates" }
     property :java_sdk, [String, nil], default: nil # javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
@@ -40,7 +39,7 @@ module WebsphereCookbook
         management_type = management_type_lookup('dmgr')
 
         options = " -profileName #{profile_name} -profilePath #{profile_path} -templatePath #{template_path} "\
-        "-nodeName #{node_name} -server_name #{server_name}"
+        "-nodeName #{node_name}"
         options << " -cellName #{cell_name}" if cell_name
         options << " -serverType #{management_type}"
         options << " -adminUserName #{admin_user} -adminPassword #{admin_password} -enableAdminSecurity true" if admin_user

@@ -90,7 +90,6 @@ end
 - `dmgr_port`, [String, nil], default: nil, The dmgr port, when nil WAS will default to dmgr SOAP connector default port 8879.
 - `profile_name`, String, name_property: true. # The Dmgr profile name.
 - `node_name`, String, default: lazy { "#{profile_name}_node" }. It's easier to keep the default name here.
-- `server_name`, String, default: lazy { "#{profile_name}_server" } It's easier to keep the default name here.
 - `cell_name`, [String, nil], default: nil
 - `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
 - `security_attributes`, [Hash, nil], default: nil # A hash of security attributes to apply to the dmgr
