@@ -1,18 +1,14 @@
 rvm: 2.2
-
 sudo: required
-
 branches:
   only:
-    - "master"
-
+  - master
 addons:
   apt:
     sources:
-      - chef-stable-precise
+    - chef-stable-precise
     packages:
-      - chefdk
-
+    - chefdk
 env:
   matrix:
   - INSTANCE=was-cluster-centos-6
@@ -20,22 +16,22 @@ env:
   - INSTANCE=was-jms-env-vhost-centos-6
   - INSTANCE=was-app-server-centos-6
   - INSTANCE=was-webserver-centos-6
-
   fast_finish: true
-
 before_script:
-  - eval "$(/opt/chefdk/bin/chef shell-init bash)"
-  - /opt/chefdk/embedded/bin/chef gem install kitchen-ec2
-  - openssl aes-256-cbc -K $encrypted_deb391b403a8_key -iv $encrypted_deb391b403a8_iv -in travis-ci.pem.enc -out travis-ci.pem -d
-  - /opt/chefdk/embedded/bin/chef --version
-  - rubocop --version
-  - rubocop
-  - foodcritic --version
-  - foodcritic . --exclude spec
-
+- eval "$(/opt/chefdk/bin/chef shell-init bash)"
+- "/opt/chefdk/embedded/bin/chef gem install kitchen-ec2"
+- openssl version
+- openssl aes-256-cbc -K $encrypted_deb391b403a8_key -iv $encrypted_deb391b403a8_iv
+  -in travis-ci.pem.enc -out travis-ci.pem -d
+- "/opt/chefdk/embedded/bin/chef --version"
+- rubocop --version
+- rubocop
+- foodcritic --version
+- foodcritic . --exclude spec
 script:
-  #- KITCHEN_YAML=.kitchen.ec2.yml travis_wait 50 kitchen test --parallel
-  - KITCHEN_YAML=.kitchen.ec2.yml travis_wait 50 kitchen test ${INSTANCE}
-
+- KITCHEN_YAML=.kitchen.ec2.yml travis_wait 50 kitchen test ${INSTANCE}
 after_script:
-  - cat .kitchen/logs/kitchen.log
+- cat .kitchen/logs/kitchen.log
+before_install:
+- openssl aes-256-cbc -K $encrypted_deb391b403a8_key -iv $encrypted_deb391b403a8_iv
+  -in travis-ci.pem.enc -out travis-ci.pem -d
