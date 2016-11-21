@@ -43,6 +43,7 @@ module WebsphereCookbook
 
         execute "manage_profiles #{cmd} #{profile_name}" do
           cwd bin_dir
+          user admin_user
           command command
           sensitive true
           action :run

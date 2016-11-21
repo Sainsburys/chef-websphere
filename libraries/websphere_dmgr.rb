@@ -25,12 +25,12 @@ module WebsphereCookbook
     property :profile_name, String, name_property: true
     property :profile_path, String, default: lazy { "#{websphere_root}/profiles/#{profile_name}" }
     property :node_name, String, default: lazy { "#{profile_name}_node" }
-    property :server_name, String, default: lazy { "#{profile_name}_server" }
     property :cell_name, [String, nil], default: nil
     property :profile_templates_dir, String, default: lazy { "#{websphere_root}/profileTemplates" }
     property :java_sdk, [String, nil], default: nil # javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
     property :security_attributes, [Hash, nil], default: nil # these are set when the Dmgr is started
     property :run_user, String, default: 'was'
+    property :manage_user, [TrueClass, FalseClass], default: true
 
     # creates a new profile or augments/updates if profile exists.
     action :create do
@@ -40,7 +40,7 @@ module WebsphereCookbook
         management_type = management_type_lookup('dmgr')
 
         options = " -profileName #{profile_name} -profilePath #{profile_path} -templatePath #{template_path} "\
-        "-nodeName #{node_name} -server_name #{server_name}"
+        "-nodeName #{node_name}"
         options << " -cellName #{cell_name}" if cell_name
         options << " -serverType #{management_type}"
         options << " -adminUserName #{admin_user} -adminPassword #{admin_password} -enableAdminSecurity true" if admin_user
@@ -48,11 +48,16 @@ module WebsphereCookbook
       end
 
       # set java sdk if set
-      current_java = current_java_sdk(profile_name)
-      enable_java_sdk(java_sdk, "#{profile_path}/bin", profile_name) if java_sdk && p_exists && current_java != java_sdk # only update if java version changes
+      if java_sdk
+        current_java = current_java_sdk(profile_name)
+        enable_java_sdk(java_sdk, "#{profile_path}/bin", profile_name) if p_exists && current_java != java_sdk
+      end
 
       # run dmgr as service
-      create_service_account(run_user) unless run_user == 'root'
+      # no need to do user things (if you installed was out of this cookbook by example)
+      unless run_user == 'root' || manage_user == false
+        create_service_account(run_user)
+      end
       enable_as_service(profile_name, 'dmgr', profile_path, run_user)
     end
 
