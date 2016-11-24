@@ -27,13 +27,14 @@ module WebsphereCookbook
     property :profile_type, String, default: 'custom', regex: /^(appserver|custom)$/
     property :run_user, String, default: 'was'
     property :attributes, [Hash, nil], default: nil # these are only set if the node is federated.
+    property :server_name, [String, nil], default: nil
     # creates a new profile or augments/updates if profile exists.
 
     action :create do
       unless profile_exists?(profile_name)
         template_path = template_lookup(profile_type, profile_templates_dir)
         options = " -profileName '#{profile_name}' -profilePath '#{profile_path}' -templatePath '#{template_path}' -nodeName '#{node_name}'"
-        options << " -serverName '#{server_name}'" if profile_type == 'appserver'
+        options << " -serverName '#{server_name}'" if profile_type == 'appserver' && !server_name.nil?
         options << " -cellName '#{cell_name}'" if cell_name
 
         cmd = "./manageprofiles.sh -create #{options}"
@@ -66,13 +67,14 @@ module WebsphereCookbook
           update_attributes(attributes, server_id) if federated?(profile_path, node_name) && !server_id.nil? && attributes
         end
         action :run
+        not_if { server_name.nil? }
         # subscribes :run, "execute[addNode #{profile_path}/bin]", :delayed
       end
     end
 
     action :start do
       start_node("#{profile_path}/bin") if federated?(profile_path, node_name)
-      start_server(node_name, server_name) if profile_type == 'appserver'
+      start_server(node_name, server_name) if profile_type == 'appserver' && !server_name.nil?
     end
 
     action :stop do

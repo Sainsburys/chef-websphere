@@ -29,6 +29,7 @@ module WebsphereCookbook
     property :admin_password, [String, nil], default: nil
     property :dmgr_host, String, default: 'localhost' # dmgr host to federate to.
     property :dmgr_port, [String, nil], default: nil # dmgr port to federate to.
+    property :sensitive_exec, [TrueClass, FalseClass], default: true # for debug purposes
 
     # you need at least one action here to allow the action_class.class_eval block to work
     action :dummy do
@@ -43,9 +44,9 @@ module WebsphereCookbook
 
         execute "manage_profiles #{cmd} #{profile_name}" do
           cwd bin_dir
-          user admin_user
+          user run_user
           command command
-          sensitive true
+          sensitive sensitive_exec
           action :run
         end
       end
@@ -79,7 +80,7 @@ module WebsphereCookbook
           cwd profile_bin
           command cmd
           returns [0, 246, 255]
-          sensitive true
+          sensitive sensitive_exec
           action :run
         end
       end
@@ -112,7 +113,7 @@ module WebsphereCookbook
           command cmd
           returns [0]
           action :run
-          sensitive true
+          sensitive sensitive_exec
         end
       end
 
@@ -203,7 +204,7 @@ module WebsphereCookbook
         execute "addNode #{profile_bin_dir}" do
           cwd profile_bin_dir
           command cmd
-          sensitive true
+          sensitive sensitive_exec
           action :run
         end
         save_config
@@ -220,7 +221,7 @@ module WebsphereCookbook
         execute "removeNode #{profile_bin_dir}" do
           cwd bin_dir
           command cmd
-          sensitive true
+          sensitive sensitive_exec
           action :run
         end
       end
@@ -233,7 +234,7 @@ module WebsphereCookbook
         execute "cleanupNode node: #{nde_name} dmgr: #{dmgr_host}" do
           cwd bin_dir
           command cmd
-          sensitive true
+          sensitive sensitive_exec
           action :run
         end
       end
@@ -440,7 +441,7 @@ module WebsphereCookbook
       end
 
       # executes wsadmin commands. Doesn't capture any stdout.
-      def wsadmin_exec(label, cmd, return_codes = [0], sensitive = true, bin_directory = bin_dir)
+      def wsadmin_exec(label, cmd, return_codes = [0], bin_directory = bin_dir)
         wsadmin_cmd = './wsadmin.sh -lang jython -conntype SOAP '
         wsadmin_cmd << "-host #{dmgr_host} " if dmgr_host
         wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
@@ -452,7 +453,7 @@ module WebsphereCookbook
           cwd bin_directory
           command wsadmin_cmd
           returns return_codes
-          sensitive sensitive
+          sensitive sensitive_exec
           action :run
         end
       end
@@ -469,7 +470,7 @@ module WebsphereCookbook
           cwd bin_directory
           command wsadmin_cmd
           returns return_codes
-          sensitive true
+          sensitive sensitive_exec
           action :run
         end
       end

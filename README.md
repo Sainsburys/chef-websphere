@@ -93,7 +93,8 @@ end
 - `cell_name`, [String, nil], default: nil
 - `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
 - `security_attributes`, [Hash, nil], default: nil # A hash of security attributes to apply to the dmgr
-- `manage_user`, [TrueClass, FalseClass], default: true. Should the resource create the user for you.
+- `manage_user`, [TrueClass, FalseClass], default: true. Should the resource create the user for you. Set to false if you have created the run_user previously in your recipe, outside of this resource.
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ##### Actions
 
@@ -132,6 +133,7 @@ end
 - `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
 - `profile_type`, String, default: 'custom', Can be either appserver or custom, but easier to just use custom all the time and add jvms with websphere_app_server or websphere_cluster_member.
 - `attributes`, [Hash, nil], default: nil, These are custom attributes for the server when using the appserver type profile, such as monitoringPolicy. They are only set when the node is federated.
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ##### Actions
 
@@ -176,6 +178,7 @@ end
 - `server_name`, String, name_property: true, The new clustered server name
 - `server_node`, [String, nil], default: nil, required: true, The node to create the server on.
 - `attributes`, [Hash, nil], default: nil, A hash of attributes to apply to the server, eg. monitoringPolicy.
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ##### Actions
 
@@ -207,6 +210,7 @@ end
 - `dmgr_port`, [String, nil], default: nil, The dmgr port to federate to.
 - `cluster_name`, String, name_property: true
 - `prefer_local`, [TrueClass, FalseClass], default: true
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ##### Actions
 
@@ -258,6 +262,7 @@ end
 - `session_replication`, [TrueClass, FalseClass], default: false
 - `resources_scope`, String, default: 'both', regex: /^(both|server|cluster)$/
 - `attributes`, [Hash, nil], default: nil, A hash of attributes to apply to the server, eg. monitoringPolicy.
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ##### Actions
 
@@ -295,6 +300,7 @@ end
 - `node_name`, [String, nil], default: nil
 - `cluster_name`, [String, nil], default: nil
 - `context_root`, [String, nil], default: nil
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ##### Actions
 
@@ -348,6 +354,7 @@ end
 - `ihs_admin_user`, [String, nil], default: nil
 - `ihs_admin_password`, [String, nil], default: nil
 - `ihs_admin_port`, String, default: '8008'
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ##### Actions
 
@@ -398,7 +405,7 @@ end
 - `default_cert`, String, default: 'no'. Can be yes or no
 - `ikeycmd`, String, default: /opt/IBM/WebSphere/AppServer/java/jre/bin/ikeycmd path to ikeycmd tool.
 - `owned_by`, String, default: 'root'
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # for debug purposes only.
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ##### Actions
 
@@ -462,7 +469,7 @@ end
 - `url`, [String, nil], default: nil
 - `classpath_jars`, [Array, nil], default: nil Full path to each jar driver
 - `description`, [String, nil], default: nil
-
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ##### Actions
 
@@ -507,6 +514,7 @@ end
 - `conn_pool_unused_timeout`, String, default: '1800'
 - `conn_aged_timeout`, String, default: '0'
 - `conn_purge_policy`, String, default: 'FailingConnectionOnly' can be only FailingConnectionOnly or EntirePool
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ##### Actions
 
@@ -543,7 +551,7 @@ end
 - `type`, String, required: true, Can be QUEUE, TOPIC or UNIFIED
 - `description`, [String, nil], default: nil
 - `category`, [String, nil], default: nil
-
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ##### Actions
 
@@ -578,7 +586,7 @@ end
 - `script`, [String, nil], default: nil. The command for wsadmin to run.  If a file is given this will be ignored, and only the file will be executed.
 - `file`, [String, nil], default: nil The script file for wsadmin to run.
 - `return_codes`, Array, default: [0]. Return codes to allow.
-- `sensitive`, [TrueClass, FalseClass], default: false. For security to hide passwords form output if necessary.
+- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 
 ## License and Author

@@ -34,6 +34,10 @@ module WebsphereCookbook
 
     # creates a new profile or augments/updates if profile exists.
     action :create do
+      unless run_user == 'root' || manage_user == false
+        create_service_account(run_user)
+      end
+
       p_exists = profile_exists?(profile_name)
       unless p_exists
         template_path = template_lookup('dmgr', profile_templates_dir)
@@ -55,9 +59,6 @@ module WebsphereCookbook
 
       # run dmgr as service
       # no need to do user things (if you installed was out of this cookbook by example)
-      unless run_user == 'root' || manage_user == false
-        create_service_account(run_user)
-      end
       enable_as_service(profile_name, 'dmgr', profile_path, run_user)
     end
 
