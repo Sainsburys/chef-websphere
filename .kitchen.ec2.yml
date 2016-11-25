@@ -5,8 +5,8 @@ driver:
   aws_ssh_key_id: travis-ci
   instance_type: t2.large
   # temp vpc
-  security_group_ids: [ sg-abfe3ecc ]
-  subnet_id: subnet-40706619
+  security_group_ids: [ sg-4491db20 ]
+  subnet_id: 	subnet-b9e3bee0
   associate_public_ip: true
   iam_profile_name: id-chef
 

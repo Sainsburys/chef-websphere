@@ -1,5 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
+v1.0.1
+- run manageprofiles.sh as was run_user
+- add sensitive_exec feature for debugging on all resources
+- readme update
+
 v1.0.0
 - released to supermarket. Travis-ci integration tests.
 

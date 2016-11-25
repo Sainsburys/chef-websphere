@@ -29,7 +29,6 @@ module WebsphereCookbook
     property :script, [String, nil], default: nil
     property :file, [String, nil], default: nil
     property :return_codes, Array, default: [0]
-    property :sensitive, [TrueClass, FalseClass], default: false
 
     action :run do
       wsadmin_cmd = './wsadmin.sh -lang jython -conntype SOAP '
@@ -43,7 +42,7 @@ module WebsphereCookbook
         cwd bin_dir
         command wsadmin_cmd
         returns return_codes
-        sensitive sensitive
+        sensitive sensitive_exec
         action :run
       end
     end
@@ -58,7 +57,7 @@ module WebsphereCookbook
       execute "wsadmin #{label}" do
         cwd bin_dir
         command wsadmin_cmd
-        sensitive true
+        sensitive sensitive_exec
         action :run
       end
     end

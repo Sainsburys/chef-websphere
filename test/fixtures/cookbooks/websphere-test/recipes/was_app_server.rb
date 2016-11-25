@@ -4,6 +4,7 @@ websphere_dmgr 'Dmgr01' do
   cell_name 'MyNewCell'
   admin_user 'admin'
   admin_password 'admin'
+  sensitive_exec false
   action [:create, :start]
 end
 
@@ -11,6 +12,7 @@ websphere_profile 'Custom' do
   profile_type 'custom'
   admin_user 'admin'
   admin_password 'admin'
+  sensitive_exec false
   action [:create, :federate]
 end
 
@@ -28,6 +30,7 @@ websphere_app_server 'app_server1' do
       }
     }
   })
+  sensitive_exec false
   action [:create, :start]
 end
 
@@ -35,6 +38,7 @@ websphere_app_server 'app_server2' do
   node_name 'Custom_node'
   admin_user 'admin'
   admin_password 'admin'
+  sensitive_exec false
   action [:create, :start, :delete]
 end
 
@@ -52,6 +56,7 @@ websphere_app 'sample_app' do
   node_name 'Custom_node'
   admin_user 'admin'
   admin_password 'admin'
+  sensitive_exec false
   action [:deploy_to_server, :start]
 end
 
@@ -60,4 +65,13 @@ log 'test restarting app' do
   level :info
   notifies :stop, 'websphere_app[sample_app]', :immediately
   notifies :start, 'websphere_app[sample_app]', :immediately
+end
+
+websphere_profile 'App_Profile' do
+  profile_type 'appserver'
+  server_name 'AppProfile_server'
+  admin_user 'admin'
+  admin_password 'admin'
+  sensitive_exec false
+  action [:create, :federate, :start]
 end
