@@ -28,8 +28,10 @@ module WebsphereCookbook
     property :run_user, String, default: 'was'
     property :attributes, [Hash, nil], default: nil # these are only set if the node is federated.
     property :server_name, [String, nil], default: nil
-    # creates a new profile or augments/updates if profile exists.
+    property :manage_user, [TrueClass, FalseClass], default: true
+    property :manage_service, [TrueClass, FalseClass], default: true
 
+    # creates a new profile or augments/updates if profile exists.
     action :create do
       unless profile_exists?(profile_name)
         template_path = template_lookup(profile_type, profile_templates_dir)
@@ -58,8 +60,10 @@ module WebsphereCookbook
       federated = federated?(profile_path, node_name)
       if profile_exists?(profile_name) && !federated
         add_node("#{profile_path}/bin")
-        create_service_account(run_user) unless run_user == 'root'
-        enable_as_service(node_name, 'nodeagent', profile_path, run_user)
+        unless run_user == 'root' || manage_user == false
+          create_service_account(run_user)
+        end
+        enable_as_service(node_name, 'nodeagent', profile_path, run_user) if manage_service == true
       end
 
       # set attributes on server
