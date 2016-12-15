@@ -47,8 +47,10 @@ module WebsphereCookbook
         end
 
         # set java sdk if set
-        current_java = current_java_sdk(profile_name)
-        enable_java_sdk(java_sdk, "#{profile_path}/bin", profile_name) if java_sdk && current_java != java_sdk # only update if java version changes
+        if java_sdk
+          current_java = current_java_sdk(profile_name)
+          enable_java_sdk(java_sdk, "#{profile_path}/bin", profile_name) if current_java != java_sdk
+        end
       end
     end
 
