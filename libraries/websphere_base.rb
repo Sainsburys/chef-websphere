@@ -54,7 +54,7 @@ module WebsphereCookbook
       # returns a hash of enpoint => port for a server
       # if server is nil it returns an array of all servers endpoints and ports
       # returns nil if error
-      def get_ports(srvr_name = '', bin_directory = '/opt/IBM/WebSphere/AppServer/bin')
+      def get_ports(srvr_name = '', bin_directory = bin_dir)
         cookbook_file "#{bin_directory}/server_ports.py" do
           cookbook 'websphere'
           source 'server_ports.py'
