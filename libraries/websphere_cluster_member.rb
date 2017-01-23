@@ -9,7 +9,7 @@ module WebsphereCookbook
     resource_name :websphere_cluster_member
     property :server_name, String, name_property: true
     property :server_node, [String, nil], default: nil, required: true
-    property :member_weight, Fixnum, default: 2 # number from 0-100. Higher weight gets more traffic
+    property :member_weight, Integer, default: 2 # number from 0-100. Higher weight gets more traffic
     property :session_replication, [TrueClass, FalseClass], default: false
     property :resources_scope, String, default: 'both', regex: /^(both|server|cluster)$/
     property :generate_unique_ports, [TrueClass, FalseClass], default: true

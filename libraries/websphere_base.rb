@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# rubocop:disable Metrics/ClassLength
 module WebsphereCookbook
   class WebsphereBase < Chef::Resource
     require_relative 'helpers'
@@ -603,5 +602,3 @@ module WebsphereCookbook
     end
   end
 end
-
-# rubocop:enable Metrics/ClassLength
