@@ -497,7 +497,7 @@ module WebsphereCookbook
 
       def stop_all_servers(nde_name)
         cmd = "AdminServerManagement.stopAllServers('#{nde_name}')"
-        wsadmin_exec("wsadmin stoping all servers on node #{nde_name}", cmd, [0, 103])
+        wsadmin_exec("wsadmin stopping all servers on node #{nde_name}", cmd, [0, 103])
       end
 
       def delete_server(nde_name, serv_name)
