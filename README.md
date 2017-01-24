@@ -91,7 +91,7 @@ end
 - `profile_name`, String, name_property: true. # The Dmgr profile name.
 - `node_name`, String, default: lazy { "#{profile_name}_node" }. It's easier to keep the default name here.
 - `cell_name`, [String, nil], default: nil
-- `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
+- `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used. [See more](http://www.ibm.com/support/knowledgecenter/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/rxml_managesdk.html)
 - `security_attributes`, [Hash, nil], default: nil # A hash of security attributes to apply to the dmgr
 - `manage_user`, [TrueClass, FalseClass], default: true. Should the resource create the user for you. Set to false if you have created the run_user previously in your recipe, outside of this resource.
 - `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
@@ -130,9 +130,11 @@ end
 - `node_name`, String, default: lazy { "#{profile_name}_node" }
 - `server_name`, String, default: lazy { "#{profile_name}_server" }
 - `cell_name`, [String, nil], default: nil
-- `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
+- `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used. [See more](http://www.ibm.com/support/knowledgecenter/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/rxml_managesdk.html)
 - `profile_type`, String, default: 'custom', Can be either appserver or custom, but easier to just use custom all the time and add jvms with websphere_app_server or websphere_cluster_member.
 - `attributes`, [Hash, nil], default: nil, These are custom attributes for the server when using the appserver type profile, such as monitoringPolicy. They are only set when the node is federated.
+- `manage_user`, [TrueClass, FalseClass], default: true. Should the resource create the user for you. Set to false if you have created the run_user previously in your recipe, outside of this resource.
+- `manage_service`, [TrueClass, FalseClass], default: true. Should the resource create the init service for you. Set to false if you have created the service previously in your recipe, outside of this resource.
 - `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ##### Actions

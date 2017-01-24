@@ -51,7 +51,7 @@ module WebsphereCookbook
         manageprofiles_exec('./manageprofiles.sh -create', options)
       end
 
-      # set java sdk if set
+      # Enable "profile_name" to use the specific "java_sdk"
       if java_sdk
         current_java = current_java_sdk(profile_name)
         enable_java_sdk(java_sdk, "#{profile_path}/bin", profile_name) if p_exists && current_java != java_sdk
