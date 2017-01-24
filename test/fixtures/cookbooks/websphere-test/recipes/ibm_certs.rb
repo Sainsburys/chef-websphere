@@ -33,6 +33,14 @@ ibm_package 'PLG Plugins install' do
   sensitive_exec false
 end
 
+# Enable IBMCMSKS provider
+cookbook_file '/opt/IBM/WebSphere/Plugins/java/jre/lib/security/java.security' do
+  source 'java.security'
+  owner 'root'
+  group 'root'
+  mode 00644
+end
+
 user 'jim'
 
 ibm_cert 'mydomain.com' do

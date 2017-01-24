@@ -24,8 +24,8 @@ before_script:
 - openssl aes-256-cbc -K $encrypted_deb391b403a8_key -iv $encrypted_deb391b403a8_iv
   -in travis-ci.pem.enc -out travis-ci.pem -d
 - "/opt/chefdk/embedded/bin/chef --version"
-- rubocop --version
-- rubocop
+- cookstyle --version
+- cookstyle
 - foodcritic --version
 - foodcritic . --exclude spec
 script:

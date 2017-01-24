@@ -23,5 +23,13 @@ Metrics/ClassLength:
 Metrics/MethodLength:
   Max: 20
 
+# Easier for diff, but not common enough
+Style/TrailingCommaInLiteral:
+  Enabled: false
+
+# Ruby 3
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 Lint/ParenthesesAsGroupedExpression:
   Enabled: false
