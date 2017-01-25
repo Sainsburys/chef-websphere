@@ -1,11 +1,21 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
+
+v1.0.2
+--------------------
+- use cookstyle for style check
+- fix integration tests(IBMCMSKS provider missing)
+- do not try to look at the current java sdk if the attribute is not specified (WAS ND 7 Friendly)
+- allow to not create a user and a service when using websphere_profile
+
 v1.0.1
+--------------------
 - run manageprofiles.sh as was run_user
 - add sensitive_exec feature for debugging on all resources
 - readme update
 
 v1.0.0
+--------------------
 - released to supermarket. Travis-ci integration tests.
 
 v0.6.0
