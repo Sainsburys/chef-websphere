@@ -18,7 +18,7 @@ module WebsphereCookbook
     # creates a new profile or augments/updates if profile exists.
     action :create do
       # make sure cluster exists, and we're not adding a server that already exists in a cluster.
-      if cluster_exists?(cluster_name) && !member_of_cluster?(server_name)
+      if cluster_exists?(cluster_name) && !member_of_cluster?(server_name, server_node)
         if get_cluster_members(cluster_name).count > 0
           # this will NOT be the first member. add as additional
           cmd = "AdminTask.createClusterMember(['-clusterName', '#{cluster_name}', '-memberConfig', '[-memberNode #{server_node} "\

@@ -328,23 +328,34 @@ module WebsphereCookbook
         false
       end
 
-      # returns true if server name is a member of specified cluster.
-      def member?(clus_name, serv_name)
-        cmd = "-c \"AdminClusterManagement.checkIfClusterMemberExists('#{clus_name}', '#{serv_name}')\""
-        mycmd = wsadmin_returns(cmd)
-        if mycmd.stdout.include?("\n'true'\n")
-          Chef::Log.debug("Server: #{serv_name} IS a member of cluster: #{clus_name}")
+      # returns true if server name is a member of specified cluster for a specified node.
+      def member?(clus_name, serv_name, serv_node)
+        # Get all server members from the cluster
+        server_list_cmd = wsadmin_returns("-c \"AdminClusterManagement.listClusterMembers('#{clus_name}')\"")
+        server_list = server_list_cmd.stdout.chomp.match(/\[(.*?)\]/)
+
+        # Look for a server member with the same name and the same node name.
+        # AdminClusterManagement.checkIfClusterMemberExists doesn't look for the node, so if you have one server on
+        # another node with the same name, it will return true.
+        is_member = server_list.captures.first.split(/, */).select do |srv|
+          current_server_name = wsadmin_last_returned_value(wsadmin_returns("-c \"AdminConfig.showAttribute(#{srv}, 'memberName')\"").stdout)
+          current_node_name = wsadmin_last_returned_value(wsadmin_returns("-c \"AdminConfig.showAttribute(#{srv}, 'nodeName')\"").stdout)
+          current_server_name == serv_name && current_node_name == serv_node
+        end.empty?
+        if is_member
+          Chef::Log.debug("Server: #{serv_name} is NOT a member of cluster: #{clus_name}(on node #{serv_node})")
+          return false
+        else
+          Chef::Log.debug("Server: #{serv_name} IS a member of cluster: #{clus_name}(on node #{serv_node})")
           return true
         end
-        Chef::Log.debug("Server: #{serv_name} is NOT a member of cluster: #{clus_name}")
-        false
       end
 
       # if server is a cluster member, it returns the cluster name
       # returns nil is server is not part of a cluster
-      def member_of_cluster?(serv_name)
+      def member_of_cluster?(serv_name, serv_node)
         clusters.each do |cluster|
-          return cluster if member?(cluster, serv_name)
+          return cluster if member?(cluster, serv_name, serv_node)
         end
         nil
       end

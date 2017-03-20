@@ -21,6 +21,15 @@ module WebsphereCookbook
       str.chomp.gsub(/\[|\]/, '').split(', ') # trim '[' and ']' chars from string and convert to array
     end
 
+    # Return the last line of a wsadmin cmd output.
+    # Useful when trying to get a single value from a wsadmin cmd. By example if we want to get "server1" from:
+    # AdminConfig.showAttribute(serverId, 'memberName')
+    # WASX7209I: Connected to process "dmgr" on node infradev-test-gol-dmgr-i-0869602ce0cc48ce6 using SOAP connector;  The type of process is: DeploymentManager
+    # 'server1'
+    def wsadmin_last_returned_value(output)
+      output.lines.last.chomp.match(/^'(.*)'$/).captures.first
+    end
+
     # returns cell name for a profile path
     # assumes only one cell folder can exist in a profile config path
     def profile_cell(p_path)
