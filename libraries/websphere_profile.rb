@@ -26,6 +26,7 @@ module WebsphereCookbook
     resource_name :websphere_profile
     property :profile_type, String, default: 'custom', regex: /^(appserver|custom)$/
     property :run_user, String, default: 'was'
+    property :run_group, String, default: 'was'
     property :attributes, [Hash, nil], default: nil # these are only set if the node is federated.
     property :server_name, [String, nil], default: nil
     property :manage_user, [TrueClass, FalseClass], default: true
@@ -44,6 +45,8 @@ module WebsphereCookbook
         execute "manage_profiles -create #{profile_name}" do
           cwd bin_dir
           command cmd
+          user run_user
+          group run_group
           sensitive true
           action :run
         end
@@ -61,7 +64,7 @@ module WebsphereCookbook
       if profile_exists?(profile_name) && !federated
         add_node("#{profile_path}/bin")
         unless run_user == 'root' || manage_user == false
-          create_service_account(run_user)
+          create_service_account(run_user, run_group)
         end
         enable_as_service(node_name, 'nodeagent', profile_path, run_user) if manage_service == true
       end
