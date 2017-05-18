@@ -44,6 +44,7 @@ module WebsphereCookbook
         execute "manage_profiles #{cmd} #{profile_name}" do
           cwd bin_dir
           user run_user
+          group run_group
           command command
           sensitive sensitive_exec
           action :run
@@ -168,26 +169,31 @@ module WebsphereCookbook
         end
       end
 
-      def create_service_account(user)
+      def create_service_account(user, group)
+        group group do
+          action :create
+          not_if { user == 'root' }
+        end
         user user do
           comment 'websphere service account'
           home "/home/#{user}"
+          group group
           shell '/sbin/nologin'
           not_if { user == 'root' }
         end
 
         directory "/home/#{user}" do
           owner user
-          group user
+          group group
           mode '0750'
           recursive true
           action :create
           not_if { user == 'root' }
         end
 
-        # there's no perfect way to chown in chef without being explicit for each dir with the directlry resource.
+        # there's no perfect way to chown in chef without being explicit for each dir with the directory resource.
         execute 'chown websphere root for service account' do
-          command "chown -R #{user}:root #{websphere_root}"
+          command "chown -R #{user}:#{group} #{websphere_root}"
           action :run
         end
       end
