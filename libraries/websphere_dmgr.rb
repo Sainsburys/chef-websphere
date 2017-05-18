@@ -30,12 +30,13 @@ module WebsphereCookbook
     property :java_sdk, [String, nil], default: nil # javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
     property :security_attributes, [Hash, nil], default: nil # these are set when the Dmgr is started
     property :run_user, String, default: 'was'
+    property :run_group, String, default: 'was'
     property :manage_user, [TrueClass, FalseClass], default: true
 
     # creates a new profile or augments/updates if profile exists.
     action :create do
       unless run_user == 'root' || manage_user == false
-        create_service_account(run_user)
+        create_service_account(run_user, run_group)
       end
 
       p_exists = profile_exists?(profile_name)

@@ -41,6 +41,8 @@ services.each do |service|
 end
 
 describe file('/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/config/cells/MyNewCell/nodes/CustomProfile1_node/servers/ClusterServer1/server.xml') do
+  it { should be_owned_by 'was' }
+  it { should be_grouped_into 'was' }
   its(:content) { should match(/<jvmEntries.*initialHeapSize="1024".*maximumHeapSize="3072".*debugMode="true"/) }
   its(:content) { should match(/maximumStartupAttempts="2"/) }
   its(:content) { should match(/pingInterval="222"/) }
