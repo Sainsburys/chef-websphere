@@ -1,6 +1,14 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.0.4
+--------------------
+- add user parameter to commands so files are not owned by root in contexts where we are running as user
+
+v1.0.3
+--------------------
+- ensure server members with the same name on different nodes do not clash on cluster member checks
+- add group setting to certain commands
 v1.0.2
 --------------------
 - use cookstyle for style check
