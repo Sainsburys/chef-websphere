@@ -78,6 +78,7 @@ module WebsphereCookbook
 
         execute "stop #{p_name}" do
           cwd profile_bin
+          user run_user
           command cmd
           returns [0, 246, 255]
           sensitive sensitive_exec
@@ -92,6 +93,7 @@ module WebsphereCookbook
         # start_profile(profile_name, "#{profile_path}/bin", "./startNode.sh", [0, 255])
         execute "start node on profile: #{profile_bin}" do
           cwd profile_bin
+          user run_user
           command './startNode.sh'
           returns [0, 255] # ignore error if node already started.
           action :run
@@ -110,6 +112,7 @@ module WebsphereCookbook
 
         execute "sync node on profile: #{profile_bin}" do
           cwd profile_bin
+          user run_user
           command cmd
           returns [0]
           action :run
@@ -136,6 +139,7 @@ module WebsphereCookbook
         # start_profile(profile_name, bin_dir, "./startManager.sh -profileName #{profile_name}", [0, 255])
         execute "start dmgr profile: #{p_name}" do
           cwd bin_dir
+          user run_user
           command "./startManager.sh -profileName #{p_name}"
           returns [0, 255] # ignore error if node already started.
           action :run
@@ -208,6 +212,7 @@ module WebsphereCookbook
 
         execute "addNode #{profile_bin_dir}" do
           cwd profile_bin_dir
+          user run_user
           command cmd
           sensitive sensitive_exec
           action :run
@@ -225,6 +230,7 @@ module WebsphereCookbook
 
         execute "removeNode #{profile_bin_dir}" do
           cwd bin_dir
+          user run_user
           command cmd
           sensitive sensitive_exec
           action :run
@@ -238,6 +244,7 @@ module WebsphereCookbook
         cmd << " -username #{admin_user} -password #{admin_password}" if admin_user && admin_password
         execute "cleanupNode node: #{nde_name} dmgr: #{dmgr_host}" do
           cwd bin_dir
+          user run_user
           command cmd
           sensitive sensitive_exec
           action :run
@@ -247,6 +254,7 @@ module WebsphereCookbook
       def update_registry
         execute 'update profile registry' do
           cwd bin_dir
+          user run_user
           command './manageprofiles.sh -validateAndUpdateRegistry'
           action :run
         end
@@ -272,6 +280,7 @@ module WebsphereCookbook
       def delete_profile(p_name, p_path)
         execute "delete #{p_name}" do
           cwd bin_dir
+          user run_user
           command "./manageprofiles.sh -delete -profileName #{p_name} && "\
             './manageprofiles.sh -validateAndUpdateRegistry'
           returns [0, 2]
@@ -292,6 +301,7 @@ module WebsphereCookbook
         cmd << " -user #{admin_user} -password #{admin_password}" if admin_user && admin_password
         execute "enable java #{sdk_name} on profile: #{profile_name}" do
           cwd profile_bin
+          user run_user
           command cmd
           action :run
         end
@@ -467,6 +477,7 @@ module WebsphereCookbook
 
         execute "wsadmin #{label}" do
           cwd bin_directory
+          user run_user
           command wsadmin_cmd
           returns return_codes
           sensitive sensitive_exec
@@ -484,6 +495,7 @@ module WebsphereCookbook
 
         execute "wsadmin #{label}" do
           cwd bin_directory
+          user run_user
           command wsadmin_cmd
           returns return_codes
           sensitive sensitive_exec
