@@ -24,6 +24,8 @@ module WebsphereCookbook
     resource_name :websphere_base
     property :websphere_root, String, default: '/opt/IBM/WebSphere/AppServer'
     property :bin_dir, String, default: lazy { "#{websphere_root}/bin" }
+    property :run_user, String, default: 'was'
+    property :run_group, String, default: 'was'
     property :admin_user, [String, nil], default: nil
     property :admin_password, [String, nil], default: nil
     property :dmgr_host, String, default: 'localhost' # dmgr host to federate to.
