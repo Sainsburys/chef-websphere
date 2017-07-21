@@ -29,8 +29,6 @@ module WebsphereCookbook
     property :profile_templates_dir, String, default: lazy { "#{websphere_root}/profileTemplates" }
     property :java_sdk, [String, nil], default: nil # javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
     property :security_attributes, [Hash, nil], default: nil # these are set when the Dmgr is started
-    property :run_user, String, default: 'was'
-    property :run_group, String, default: 'was'
     property :manage_user, [TrueClass, FalseClass], default: true
 
     # creates a new profile or augments/updates if profile exists.

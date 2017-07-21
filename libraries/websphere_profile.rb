@@ -25,8 +25,6 @@ module WebsphereCookbook
 
     resource_name :websphere_profile
     property :profile_type, String, default: 'custom', regex: /^(appserver|custom)$/
-    property :run_user, String, default: 'was'
-    property :run_group, String, default: 'was'
     property :attributes, [Hash, nil], default: nil # these are only set if the node is federated.
     property :server_name, [String, nil], default: nil
     property :manage_user, [TrueClass, FalseClass], default: true
