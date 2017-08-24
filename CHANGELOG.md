@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.0.3
+--------------------
+- add fingerprint check for IBM certificate import
+
 v1.0.2
 --------------------
 - use cookstyle for style check

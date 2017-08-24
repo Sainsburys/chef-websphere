@@ -122,17 +122,31 @@ module WebsphereCookbook
         end
       end
 
+      def cert_sha256_fingerprint(db, cert_password = nil)
+        cmd = "#{ikeycmd} -cert -details -label #{label} -db #{db}"
+        cmd << " -pw #{cert_password}" if cert_password
+        cmd << " | grep SHA256:' | awk '{print $2}'"
+        mycmd = Mixlib::ShellOut.new(cmd, cwd: ::File.dirname(db))
+        mycmd.run_command
+      end
+
       def cert_in_keystore?
         cmd = "#{ikeycmd} -cert -list -pw #{kdb_password} -label #{label} -db #{kdb}"
         mycmd = Mixlib::ShellOut.new(cmd, cwd: ::File.dirname(kdb))
         mycmd.run_command
         if mycmd.stdout.include?("doesn't contain an entry with label") || mycmd.error?
           Chef::Log.warn("certificate #{label} not found in #{kdb}")
-          return false
         else
           Chef::Log.warn("certificate #{label} already exists in #{kdb}")
-          return true
+          kdb_print = cert_sha256_fingerprint(kdb, kdb_password)
+          cert_print = if import_password
+                         cert_sha256_fingerprint(add_cert, import_password)
+                       else
+                         cert_sha256_fingerprint(add_cert)
+                       end
+          return true if kdb_print == cert_print
         end
+        false
       end
     end
   end
