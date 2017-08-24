@@ -1,5 +1,8 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
+v1.0.5
+--------------------
+- add update action for IBM certificate import
 
 v1.0.4
 --------------------
@@ -9,6 +12,7 @@ v1.0.3
 --------------------
 - ensure server members with the same name on different nodes do not clash on cluster member checks
 - add group setting to certain commands
+
 v1.0.2
 --------------------
 - use cookstyle for style check
