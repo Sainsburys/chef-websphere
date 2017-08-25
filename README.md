@@ -414,6 +414,8 @@ end
 - `:create` - Creates a keystore with a default certificate
 - `:extract` - extracts a certificate from a keystore
 - `:add` - adds an existing certificate to an existing keystore.
+- `:import` - import a new certificate to an existing keystore.
+- `:update` - update a certificate in an existing keystore with the same label.
 
 
 ### websphere_env
