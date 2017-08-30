@@ -80,5 +80,5 @@ ibm_cert 'chef-websphere-test.com' do
   import_password 'password'
   sensitive_exec false
   ikeycmd '/opt/IBM/WebSphere/Plugins/java/jre/bin/ikeycmd'
-  action [:import, :set_default]
+  action [:import, :set_default, :update]
 end

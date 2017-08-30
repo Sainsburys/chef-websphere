@@ -1,5 +1,9 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
+v1.0.6
+--------------------
+- Fix fingerprint call and make update more idempotent (and faster)
+
 v1.0.5
 --------------------
 - add update action for IBM certificate import

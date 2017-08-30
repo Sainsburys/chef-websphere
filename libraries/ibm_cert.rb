@@ -100,13 +100,14 @@ module WebsphereCookbook
         action :run
         only_if { ::File.exist?(kdb) && ::File.exist?(add_cert) }
         not_if { matching_cert_in_keystore? }
+        notifies :run, "execute[import key database #{label} to #{kdb}]", :immediately
       end
 
       execute "import key database #{label} to #{kdb}" do
         command "#{ikeycmd} -cert -import -target #{kdb} -target_pw #{kdb_password} -type #{kdb_type} -db #{add_cert} -label #{label} -target_type cms"
         command << " -pw #{import_password}" if import_password
         sensitive sensitive_exec
-        action :run
+        action :nothing
         only_if { ::File.exist?(kdb) && ::File.exist?(add_cert) }
         not_if { cert_in_keystore? }
       end
@@ -144,7 +145,7 @@ module WebsphereCookbook
       def cert_sha256_fingerprint(db, cert_password = nil)
         cmd = "#{ikeycmd} -cert -details -label #{label} -db #{db}"
         cmd << " -pw #{cert_password}" if cert_password
-        cmd << " | grep SHA256:' | awk '{print $2}'"
+        cmd << " | grep 'SHA256:' | awk '{print $2}'"
         mycmd = Mixlib::ShellOut.new(cmd, cwd: ::File.dirname(db))
         mycmd.run_command
       end
@@ -162,9 +163,10 @@ module WebsphereCookbook
         end
       end
 
+      # return true if the SHA256 fingerprint matches the certificate in the keystore
       def matching_cert_in_keystore?
         if cert_in_keystore?
-          Chef::Log.warn("certificate #{label} not found in #{kdb}")
+          Chef::Log.warn("certificate #{label} found in #{kdb}, checking fingerprints")
           kdb_print = cert_sha256_fingerprint(kdb, kdb_password)
           cert_print = if import_password
                          cert_sha256_fingerprint(add_cert, import_password)
