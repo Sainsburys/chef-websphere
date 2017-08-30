@@ -148,6 +148,7 @@ module WebsphereCookbook
         cmd << " | grep 'SHA256:' | awk '{print $2}'"
         mycmd = Mixlib::ShellOut.new(cmd, cwd: ::File.dirname(db))
         mycmd.run_command
+        mycmd.stdout
       end
 
       def cert_in_keystore?
