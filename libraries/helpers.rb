@@ -46,5 +46,20 @@ module WebsphereCookbook
       }
       mgmttype[profle_type]
     end
+# Convert a passed in hash into a wsadmin acceptable string
+    def attributes_to_wsadmin_str(attributes_hash)
+      if !attributes_hash.nil
+        attribute_str = '['
+        attributes_hash.each do |k, v|
+          attribute_str.concat("['#{k}', ")
+          if v.is_a?(Hash)
+            attribute_str.concat(attributes_to_wsadmin_str(v))
+          else
+            attribute_str.concat("'#{v}']")
+          end
+        end
+        attribute_str.concat(']')
+        attribute_str
+      end
   end
 end
