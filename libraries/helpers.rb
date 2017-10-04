@@ -56,16 +56,16 @@ module WebsphereCookbook
       mgmttype[profle_type]
     end
 
-# Generic convert to wsadmin array
-# We convert a ruby hash / array into a [] bracket string which is understood by wsadmin script.
-# Each kvp in a hash is surrounded by [] and then if the value is an object it is in-turn passed
-# through the method to ensure the correct wrapping.
-# Sample ruby input { 'foo' => [ { 'bar' => 'car', 'a' => 'b'}, {'c' => 'd', 'e' =>'f'} ] }
-#             output [['foo' [[['bar','car'],['a','b']],[['c','d'],['e','f']]]]]
+    # Generic convert to wsadmin array
+    # We convert a ruby hash / array into a [] bracket string which is understood by wsadmin script.
+    # Each kvp in a hash is surrounded by [] and then if the value is an object it is in-turn passed
+    # through the method to ensure the correct wrapping.
+    # Sample ruby input { 'foo' => [ { 'bar' => 'car', 'a' => 'b'}, {'c' => 'd', 'e' =>'f'} ] }
+    #             output [['foo' [[['bar','car'],['a','b']],[['c','d'],['e','f']]]]]
     def attributes_to_wsadmin_str(an_object)
       attribute_str = ''
-      if !an_object.nil?
-# Need to determine how to preceed based on the object type
+      unless an_object.nil?
+        # Need to determine how to proceed based on the object type
         if an_object.is_a?(Hash)
           last_index = an_object.size - 1
           attribute_str.concat('[')
@@ -73,9 +73,7 @@ module WebsphereCookbook
             attribute_str.concat('[')
             attribute_str.concat("'#{k}', #{attributes_to_wsadmin_str(v)}")
             attribute_str.concat(']')
-            if index < last_index
-              attribute_str.concat(', ')
-            end
+            attribute_str.concat(', ') if index < last_index
           end
           attribute_str.concat(']')
         elsif an_object.is_a?(Array)
@@ -83,13 +81,11 @@ module WebsphereCookbook
           attribute_str.concat('[')
           an_object.each_with_index do |v, index|
             attribute_str.concat(attributes_to_wsadmin_str(v))
-            if index < last_index
-              attribute_str.concat(', ')
-            end
+            attribute_str.concat(', ') if index < last_index
           end
           attribute_str.concat(']')
         else
-# I'm just a simple value
+          # I'm just a simple value
           attribute_str.concat("'#{an_object}'")
         end
       end
