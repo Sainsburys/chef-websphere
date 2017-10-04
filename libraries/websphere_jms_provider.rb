@@ -30,11 +30,11 @@ module WebsphereCookbook
     property :url, [String, nil], default: nil
     property :classpath_jars, [Array, nil], default: nil # full path to each jar
     property :description, [String, nil], default: nil
-    property :attributes, [Hash, nil], default: { } # Generic hash holding attributes for the provider - see : https://www.ibm.com/support/knowledgecenter/en/SS7K4U_7.0.0/com.ibm.websphere.zseries.doc/info/zseries/ae/rxml_7adminjms.html (ignore that it's for zOS) 
+    property :attributes, [Hash, nil], default: {} # Generic hash holding attributes for the provider - see : https://www.ibm.com/support/knowledgecenter/en/SS7K4U_7.0.0/com.ibm.websphere.zseries.doc/info/zseries/ae/rxml_7adminjms.html (ignore that it's for zOS)
     action :create do
       unless jms_provider_exists?
-        @jmsattrs = attributes.merge( {'classpath' => "#{classpath_jars.join(';')}" } )
-        @jmsattrs.merge!( {'description' => "#{description}" } )
+        @jmsattrs = attributes.merge('classpath' => classpath_jars.join(';').to_s)
+        @jmsattrs['description'] = description
         @attributes_str = attributes_to_wsadmin_str(@jmsattrs)
         cmd = "AdminJMS.createJMSProviderAtScope('#{scope}', '#{provider_name}', "\
           "'#{context_factory}', '#{url}', #{@attributes_str})"
