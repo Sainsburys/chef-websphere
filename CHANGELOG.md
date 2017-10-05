@@ -1,5 +1,9 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
+v1.0.7
+--------------------
+- Update to allow setting of attributes against a JMS provider
+
 v1.0.6
 --------------------
 - Fix fingerprint call and make update more idempotent (and faster)
