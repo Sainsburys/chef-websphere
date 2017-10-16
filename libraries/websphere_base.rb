@@ -630,6 +630,26 @@ module WebsphereCookbook
         wsadmin_exec("wsadmin deploy #{appl_file} to cluster #{clus_name}", cmd)
         save_config
       end
+
+      # Retrieve those cluster templates already defined for a cluster
+      def get_cluster_templates(clus_name)
+        cmd = "-c \"AdminTask.listClusterMemberTemplates('[-clusterName #{clus_name}]')\""
+        mycmd = wsadmin_returns(cmd)
+        # example output:'V7MemberTemplate(templates/clusters/sample-cluster/servers/V7MemberTemplate|server.xml#Server_1506097558200)\nV7MemberTemplate0(templates/clusters/sample-cluster/servers/V7MemberTemplate0|server.xml#Server_1508144541044)'
+        was_templates = []
+        return was_templates if mycmd.error?
+        str = mycmd.stdout.chomp.match(/'(.*?)'/) # get only what's between ''.
+        return was_templates if str.nil?
+        str_match = str.captures.first
+        # get the first match only, removing outer brackets ['']
+        raw_servers = str_match.split("\n")
+        raw_servers.each do |s|
+          was_template = s.split('(')[0]
+          was_templates << was_template
+        end
+        Chef::Log.debug("get_cluster_templates() result #{was_templates}")
+        was_templates
+      end
     end
   end
 end
