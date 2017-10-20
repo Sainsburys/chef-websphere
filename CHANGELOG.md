@@ -1,5 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
+
+v1.0.8
+--------------------
+- Don't add a new cluster template if one exists
+
 v1.0.7
 --------------------
 - Update to allow setting of attributes against a JMS provider
