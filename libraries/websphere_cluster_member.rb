@@ -19,13 +19,15 @@ module WebsphereCookbook
     action :create do
       # make sure cluster exists, and we're not adding a server that already exists in a cluster.
       if cluster_exists?(cluster_name) && !member_of_cluster?(server_name, server_node)
-        if get_cluster_members(cluster_name).count > 0
-          # this will NOT be the first member. add as additional
+        if get_cluster_members(cluster_name).count > 0 || get_cluster_templates(cluster_name).count > 0
+          # this will NOT be the first member (or we have defined a template at some point). Add as additional
+          Chef::Log.info('Not creating first member, either existing members or templates exist')
           cmd = "AdminTask.createClusterMember(['-clusterName', '#{cluster_name}', '-memberConfig', '[-memberNode #{server_node} "\
             "-memberName #{server_name} -memberWeight #{member_weight} -genUniquePorts #{generate_unique_ports} -replicatorEntry #{session_replication}]'])"
           wsadmin_exec("wsadmin add additional member: #{server_name} to cluster: #{cluster_name} ", cmd)
         else
           # this will be the first member and be the template for further cluster members
+          Chef::Log.info('Creating first cluster member and template')
           cmd = "AdminClusterManagement.createFirstClusterMemberWithTemplate('#{cluster_name}', '#{server_node}', '#{server_name}', 'default')"
           wsadmin_exec("wsadmin add first cluster member: #{server_name} to cluster: #{cluster_name} ", cmd)
         end
