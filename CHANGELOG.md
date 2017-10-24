@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.0.9
+--------------------
+- add ability to specify a template for new cluster member
+
 v1.0.8
 --------------------
 - Don't add a new cluster template if one exists
