@@ -33,14 +33,14 @@ module WebsphereCookbook
           # this will be the first member and be the template for further cluster members. Decide if we have a template server elsewhere to use
           Chef::Log.info('Creating first cluster member and template')
           cmd = nil
-          if template_node_name != nil && template_server_name != nil
+          if !template_node_name.nil? && !template_server_name.nil?
             Chef::Log.info("Using node #{template_node_name} and server #{template_server_name} as a template")
             cmd = "AdminClusterManagement.createFirstClusterMemberWithTemplateNodeServer('#{cluster_name}', '#{server_node}', '#{server_name}', '#{template_node_name}', '#{template_server_name}')"
           else
             # This will create a standard WAS server using the default application server template
             Chef::Log.info('Creating new member using default application server template')
             cmd = "AdminClusterManagement.createFirstClusterMemberWithTemplate('#{cluster_name}', '#{server_node}', '#{server_name}', 'default')"
-          end 
+          end
           wsadmin_exec("wsadmin add first cluster member: #{server_name} to cluster: #{cluster_name} ", cmd)
         end
       end
