@@ -20,7 +20,7 @@ module WebsphereCookbook
     # creates a new profile or augments/updates if profile exists.
     action :create do
       # make sure cluster exists, and we're not adding a server that already exists in a cluster.
-      if cluster_exists?(cluster_name) && !member_of_cluster?(server_name, server_node)
+      if cluster_exists?(cluster_name) && !member?(cluster_name, server_name, server_node)
         if get_cluster_members(cluster_name).count > 0
           # this will NOT be the first member (or we have defined a template at some point). Add as additional
           # There is a horrible WAS 'feature' that means that even if a template has been defined on a cluster, if there are no members

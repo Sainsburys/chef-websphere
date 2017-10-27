@@ -321,7 +321,6 @@ module WebsphereCookbook
         wsadmin_cmd << cmd
         mycmd = Mixlib::ShellOut.new(wsadmin_cmd, cwd: bin_directory)
         mycmd.run_command
-
         Chef::Log.debug("wsadmin_returns cmd: #{cmd} stdout: #{mycmd.stdout} stderr: #{mycmd.stderr}")
         mycmd
       end
@@ -347,26 +346,21 @@ module WebsphereCookbook
       end
 
       # returns true if server name is a member of specified cluster for a specified node.
-      def member?(clus_name, serv_name, serv_node)
+      def member?(clus_name, serv_name, serv_node, bin_directory = bin_dir)
         # Get all server members from the cluster
-        server_list_cmd = wsadmin_returns("-c \"AdminClusterManagement.listClusterMembers('#{clus_name}')\"")
-        server_list = server_list_cmd.stdout.chomp.match(/\[(.*?)\]/)
-
-        # Look for a server member with the same name and the same node name.
-        # AdminClusterManagement.checkIfClusterMemberExists doesn't look for the node, so if you have one server on
-        # another node with the same name, it will return true.
-        is_member = server_list.captures.first.split(/, */).select do |srv|
-          current_server_name = wsadmin_last_returned_value(wsadmin_returns("-c \"AdminConfig.showAttribute(#{srv}, 'memberName')\"").stdout)
-          current_node_name = wsadmin_last_returned_value(wsadmin_returns("-c \"AdminConfig.showAttribute(#{srv}, 'nodeName')\"").stdout)
-          current_server_name == serv_name && current_node_name == serv_node
-        end.empty?
-        if is_member
-          Chef::Log.debug("Server: #{serv_name} is NOT a member of cluster: #{clus_name}(on node #{serv_node})")
-          return false
-        else
-          Chef::Log.debug("Server: #{serv_name} IS a member of cluster: #{clus_name}(on node #{serv_node})")
-          return true
+        cookbook_file "#{bin_directory}/cluster_member_exists.py" do
+          cookbook 'websphere'
+          source 'cluster_member_exists.py'
+          mode '0755'
+          action :create
         end
+        Chef::Log.info("Checking for: #{clus_name} #{serv_node} #{serv_name}")
+        cmd = "-f #{bin_directory}/cluster_member_exists.py #{clus_name} #{serv_node} #{serv_name}"
+        mycmd = wsadmin_returns(cmd)
+        return false if mycmd.error?
+        Chef::Log.debug("Result from member query #{mycmd.stdout}")
+        return true if mycmd.stdout.include?('===1===')
+        false
       end
 
       # if server is a cluster member, it returns the cluster name
