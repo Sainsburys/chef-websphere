@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.0.10
+--------------------
+- use pure wsadmin to determine cluster membership
+
 v1.0.9
 --------------------
 - add ability to specify a template for new cluster member
