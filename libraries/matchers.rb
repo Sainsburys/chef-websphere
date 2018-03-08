@@ -17,6 +17,10 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:websphere_dmgr, :delete, resource_name)
   end
 
+  def sync_websphere_dmgr(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:websphere_dmgr, :sync_all, resource_name)
+  end
+
   # websphere_profile
   def create_websphere_profile(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:websphere_profile, :create, resource_name)
@@ -106,4 +110,37 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:websphere_ihs, :stop, resource_name)
   end
 
+  def restart_websphere_ihs(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:websphere_ihs, :restart, resource_name)
+  end
+
+  # IBM certificates
+  def create_ibm_certificate(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:ibm_cert, :create, resource_name)
+  end
+
+  def extract_ibm_certificate(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:ibm_cert, :extract, resource_name)
+  end
+
+  def add_ibm_certificate(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:ibm_cert, :add, resource_name)
+  end
+
+  def import_ibm_certificate(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:ibm_cert, :import, resource_name)
+  end
+
+  def make_default_ibm_certificate(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:ibm_cert, :set_default, resource_name)
+  end
+
+  # JMS
+  def create_jms_provider(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:websphere_jms_provider, :create, resource_name)
+  end
+
+  def create_jms_conn_factory(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:websphere_jms_conn_factory, :create, resource_name)
+  end
 end
