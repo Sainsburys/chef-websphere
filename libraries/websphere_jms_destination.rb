@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: websphere
-# Resource:: websphere-server
+# Resource:: websphere_jms_destination
 #
 # Copyright (C) 2015 J Sainsburys
 #
