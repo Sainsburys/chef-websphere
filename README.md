@@ -6,7 +6,7 @@
 
 This cookbook installs and configures Websphere Application Server Network Deployment (WAS-ND). It has only been tested with a Deployment Manager and Managed nodes.
 
-So far it has only been tested with Websphere ND 8.5.
+So far it has only been tested with Websphere ND 7.0 and 8.5.
 
 The cookbook lacks idempotency as querying WAS for the current state is overly complex, really slow, or just not possible.  For that reason it's better to destroy and recreate objects rather than update them at this stage.
 
@@ -20,6 +20,7 @@ The cookbook lacks idempotency as querying WAS for the current state is overly c
 * Red Hat Enterprise 6
 
 ## Versions
+• WASND 7.0
 • WASND 8.5
 
 ## Usage

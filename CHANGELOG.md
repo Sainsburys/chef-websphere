@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.0.11
+--------------------
+- update README docs with WAS ND 7.0
+
 v1.0.10
 --------------------
 - use pure wsadmin to determine cluster membership
