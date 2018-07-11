@@ -83,13 +83,14 @@ end
 
 ##### Parameters
 
+- `label`, String, name_property: true, just a label to make the execute resource name unique
 - `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
 - `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
 - `admin_user`, [String, nil], default: nil, The dmgr user.  
 - `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
 - `dmgr_host`, String, default: 'localhost', The dmgr host/ip.
 - `dmgr_port`, [String, nil], default: nil, The dmgr port, when nil WAS will default to dmgr SOAP connector default port 8879.
-- `profile_name`, String, name_property: true. # The Dmgr profile name.
+- `profile_name`, String, # The Dmgr profile name.
 - `node_name`, String, default: lazy { "#{profile_name}_node" }. It's easier to keep the default name here.
 - `cell_name`, [String, nil], default: nil
 - `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used. [See more](http://www.ibm.com/support/knowledgecenter/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/rxml_managesdk.html)
@@ -121,13 +122,14 @@ end
 
 ##### Parameters
 
+- `label`, String, name_property: true, just a label to make the execute resource name unique
 - `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
 - `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
 - `admin_user`, [String, nil], default: nil, The dmgr user.  
 - `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
 - `dmgr_host`, String, default: 'localhost', The dmgr host to federate to.
 - `dmgr_port`, [String, nil], default: nil, The dmgr port to federate to.
-- `profile_name`, String, name_property: true
+- `profile_name`, String
 - `node_name`, String, default: lazy { "#{profile_name}_node" }
 - `server_name`, String, default: lazy { "#{profile_name}_server" }
 - `cell_name`, [String, nil], default: nil
@@ -587,7 +589,7 @@ end
 
 ##### Parameters
 
-- `label`, String, name_property: true just a label to make the execute resource name unique
+- `label`, String, name_property: true, just a label to make the execute resource name unique
 - `script`, [String, nil], default: nil. The command for wsadmin to run.  If a file is given this will be ignored, and only the file will be executed.
 - `file`, [String, nil], default: nil The script file for wsadmin to run.
 - `return_codes`, Array, default: [0]. Return codes to allow.
