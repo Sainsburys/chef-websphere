@@ -22,7 +22,8 @@ module WebsphereCookbook
 
     resource_name :websphere_dmgr
 
-    property :profile_name, String, name_property: true
+    property :label, String, name_property: true
+    property :profile_name, String, required: true
     property :profile_path, String, default: lazy { "#{websphere_root}/profiles/#{profile_name}" }
     property :node_name, String, default: lazy { "#{profile_name}_node" }
     property :cell_name, [String, nil], default: nil
