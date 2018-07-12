@@ -1,6 +1,7 @@
 include_recipe 'websphere-test::was_install_basic'
 
-websphere_dmgr 'Dmgr01' do
+websphere_dmgr 'Dmgr01 create' do
+  profile_name 'Dmgr01'
   cell_name 'MyNewCell'
   admin_user 'admin'
   admin_password 'admin'
@@ -8,7 +9,8 @@ websphere_dmgr 'Dmgr01' do
   action [:create, :start]
 end
 
-websphere_profile 'Custom' do
+websphere_profile 'Custom profile create and federate' do
+  profile_name 'Custom'
   profile_type 'custom'
   admin_user 'admin'
   admin_password 'admin'
@@ -67,7 +69,8 @@ log 'test restarting app' do
   notifies :start, 'websphere_app[sample_app]', :immediately
 end
 
-websphere_profile 'App_Profile' do
+websphere_profile 'App_Profile create/federate/start' do
+  profile_name 'App_Profile'
   profile_type 'appserver'
   server_name 'AppProfile_server'
   admin_user 'admin'

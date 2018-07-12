@@ -1,7 +1,8 @@
 include_recipe 'websphere-test::was_install_basic'
 include_recipe 'websphere-test::was_fixpack_java7'
 
-websphere_dmgr 'Dmgr01' do
+websphere_dmgr 'Dmgr01 create' do
+  profile_name 'Dmgr01'
   cell_name 'MyNewCell'
   admin_user 'admin'
   admin_password 'admin'
@@ -15,7 +16,8 @@ end
 ## Create, federate, start and set custom attributes
 ## Create, start, federate
 ## delete, create, federate, and set custom attributes start with same name
-websphere_profile 'AppProfile1' do
+websphere_profile 'AppProfile1 create/federate/start' do
+  profile_name 'AppProfile1'
   admin_user 'admin'
   admin_password 'admin'
   attributes ({
@@ -35,7 +37,8 @@ end
 ## create two Custom Nodes to use in cluster
 ## create, federate both nodes.
 ## delete, create, federate one of the nodes custom nodes with same name
-websphere_profile 'CustomProfile1' do
+websphere_profile 'CustomProfile1 create/federate' do
+  profile_name 'CustomProfile1'
   profile_type 'custom'
   admin_user 'admin'
   admin_password 'admin'
