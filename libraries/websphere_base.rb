@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: websphere
-# Resource:: websphere-server
+# Resource:: websphere_base
 #
 # Copyright (C) 2015 J Sainsburys
 #
@@ -74,6 +74,7 @@ module WebsphereCookbook
         endpoints
       end
 
+      # returns 246 if already stopped
       def stop_profile_node(p_name, profile_bin)
         cmd = "./stopNode.sh -profileName #{p_name} -stopservers"
         cmd << " -username #{admin_user} -password #{admin_password}" if admin_user && admin_password
@@ -137,10 +138,11 @@ module WebsphereCookbook
       # starts a dmgr node.
       # requires path to profiles own bin dir
       # TODO: add check if node or server are already started first.
-      def start_manager(p_name)
+      def start_manager(p_name, profile_env, profile_bin = bin_dir)
         # start_profile(profile_name, bin_dir, "./startManager.sh -profileName #{profile_name}", [0, 255])
         execute "start dmgr profile: #{p_name}" do
-          cwd bin_dir
+          cwd profile_bin
+          environment profile_env
           user run_user
           command "./startManager.sh -profileName #{p_name}"
           returns [0, 255] # ignore error if node already started.
@@ -150,14 +152,14 @@ module WebsphereCookbook
 
       # use to setup a nodeagent or dmgr as an init.d service
       # server_name should be 'dmgr' or 'nodeagent'
-      def enable_as_service(service_name, srvr_name, prof_path, runas = 'root')
+      def enable_as_service(service_name, srvr_name, prof_path, runas = '')
         # if dplymgr user and password set, then add as additional args for stop.
         stop_args = admin_user && admin_password ? "-username #{admin_user} -password #{admin_password}" : ''
         # admin_user && admin_password ? start_args = "-username #{admin_user} -password #{admin_password}" : start_args = ''
 
         template "/etc/init.d/#{service_name}" do
           mode '0755'
-          source 'node_service_init.d.erb'
+          source srvr_name == 'dmgr' ? 'dmgr_init.d.erb' : 'node_service_init.d.erb'
           cookbook 'websphere'
           variables(
             service_name: service_name,

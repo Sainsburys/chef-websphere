@@ -31,6 +31,7 @@ module WebsphereCookbook
     property :java_sdk, [String, nil], default: nil # javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
     property :security_attributes, [Hash, nil], default: nil # these are set when the Dmgr is started
     property :manage_user, [TrueClass, FalseClass], default: true
+    property :profile_env, [Hash, nil], default: nil # start/stop environment parameters
 
     # creates a new profile or augments/updates if profile exists.
     action :create do
@@ -63,11 +64,7 @@ module WebsphereCookbook
     end
 
     action :start do
-      # service node_name do
-      #   action :start
-      # end
-      # start_profile(profile_name, bin_dir, "./startManager.sh -profileName #{profile_name}", [0, 255])
-      start_manager(profile_name)
+      start_manager(profile_name, profile_env, "#{profile_path}/bin")
 
       # set attributes on dmgr
       ruby_block 'set security attributes' do
