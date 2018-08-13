@@ -62,7 +62,7 @@ module WebsphereCookbook
       # it can take a minute to create the clustered server, so we need to add a delay in if it cannot find it.
       sleep(30) if !server_exists?(server_node, server_name) || !member?(cluster_name, server_name)
       sleep(30) if !server_exists?(server_node, server_name) || !member?(cluster_name, server_name)
-      start_server(server_node, server_name) if server_exists?(server_node, server_name) || member?(cluster_name, server_name)
+      start_server(cluster_name, server_name, server_node) if server_exists?(server_node, server_name) || member?(cluster_name, server_name, server_node)
       # node.normal['websphere']['endpoints'][server_name] = get_ports(server_node,server_name)
       node.default['websphere']['endpoints'] = get_ports
       # Chef::Log.debug("endpoints set #{node['websphere']['endpoints'][server_node][server_name]}")
@@ -70,7 +70,7 @@ module WebsphereCookbook
 
     action :delete do
       # TODO: delete server using the object id so you don't need as many inputs to delete it.
-      delete_cluster_member(cluster_name, server_name, server_node, session_replication) if server_exists?(server_node, server_name) && member?(cluster_name, server_name)
+      delete_cluster_member(cluster_name, server_name, server_node, session_replication) if server_exists?(server_node, server_name) && member?(cluster_name, server_name, server_node)
       save_config
       # if no more cluster members, delete cluster so it can be recreated with new template
       # delete_cluster(cluster_name) unless get_cluster_members(cluster_name).count > 0

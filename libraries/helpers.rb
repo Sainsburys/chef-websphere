@@ -33,9 +33,9 @@ module WebsphereCookbook
     # returns cell name for a profile path
     # assumes only one cell folder can exist in a profile config path
     def profile_cell(p_path)
-      ::Dir.chdir("#{p_path}/config/cells")
-      cell = ::Dir.glob('*').select { |f| ::File.directory? f }
-      cell.first
+      return unless ::File.exist?("#{p_path}/bin/setupCmdLine.sh")
+      cell = ::File.open("#{p_path}/bin/setupCmdLine.sh").grep(/^WAS_CELL=/).first.split('=')
+      cell.last.chomp
     end
 
     def template_lookup(profle_type, profile_templates_dir)

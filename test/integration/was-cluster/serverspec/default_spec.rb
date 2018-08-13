@@ -40,6 +40,13 @@ services.each do |service|
   end
 end
 
+describe file('/etc/init.d/Dmgr01') do
+  its(:content) { should match(/startScript=startManager.sh/) }
+end
+describe file('/etc/init.d/AppProfile1_node') do
+  its(:content) { should match(/startScript=startServer.sh/) }
+end
+
 describe file('/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/config/cells/MyNewCell/nodes/CustomProfile1_node/servers/ClusterServer1/server.xml') do
   it { should be_owned_by 'was' }
   it { should be_grouped_into 'was' }

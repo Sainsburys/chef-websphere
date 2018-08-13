@@ -4,6 +4,7 @@ include_recipe 'websphere-test::was_fixpack_java7'
 websphere_dmgr 'Dmgr01 create' do
   profile_name 'Dmgr01'
   cell_name 'MyNewCell'
+  node_name 'MyNewNode'
   admin_user 'admin'
   admin_password 'admin'
   security_attributes ({
@@ -56,6 +57,7 @@ end
 
 websphere_cluster_member 'ClusterServer1' do
   cluster_name 'MyCluster'
+  server_name 'ClusterServer1-node'
   server_node 'CustomProfile1_node'
   admin_user 'admin'
   admin_password 'admin'
