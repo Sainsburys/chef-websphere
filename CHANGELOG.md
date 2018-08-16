@@ -1,6 +1,11 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.0.12
+--------------------
+- Change Deployment Manager init script to use startManager.sh and stopManager.sh
+- Allow use of environment variables with the dmgr profile
+
 v1.0.11
 --------------------
 - update README docs with WAS ND 7.0

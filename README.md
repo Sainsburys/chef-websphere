@@ -1,51 +1,57 @@
-# Websphere Cookbook
+# WebSphere Cookbook
 
 [![Build Status](https://travis-ci.org/Sainsburys/chef-websphere.svg?branch=master)](https://travis-ci.org/Sainsburys/chef-websphere)
 
 ## Scope
 
-This cookbook installs and configures Websphere Application Server Network Deployment (WAS-ND). It has only been tested with a Deployment Manager and Managed nodes.
+This cookbook installs and configures WebSphere Application Server Network Deployment (WAS-ND). It has only been tested with a Deployment Manager and Managed nodes.
 
-So far it has only been tested with Websphere ND 7.0 and 8.5.
+So far it has only been tested with WebSphere ND 7.0 and 8.5.
 
 The cookbook lacks idempotency as querying WAS for the current state is overly complex, really slow, or just not possible.  For that reason it's better to destroy and recreate objects rather than update them at this stage.
 
 ## Requirements
+
 * Chef 12.5 or higher
 * Installation media for Installation manager either local or via a url, and Media or repositories for any other packages like WAS ND, IHS etc.
-* You will first need to install Websphere Network Deployment version using the ibm-installmgr cookbook.  See test/fixtures/cookbooks/webshpere-test/recipes/was_install.rb for an example.
+* You will first need to install WebSphere Network Deployment version using the ibm-installmgr cookbook.  See `test/fixtures/cookbooks/websphere-test/recipes/was_install.rb` for an example.
 
 ## Platform
-* Centos 6
+
+* CentOS 6
 * Red Hat Enterprise 6
 
 ## Versions
+
 • WASND 7.0
 • WASND 8.5
 
 ## Usage
 
 The general pattern for usage is to:
+
 1. Instal Installation Manager with the installation manager cookbook
-2. Install Websphere ND, Websphere Toolbox and Websphere Plugins (for IHS)
-2. Deploy a Dmgr
-3. Deploy a custom profile
-4. Deploy an appserver OR Deploy a cluster and add a cluster member to the profile
-5. Deploy IHS if needed.
+2. Install WebSphere ND, WebSphere Toolbox and WebSphere Plugins (for IHS)
+3. Deploy a Deployment Manager
+4. Deploy a custom profile
+5. Deploy an appserver OR Deploy a cluster and add a cluster member to the profile
+6. Deploy IHS if needed.
 
 ### Install
 
 You first need to install the necessary components. To do this use the ibm-installmgr cookbook.  It can be used to install any of the following:
-  - Websphere ND
-  - Any Websphere ND Fixpacks
-  - IBM Java version(s)
-  - Websphere Plugins (PLG)
-  - Websphere customization toolbox
-  - IHS HTTP Server.
 
-As well as the below example, see test/fixtures/cookbooks/webshpere-test/recipes/was_install.rb for a more complete example.
+* WebSphere ND
+* Any WebSphere ND Fixpacks
+* IBM Java version(s)
+* WebSphere Plugins (PLG)
+* WebSphere customization toolbox
+* IHS HTTP Server.
 
-##### Example
+As well as the below example, see `test/fixtures/cookbooks/websphere-test/recipes/was_install.rb` for a more complete example.
+
+#### Example
+
   ```ruby
   install_mgr 'ibm-im install' do
     install_package 'https://someurl/agent.installer.linux.gtk.x86_64_1.8.4000.20151125_0201.zip'
@@ -64,14 +70,14 @@ As well as the below example, see test/fixtures/cookbooks/webshpere-test/recipes
   end
   ```
 
-
 ### websphere_base
 
 Do not use this directly it can be ignored. This resource is only used as a parent class to share methods between child resources.
 
 ### websphere_dmgr
 
-##### Example
+#### Example
+
 ```ruby
 websphere_dmgr 'Dmgr01' do
   cell_name 'MyNewCell'
@@ -81,36 +87,37 @@ websphere_dmgr 'Dmgr01' do
 end
 ```
 
-##### Parameters
+#### Parameters
 
-- `label`, String, name_property: true, just a label to make the execute resource name unique
-- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
-- `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
-- `admin_user`, [String, nil], default: nil, The dmgr user.  
-- `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
-- `dmgr_host`, String, default: 'localhost', The dmgr host/ip.
-- `dmgr_port`, [String, nil], default: nil, The dmgr port, when nil WAS will default to dmgr SOAP connector default port 8879.
-- `profile_name`, String, # The Dmgr profile name.
-- `node_name`, String, default: lazy { "#{profile_name}_node" }. It's easier to keep the default name here.
-- `cell_name`, [String, nil], default: nil
-- `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used. [See more](http://www.ibm.com/support/knowledgecenter/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/rxml_managesdk.html)
-- `security_attributes`, [Hash, nil], default: nil # A hash of security attributes to apply to the dmgr
-- `manage_user`, [TrueClass, FalseClass], default: true. Should the resource create the user for you. Set to false if you have created the run_user previously in your recipe, outside of this resource.
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
+* `label`, String, name_property: true, just a label to make the execute resource name unique
+* `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
+* `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
+* `admin_user`, [String, nil], default: nil, The dmgr user.
+* `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
+* `dmgr_host`, String, default: 'localhost', The dmgr host/ip.
+* `dmgr_port`, [String, nil], default: nil, The dmgr port, when nil WAS will default to dmgr SOAP connector default port 8879.
+* `profile_name`, String, name_property: true. # The Dmgr profile name.
+* `profile_env`, [Hash, nil], default: nil, additional environment variables to send to the start command
+* `node_name`, String, default: lazy { "#{profile_name}_node" }. It's easier to keep the default name here.
+* `cell_name`, [String, nil], default: nil
+* `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used. [See more](http://www.ibm.com/support/knowledgecenter/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/rxml_managesdk.html)
+* `security_attributes`, [Hash, nil], default: nil # A hash of security attributes to apply to the dmgr
+* `manage_user`, [TrueClass, FalseClass], default: true. Should the resource create the user for you. Set to false if you have created the run_user previously in your recipe, outside of this resource.
+* `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in Chef logs.
 
-##### Actions
+#### Actions
 
-- `:create` - Creates the dmgr
-- `:start` - Starts the dmgr.
-- `:stop` - Stops the dmgr.
-- `:sync_all` - Syncs all federated nodes in the dmgr without restarting the appservers
+* `:create` - Creates the dmgr
+* `:start` - Starts the dmgr.
+* `:stop` - Stops the dmgr.
+* `:sync_all` - Syncs all federated nodes in the dmgr without restarting the appservers
 
 ### websphere_profiles
 
 This resource currently only allows for appserver or custom profiles. It's best to use custom resources everywhere, and add appservers to it later with the websphere_app_server or websphere_cluster_member resources.
 
+#### Example
 
-##### Example
 ```ruby
 websphere_profile 'AppProfile1' do
   admin_user 'admin'
@@ -120,39 +127,40 @@ websphere_profile 'AppProfile1' do
 end
 ```
 
-##### Parameters
+#### Parameters
 
-- `label`, String, name_property: true, just a label to make the execute resource name unique
-- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
-- `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
-- `admin_user`, [String, nil], default: nil, The dmgr user.  
-- `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
-- `dmgr_host`, String, default: 'localhost', The dmgr host to federate to.
-- `dmgr_port`, [String, nil], default: nil, The dmgr port to federate to.
-- `profile_name`, String
-- `node_name`, String, default: lazy { "#{profile_name}_node" }
-- `server_name`, String, default: lazy { "#{profile_name}_server" }
-- `cell_name`, [String, nil], default: nil
-- `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used. [See more](http://www.ibm.com/support/knowledgecenter/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/rxml_managesdk.html)
-- `profile_type`, String, default: 'custom', Can be either appserver or custom, but easier to just use custom all the time and add jvms with websphere_app_server or websphere_cluster_member.
-- `attributes`, [Hash, nil], default: nil, These are custom attributes for the server when using the appserver type profile, such as monitoringPolicy. They are only set when the node is federated.
-- `manage_user`, [TrueClass, FalseClass], default: true. Should the resource create the user for you. Set to false if you have created the run_user previously in your recipe, outside of this resource.
-- `manage_service`, [TrueClass, FalseClass], default: true. Should the resource create the init service for you. Set to false if you have created the service previously in your recipe, outside of this resource.
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
+* `label`, String, name_property: true, just a label to make the execute resource name unique
+* `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The WAS install root
+* `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
+* `admin_user`, [String, nil], default: nil, The dmgr user.
+* `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
+* `dmgr_host`, String, default: 'localhost', The dmgr host to federate to.
+* `dmgr_port`, [String, nil], default: nil, The dmgr port to federate to.
+* `profile_name`, String, name_property: true
+* `node_name`, String, default: lazy { "#{profile_name}_node" }
+* `server_name`, String, default: lazy { "#{profile_name}_server" }
+* `cell_name`, [String, nil], default: nil
+* `java_sdk`, [String, nil], default: nil # The javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used. [See more](http://www.ibm.com/support/knowledgecenter/SS7JFU_8.5.5/com.ibm.websphere.express.doc/ae/rxml_managesdk.html)
+* `profile_type`, String, default: 'custom', Can be either appserver or custom, but easier to just use custom all the time and add jvms with websphere_app_server or websphere_cluster_member.
+* `attributes`, [Hash, nil], default: nil, These are custom attributes for the server when using the appserver type profile, such as monitoringPolicy. They are only set when the node is federated.
+* `manage_user`, [TrueClass, FalseClass], default: true. Should the resource create the user for you. Set to false if you have created the run_user previously in your recipe, outside of this resource.
+* `manage_service`, [TrueClass, FalseClass], default: true. Should the resource create the init service for you. Set to false if you have created the service previously in your recipe, outside of this resource.
+* `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
-##### Actions
+#### Actions
 
-- `:create` - Creates the profile
-- `:federate` - Adds the node to a deployment manager for federation/management.
-- `:start` - Starts the node.
-- `:stop` - Stops the node.
-- `:delete` - deletes node and profile and any servers on it. You need to delete any clusters before you can delete the node.
+* `:create` - Creates the profile
+* `:federate` - Adds the node to a deployment manager for federation/management.
+* `:start` - Starts the node.
+* `:stop` - Stops the node.
+* `:delete` - deletes node and profile and any servers on it. You need to delete any clusters before you can delete the node.
 
 ### websphere_app_server
 
 Adds a new jvm to an existing custom profile
 
-##### Example
+#### Example
+
 ```ruby
 websphere_app_server 'app_server1' do
   node_name 'Custom_node'
@@ -172,30 +180,31 @@ websphere_app_server 'app_server1' do
 end
 ```
 
-##### Parameters
+#### Parameters
 
-- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root.
-- `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
-- `admin_user`, [String, nil], default: nil, The dmgr user.  
-- `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
-- `dmgr_host`, String, default: 'localhost', The dmgr host.
-- `dmgr_port`, [String, nil], default: nil, The dmgr port leave as nil for default 8879.
-- `server_name`, String, name_property: true, The new clustered server name
-- `server_node`, [String, nil], default: nil, required: true, The node to create the server on.
-- `attributes`, [Hash, nil], default: nil, A hash of attributes to apply to the server, eg. monitoringPolicy.
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
+* `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root.
+* `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
+* `admin_user`, [String, nil], default: nil, The dmgr user.
+* `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
+* `dmgr_host`, String, default: 'localhost', The dmgr host.
+* `dmgr_port`, [String, nil], default: nil, The dmgr port leave as nil for default 8879.
+* `server_name`, String, name_property: true, The new clustered server name
+* `server_node`, [String, nil], default: nil, required: true, The node to create the server on.
+* `attributes`, [Hash, nil], default: nil, A hash of attributes to apply to the server, eg. monitoringPolicy.
+* `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
-##### Actions
+#### Actions
 
-- `:create` - Creates the server on node
-- `:delete` - Deletes the server
-- `:start` - Starts the server
+* `:create` - Creates the server on node
+* `:delete` - Deletes the server
+* `:start` - Starts the server
 
 ### websphere_cluster
 
 Creates an empty cluster to add app servers to.
 
-##### Example
+#### Example
+
 ```ruby
 websphere_cluster 'MyCluster' do
   admin_user 'admin'
@@ -205,31 +214,31 @@ websphere_cluster 'MyCluster' do
 end
 ```
 
-##### Parameters
+#### Parameters
 
-- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
-- `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
-- `admin_user`, [String, nil], default: nil, The dmgr user.  
-- `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
-- `dmgr_host`, String, default: 'localhost', The dmgr host to federate to.
-- `dmgr_port`, [String, nil], default: nil, The dmgr port to federate to.
-- `cluster_name`, String, name_property: true
-- `prefer_local`, [TrueClass, FalseClass], default: true
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
+* `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
+* `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
+* `admin_user`, [String, nil], default: nil, The dmgr user.
+* `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
+* `dmgr_host`, String, default: 'localhost', The dmgr host to federate to.
+* `dmgr_port`, [String, nil], default: nil, The dmgr port to federate to.
+* `cluster_name`, String, name_property: true
+* `prefer_local`, [TrueClass, FalseClass], default: true
+* `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
-##### Actions
+#### Actions
 
-- `:create` - Creates the cluster
-- `:delete` - Deletes the cluster
-- `:start` - Starts the servers on the cluster.
-- `:ripple_start` - Ripple starts servers on the cluster.
-
+* `:create` - Creates the cluster
+* `:delete` - Deletes the cluster
+* `:start` - Starts the servers on the cluster.
+* `:ripple_start` - Ripple starts servers on the cluster.
 
 ### websphere_cluster_member
 
 Creates and adds an application server to a cluster
 
-##### Example
+#### Example
+
 ```ruby
 websphere_cluster_member 'ClusterServer1' do
   cluster_name 'MyCluster'
@@ -251,36 +260,36 @@ websphere_cluster_member 'ClusterServer1' do
 end
 ```
 
-##### Parameters
+#### Parameters
 
-- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root.
-- `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
-- `admin_user`, [String, nil], default: nil, The dmgr user.  
-- `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
-- `dmgr_host`, String, default: 'localhost', The dmgr host.
-- `dmgr_port`, [String, nil], default: nil, The dmgr port leave as nil for default 8879.
-- `cluster_name`, String
-- `prefer_local`, [TrueClass, FalseClass], default: true
-- `server_name`, String, name_property: true, The new clustered server name
-- `server_node`, [String, nil], default: nil, required: true, The node to create the server on.
-- `member_weight`, Fixnum, default: 2 # number from 0-100. Higher weight gets more traffic
-- `session_replication`, [TrueClass, FalseClass], default: false
-- `resources_scope`, String, default: 'both', regex: /^(both|server|cluster)$/
-- `attributes`, [Hash, nil], default: nil, A hash of attributes to apply to the server, eg. monitoringPolicy.
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
+* `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root.
+* `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
+* `admin_user`, [String, nil], default: nil, The dmgr user.
+* `admin_password`, [String, nil], default: nil, The dmgr password.  This should only be known to people who know the server is managed with chef.
+* `dmgr_host`, String, default: 'localhost', The dmgr host.
+* `dmgr_port`, [String, nil], default: nil, The dmgr port leave as nil for default 8879.
+* `cluster_name`, String
+* `prefer_local`, [TrueClass, FalseClass], default: true
+* `server_name`, String, name_property: true, The new clustered server name
+* `server_node`, [String, nil], default: nil, required: true, The node to create the server on.
+* `member_weight`, Fixnum, default: 2 # number from 0-100. Higher weight gets more traffic
+* `session_replication`, [TrueClass, FalseClass], default: false
+* `resources_scope`, String, default: 'both', regex: /^(both|server|cluster)$/
+* `attributes`, [Hash, nil], default: nil, A hash of attributes to apply to the server, eg. monitoringPolicy.
+* `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
-##### Actions
+#### Actions
 
-- `:create` - Creates the server and adds to cluster
-- `:delete` - Deletes the server
-- `:start` - Starts the server
-
+* `:create` - Creates the server and adds to cluster
+* `:delete` - Deletes the server
+* `:start` - Starts the server
 
 ### websphere_app
 
 Deploys an application to a server or cluster
 
-##### Example
+#### Example
+
 ```ruby
 websphere_app 'sample_app_cluster' do
   app_file '/tmp/sample.war'
@@ -291,35 +300,35 @@ websphere_app 'sample_app_cluster' do
 end
 ```
 
-##### Parameters
+#### Parameters
 
-- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
-- `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
-- `admin_user`, [String, nil], default: nil, The dmgr user.  
-- `admin_password`, [String, nil], default: nil, The dmgr password.
-- `dmgr_host`, String, default: 'localhost', The dmgr host to federate to.
-- `dmgr_port`, [String, nil], default: nil, The dmgr port to federate to.
-- `app_name`, String, name_property: true
-- `app_file`, [String, nil], default: nil, required: true
-- `server_name`, [String, nil], default: nil
-- `node_name`, [String, nil], default: nil
-- `cluster_name`, [String, nil], default: nil
-- `context_root`, [String, nil], default: nil
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
+* `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
+* `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
+* `admin_user`, [String, nil], default: nil, The dmgr user.
+* `admin_password`, [String, nil], default: nil, The dmgr password.
+* `dmgr_host`, String, default: 'localhost', The dmgr host to federate to.
+* `dmgr_port`, [String, nil], default: nil, The dmgr port to federate to.
+* `app_name`, String, name_property: true
+* `app_file`, [String, nil], default: nil, required: true
+* `server_name`, [String, nil], default: nil
+* `node_name`, [String, nil], default: nil
+* `cluster_name`, [String, nil], default: nil
+* `context_root`, [String, nil], default: nil
+* `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
-##### Actions
+#### Actions
 
-- `:deploy_to_cluster` - Deploys app to a cluster
-- `:deploy_to_server` - Deploys app to a server
-- `:start` - Starts the app
-- `:stop` - Stops the app
-
+* `:deploy_to_cluster` - Deploys app to a cluster
+* `:deploy_to_server` - Deploys app to a server
+* `:start` - Starts the app
+* `:stop` - Stops the app
 
 ### websphere_ihs
 
 Deploys an ihs webserver to an existing profile/node.  It currently only supports `managed` ihs webservers.
 
-##### Example
+#### Example
+
 ```ruby
 websphere_ihs 'MyWebserver1' do
   config_type 'local_distributed'
@@ -333,41 +342,40 @@ websphere_ihs 'MyWebserver1' do
 end
 ```
 
-##### Parameters
+#### Parameters
 
-- `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
-- `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
-- `admin_user`, [String, nil], default: nil, The dmgr user.  
-- `admin_password`, [String, nil], default: nil, The dmgr password.
-- `dmgr_host`, String, default: 'localhost', The dmgr host to federate to.
-- `dmgr_port`, [String, nil], default: nil, The dmgr port to federate to.
-- `webserver_name`, String, name_property: true
-- `plg_root`, String, default: '/opt/IBM/WebSphere/Plugins'
-- `wct_root`, String, default: '/opt/IBM/WebSphere/Toolbox'
-- `wct_tool_root`, String, default: lazy { "#{wct_root}/WCT" }
-- `config_type`, String, default: 'local_distributed', Can only be local_distributed or remote.
-- `profile_name`, String, required: true
-- `node_name`, String, required: true
-- `map_to_apps`, [TrueClass, FalseClass], default: false
-- `ihs_hostname`, [String],  default: lazy { node.name }
-- `ihs_port`, String, default: '80'
-- `ihs_install_root`, default: '/opt/IBM/HTTPServer'
-- `ihs_config_file`, String, default: lazy { "#{ihs_install_root}/conf/httpd.conf" }
-- `runas_user`, String, default: 'root'
-- `runas_group`, String, default: 'root'
-- `enable_ihs_admin_server`, [TrueClass, FalseClass], default: false
-- `ihs_admin_user`, [String, nil], default: nil
-- `ihs_admin_password`, [String, nil], default: nil
-- `ihs_admin_port`, String, default: '8008'
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
+* `websphere_root`, String, default: '/opt/IBM/WebSphere/AppServer', The was install root
+* `bin_dir`, String, default: lazy { "#{websphere_root}/bin" } The path to the was root bin directory. No need to change this.
+* `admin_user`, [String, nil], default: nil, The dmgr user.
+* `admin_password`, [String, nil], default: nil, The dmgr password.
+* `dmgr_host`, String, default: 'localhost', The dmgr host to federate to.
+* `dmgr_port`, [String, nil], default: nil, The dmgr port to federate to.
+* `webserver_name`, String, name_property: true
+* `plg_root`, String, default: '/opt/IBM/WebSphere/Plugins'
+* `wct_root`, String, default: '/opt/IBM/WebSphere/Toolbox'
+* `wct_tool_root`, String, default: lazy { "#{wct_root}/WCT" }
+* `config_type`, String, default: 'local_distributed', Can only be local_distributed or remote.
+* `profile_name`, String, required: true
+* `node_name`, String, required: true
+* `map_to_apps`, [TrueClass, FalseClass], default: false
+* `ihs_hostname`, [String],  default: lazy { node.name }
+* `ihs_port`, String, default: '80'
+* `ihs_install_root`, default: '/opt/IBM/HTTPServer'
+* `ihs_config_file`, String, default: lazy { "#{ihs_install_root}/conf/httpd.conf" }
+* `runas_user`, String, default: 'root'
+* `runas_group`, String, default: 'root'
+* `enable_ihs_admin_server`, [TrueClass, FalseClass], default: false
+* `ihs_admin_user`, [String, nil], default: nil
+* `ihs_admin_password`, [String, nil], default: nil
+* `ihs_admin_port`, String, default: '8008'
+* `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
-##### Actions
+#### Actions
 
-- `:create` - Creates a web definition and deploys a webserver
-- `:delete` - deletes the web definition
-- `:start` - starts the webserver
-- `:stop` - stops the webserver
-
+* `:create` - Creates a web definition and deploys a webserver
+* `:delete` - deletes the web definition
+* `:start` - starts the webserver
+* `:stop` - stops the webserver
 
 ### ibm_cert
 
@@ -375,7 +383,8 @@ Used to manage ibm java certificates.  Create keystore, create certificates and 
 
 This can be used on any server with ikeycmd tool.
 
-##### Example
+#### Example
+
 ```ruby
 ibm_cert 'mydomain.com' do
   dn 'CN=mydomain.com,O=MyOrg,C=UK'
@@ -396,36 +405,35 @@ ibm_cert 'myotherdomain.com' do
 end
 ```
 
-##### Parameters
+#### Parameters
 
-- `label`, String, name_property: true
-- `dn`, String, required: true eg "CN=mydomain.com,O=MyOrg,C=UK"
-- `kdb`, String, required: true, regex: Path to keystore file. Will create if it doesn't exist. File must end in .kdb or .p12
-- `kdb_password`, String, required: true
-- `algorithm`, String, default: 'SHA256WithRSA'
-- `size`, String, default: '2048', Can be 2048, 1024 or 512
-- `expire`, String, default: '3600', required: true
-- `extract_to`, String, Used by the extract action only. Extracts in ASCII to a file <label>.cer next to the keystore file location by default. #{label}.cer" } .
-- `add_cert`, [String, nil], default: nil  path to certificate to add to keystore, only used in add.
-- `default_cert`, String, default: 'no'. Can be yes or no
-- `ikeycmd`, String, default: /opt/IBM/WebSphere/AppServer/java/jre/bin/ikeycmd path to ikeycmd tool.
-- `owned_by`, String, default: 'root'
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
+* `label`, String, name_property: true
+* `dn`, String, required: true eg "CN=mydomain.com,O=MyOrg,C=UK"
+* `kdb`, String, required: true, regex: Path to keystore file. Will create if it doesn't exist. File must end in .kdb or .p12
+* `kdb_password`, String, required: true
+* `algorithm`, String, default: 'SHA256WithRSA'
+* `size`, String, default: '2048', Can be 2048, 1024 or 512
+* `expire`, String, default: '3600', required: true
+* `extract_to`, String, Used by the extract action only. Extracts in ASCII to a file <label>.cer next to the keystore file location by default. #{label}.cer" } .
+* `add_cert`, [String, nil], default: nil  path to certificate to add to keystore, only used in add.
+* `default_cert`, String, default: 'no'. Can be yes or no
+* `ikeycmd`, String, default: /opt/IBM/WebSphere/AppServer/java/jre/bin/ikeycmd path to ikeycmd tool.
+* `owned_by`, String, default: 'root'
+* `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
-##### Actions
+#### Actions
 
-- `:create` - Creates a keystore with a default certificate
-- `:extract` - extracts a certificate from a keystore
-- `:add` - adds an existing certificate to an existing keystore.
-- `:import` - import a new certificate to an existing keystore.
-- `:update` - update a certificate in an existing keystore with the same label.
-
+* `:create` - Creates a keystore with a default certificate
+* `:extract` - extracts a certificate from a keystore
+* `:add` - adds an existing certificate to an existing keystore.
+* `:import` - import a new certificate to an existing keystore.
+* `:update` - update a certificate in an existing keystore with the same label.
 
 ### websphere_env
 
 Creates a websphere environment variable
 
-##### Example
+#### Example
 
 ```ruby
 websphere_env 'TESTING_1234' do
@@ -436,23 +444,23 @@ websphere_env 'TESTING_1234' do
   action :set
 end
 ```
-##### Parameters
 
-- `variable_name`, [String, nil], name_property.
-- `scope`, String, required: true. eg Cell=Cell1
-- `value`, [String, nil], default: nil
+#### Parameters
 
-##### Actions
+* `variable_name`, [String, nil], name_property.
+* `scope`, String, required: true. eg Cell=Cell1
+* `value`, [String, nil], default: nil
 
-- `:set` - creates the variable and sets the value.
-- `:remove` - removes the variable.
+#### Actions
 
+* `:set` - creates the variable and sets the value.
+* `:remove` - removes the variable.
 
 ### websphere_jms_provider
 
 Creates a custom jms provder in websphere
 
-##### Example
+#### Example
 
 ```ruby
 websphere_jms_provider 'ActiveMQ' do
@@ -468,26 +476,25 @@ websphere_jms_provider 'ActiveMQ' do
 end
 ```
 
-##### Parameters
+#### Parameters
 
-- `provider_name`, String, name_property: true. Unique name for the custom provider.
-- `scope`, String, required: true. eg Cell=Cell1
-- `context_factory`, [String, nil], default: nil
-- `url`, [String, nil], default: nil
-- `classpath_jars`, [Array, nil], default: nil Full path to each jar driver
-- `description`, [String, nil], default: nil
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
+* `provider_name`, String, name_property: true. Unique name for the custom provider.
+* `scope`, String, required: true. eg Cell=Cell1
+* `context_factory`, [String, nil], default: nil
+* `url`, [String, nil], default: nil
+* `classpath_jars`, [Array, nil], default: nil Full path to each jar driver
+* `description`, [String, nil], default: nil
+* `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
-##### Actions
+#### Actions
 
-- `:create` - Creates a jms provider
-
+* `:create` - Creates a jms provider
 
 ### websphere_jms_conn_factory
 
 Creates a jms connection factory
 
-##### Example
+#### Example
 
 ```ruby
 websphere_jms_conn_factory 'My Queue Conection Factory' do
@@ -504,35 +511,34 @@ websphere_jms_conn_factory 'My Queue Conection Factory' do
 end
 ```
 
-##### Parameters
+#### Parameters
 
-- `conn_factory_name`, String, name_property: true
-- `scope`, String, required: true eg 'Cell=MyCell,Cluster=MyCluster'
-- `jndi_name`, String, required: true
-- `ext_jndi_name`, String, required: true
-- `jms_provider`, String, required: true
-- `type`, String, required: true, Can be only QUEUE, TOPIC or UNIFIED
-- `description`, [String, nil], default: nil
-- `category`, [String, nil], default: nil
-- `conn_pool_timeout`, String, default: '180'
-- `conn_pool_min`, String, default: '1'
-- `conn_pool_max`, String, default: '10'
-- `conn_pool_reap_time`, String, default: '180'
-- `conn_pool_unused_timeout`, String, default: '1800'
-- `conn_aged_timeout`, String, default: '0'
-- `conn_purge_policy`, String, default: 'FailingConnectionOnly' can be only FailingConnectionOnly or EntirePool
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
+* `conn_factory_name`, String, name_property: true
+* `scope`, String, required: true eg 'Cell=MyCell,Cluster=MyCluster'
+* `jndi_name`, String, required: true
+* `ext_jndi_name`, String, required: true
+* `jms_provider`, String, required: true
+* `type`, String, required: true, Can be only QUEUE, TOPIC or UNIFIED
+* `description`, [String, nil], default: nil
+* `category`, [String, nil], default: nil
+* `conn_pool_timeout`, String, default: '180'
+* `conn_pool_min`, String, default: '1'
+* `conn_pool_max`, String, default: '10'
+* `conn_pool_reap_time`, String, default: '180'
+* `conn_pool_unused_timeout`, String, default: '1800'
+* `conn_aged_timeout`, String, default: '0'
+* `conn_purge_policy`, String, default: 'FailingConnectionOnly' can be only FailingConnectionOnly or EntirePool
+* `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
-##### Actions
+#### Actions
 
-- `:create` - Creates a jms conection factory
-
+* `:create` - Creates a jms conection factory
 
 ### websphere_jms_destination
 
 Creates a jms queue or topic
 
-##### Example
+#### Example
 
 ```ruby
 websphere_jms_destination 'My Queue' do
@@ -548,22 +554,21 @@ websphere_jms_destination 'My Queue' do
 end
 ```
 
-##### Parameters
+#### Parameters
 
-- `jms_dest_name`, String, name_property: true
-- `jndi_name`, String, required: true
-- `ext_jndi_name`, String, required: true
-- `scope`, String, required: true eg 'Cell=MyCell,Cluster=MyCluster'
-- `jms_provider`, String, required: true
-- `type`, String, required: true, Can be QUEUE, TOPIC or UNIFIED
-- `description`, [String, nil], default: nil
-- `category`, [String, nil], default: nil
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
+* `jms_dest_name`, String, name_property: true
+* `jndi_name`, String, required: true
+* `ext_jndi_name`, String, required: true
+* `scope`, String, required: true eg 'Cell=MyCell,Cluster=MyCluster'
+* `jms_provider`, String, required: true
+* `type`, String, required: true, Can be QUEUE, TOPIC or UNIFIED
+* `description`, [String, nil], default: nil
+* `category`, [String, nil], default: nil
+* `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
-##### Actions
+#### Actions
 
-- `:create` - Creates a jms queue or topic
-
+* `:create` - Creates a jms queue or topic
 
 ### websphere_wsadmin
 
@@ -587,19 +592,17 @@ websphere_wsadmin 'do some more wsadmin' do
 end
 ```
 
-##### Parameters
+#### Parameters
 
-- `label`, String, name_property: true, just a label to make the execute resource name unique
-- `script`, [String, nil], default: nil. The command for wsadmin to run.  If a file is given this will be ignored, and only the file will be executed.
-- `file`, [String, nil], default: nil The script file for wsadmin to run.
-- `return_codes`, Array, default: [0]. Return codes to allow.
-- `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
-
+* `label`, String, name_property: true just a label to make the execute resource name unique
+* `script`, [String, nil], default: nil. The command for wsadmin to run.  If a file is given this will be ignored, and only the file will be executed.
+* `file`, [String, nil], default: nil The script file for wsadmin to run.
+* `return_codes`, Array, default: [0]. Return codes to allow.
+* `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 
 ## License and Author
 
 * Authors: Lachlan Munro (<lachlan.munro@sainsburys.co.uk>), Chris Bell (<chris.bell@sainsburys.co.uk>)
-
 
 Copyright: 2016, J Sainsburys
 
