@@ -25,6 +25,7 @@ module WebsphereCookbook
     property :algorithm, String, default: 'SHA256WithRSA'
     property :size, String, default: '2048', regex: /^(2048|1024|512)$/
     property :expire, String, default: '3600', required: true
+    property :expire_kdb, String, default: '7300', required: false
     property :extract_to, String, default: lazy { "#{::File.dirname(kdb)}/#{label}.cer" } # used by the extract action only. extracts to given file in ascii format
     property :add_cert, [String, nil], default: nil # path to certificate to add/import to kdb, only used in add/import.
     property :kdb_type, String, default: 'pkcs12' # type of key database
@@ -127,7 +128,7 @@ module WebsphereCookbook
         end
 
         execute "create kdb #{kdb}" do
-          command "#{ikeycmd} -keydb -create -db #{kdb} -pw #{kdb_password} -type cms -expire 7300 -stash"
+          command "#{ikeycmd} -keydb -create -db #{kdb} -pw #{kdb_password} -type cms -expire #{expire_kdb} -stash"
           sensitive sensitive_exec
           action :run
           creates kdb

@@ -413,7 +413,8 @@ end
 * `kdb_password`, String, required: true
 * `algorithm`, String, default: 'SHA256WithRSA'
 * `size`, String, default: '2048', Can be 2048, 1024 or 512
-* `expire`, String, default: '3600', required: true
+* `expire`, String, default: '3600', required: true. The expiry for the certificate being created
+* `expire_kdb`, String, default: '7300', required: false. The expiry time (in days) for the key database
 * `extract_to`, String, Used by the extract action only. Extracts in ASCII to a file <label>.cer next to the keystore file location by default. #{label}.cer" } .
 * `add_cert`, [String, nil], default: nil  path to certificate to add to keystore, only used in add.
 * `default_cert`, String, default: 'no'. Can be yes or no
