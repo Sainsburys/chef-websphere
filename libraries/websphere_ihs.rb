@@ -51,7 +51,7 @@ module WebsphereCookbook
 
     action :create do
       if platform_family?('rhel')
-        pkgs = %w(glibc.i686 glibc libgcc.i686)
+        pkgs = %w[glibc.i686 glibc libgcc.i686]
         pkgs.each do |pkg|
           package pkg
         end

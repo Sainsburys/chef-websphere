@@ -6,7 +6,7 @@ describe 'websphere-test::was_cluster' do
   cached(:chef_run) do
     stub_commands
     ChefSpec::ServerRunner.new(
-      step_into: %w(websphere_dmgr websphere_profile websphere_cluster websphere_cluster_member websphere_ihs websphere_app),
+      step_into: %w[websphere_dmgr websphere_profile websphere_cluster websphere_cluster_member websphere_ihs websphere_app],
       platform: 'centos'
     ) do |node|
       node.automatic['websphere-test']['passport_advantage']['user'] = 'dummyuser'
@@ -14,10 +14,10 @@ describe 'websphere-test::was_cluster' do
     end.converge('websphere-test::was_cluster')
   end
 
-  %w(
+  %w[
     websphere-test::was_install_basic
     websphere-test::was_fixpack_java7
-  ).each do |recipe|
+  ].each do |recipe|
     it "includes recipe #{recipe}" do
       expect(chef_run).to include_recipe(recipe)
     end

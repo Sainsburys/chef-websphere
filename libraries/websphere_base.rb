@@ -244,7 +244,7 @@ module WebsphereCookbook
       # run after deleting a federated profile/node
       def cleanup_node(nde_name)
         cmd = "./cleanupNode.sh #{nde_name} #{new_resource.dmgr_host}"
-        cmd << " #{new_resource.dmgr_port}" ifnew_resource.dmgr_port
+        cmd << " #{new_resource.dmgr_port}" if new_resource.dmgr_port
         cmd << " -username #{new_resource.admin_user} -password #{new_resource.admin_password}" if new_resource.admin_user && new_resource.admin_password
         execute "cleanupNode node: #{nde_name} dmgr: #{new_resource.dmgr_host}" do
           cwd new_resource.bin_dir

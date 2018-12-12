@@ -24,7 +24,7 @@ module WebsphereCookbook
         if get_cluster_members(new_resource.cluster_name).count > 0
           # this will NOT be the first member (or we have defined a template at some point). Add as additional
           # There is a horrible WAS 'feature' that means that even if a template has been defined on a cluster, if there are no members
-          # in it, then when you add a new JVM WAS takes this as a new template with the default applciation profile.
+          # in it, then when you add a new JVM WAS takes this as a new template with the default application profile.
           Chef::Log.info('Not creating first member, either existing members or templates exist')
           cmd = "AdminTask.createClusterMember(['-clusterName', '#{new_resource.cluster_name}',"\
             " '-memberConfig', '[-memberNode #{new_resource.server_node} -memberName #{new_resource.server_name}"\
@@ -70,23 +70,21 @@ module WebsphereCookbook
       # it can take a minute to create the clustered server, so we need to add a delay in if it cannot find it.
       sleep(30) if !server_exists?(new_resource.server_node, new_resource.server_name) || !member?(new_resource.cluster_name, new_resource.server_name)
       sleep(30) if !server_exists?(new_resource.server_node, new_resource.server_name) || !member?(new_resource.cluster_name, new_resource.server_name)
-      start_server(
-        new_resource.cluster_name,
-        new_resource.server_name,
-        new_resource.server_node
-      ) if server_exists?(new_resource.server_node, new_resource.server_name) || member?(new_resource.cluster_name, new_resource.server_name, new_resource.server_node)
+      return unless server_exists?(new_resource.server_node, new_resource.server_name) || member?(new_resource.cluster_name, new_resource.server_name, new_resource.server_node)
+      start_server(new_resource.cluster_name, new_resource.server_name, new_resource.server_node)
       node.default['websphere']['endpoints'] = get_ports
       # Chef::Log.debug("endpoints set #{node['websphere']['endpoints'][server_node][server_name]}")
     end
 
     action :delete do
       # TODO: delete server using the object id so you don't need as many inputs to delete it.
+      return unless server_exists?(new_resource.server_node, new_resource.server_name) && member?(new_resource.cluster_name, new_resource.server_name, new_resource.server_node)
       delete_cluster_member(
         new_resource.cluster_name,
         new_resource.server_name,
         new_resource.server_node,
         new_resource.session_replication
-      ) if server_exists?(new_resource.server_node, new_resource.server_name) && member?(new_resource.cluster_name, new_resource.server_name, new_resource.server_node)
+      )
       save_config
       # if no more cluster members, delete cluster so it can be recreated with new template
       # delete_cluster(cluster_name) unless get_cluster_members(cluster_name).count > 0
