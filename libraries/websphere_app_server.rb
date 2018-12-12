@@ -1,3 +1,20 @@
+#
+# Cookbook Name:: websphere
+# Resource:: websphere_app_server
+#
+# Copyright (C) 2015-2018 J Sainsburys
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 require_relative 'websphere_cluster'
 
@@ -13,16 +30,16 @@ module WebsphereCookbook
     property :attributes, [Hash, nil], default: nil
 
     action :create do
-      unless server_exists?(node_name, server_name)
-        cmd = "AdminTask.createApplicationServer('#{node_name}', '[-name #{server_name} -genUniquePorts #{generate_unique_ports}]')"
-        wsadmin_exec("wsadmin create app server: #{server_name} to node: #{node_name} ", cmd)
+      unless server_exists?(new_resource.node_name, new_resource.server_name)
+        cmd = "AdminTask.createApplicationServer('#{new_resource.node_name}', '[-name #{new_resource.server_name} -genUniquePorts #{new_resource.generate_unique_ports}]')"
+        wsadmin_exec("wsadmin create app server: #{new_resource.server_name} to node: #{new_resource.node_name} ", cmd)
       end
 
       # set attributes on server
-      ruby_block "set server #{server_name} attributes" do
+      ruby_block "set server #{new_resource.server_name} attributes" do
         block do
-          server_id = get_id("/Node:#{node_name}/Server:#{server_name}/")
-          update_attributes(attributes, server_id) if !server_id.nil? && attributes
+          server_id = get_id("/Node:#{new_resource.node_name}/Server:#{new_resource.server_name}/")
+          update_attributes(new_resource.attributes, server_id) if !server_id.nil? && new_resource.attributes
         end
         action :run
       end
@@ -32,19 +49,19 @@ module WebsphereCookbook
 
     action :start do
       i = 0 # safety timeout break
-      until server_exists?(node_name, server_name)
+      until server_exists?(new_resource.node_name, new_resource.server_name)
         sleep(5) # ensure webserver has been created first
         i += 1
         break if i >= 8
       end
-      start_server(node_name, server_name, [0, 103])
+      start_server(new_resource.node_name, new_resource.server_name, [0, 103])
 
       node.default['websphere']['endpoints'] = get_ports
       # Chef::Log.debug("endpoints set #{node['websphere']['endpoints'][server_node][server_name]}")
     end
 
     action :delete do
-      delete_server(node_name, server_name)
+      delete_server(new_resource.node_name, new_resource.server_name)
     end
 
     # need to wrap helper methods in class_eval

@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: websphere
-# Resource:: websphere-server
+# Resource:: websphere_cluster
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,31 +30,31 @@ module WebsphereCookbook
 
     # creates an empty cluster
     action :create do
-      unless cluster_exists?(cluster_name)
-        cmd = "AdminClusterManagement.createClusterWithoutMember('#{cluster_name}')"
-        wsadmin_exec("wasadmin createClusterWithoutMember #{cluster_name}", cmd)
+      unless cluster_exists?(new_resource.cluster_name)
+        cmd = "AdminClusterManagement.createClusterWithoutMember('#{new_resource.cluster_name}')"
+        wsadmin_exec("wasadmin createClusterWithoutMember #{new_resource.cluster_name}", cmd)
         save_config
       end
     end
 
     action :delete do
-      delete_cluster(cluster_name) if cluster_exists?(cluster_name)
+      delete_cluster(new_resource.cluster_name) if cluster_exists?(new_resource.cluster_name)
       save_config
     end
 
     action :ripple_start do
-      cmd = "AdminClusterManagement.rippleStartSingleCluster('#{cluster_name}')"
-      wsadmin_exec("wasadmin ripple_restart cluster: #{cluster_name} ", cmd, [0, 103])
+      cmd = "AdminClusterManagement.rippleStartSingleCluster('#{new_resource.cluster_name}')"
+      wsadmin_exec("wasadmin ripple_restart cluster: #{new_resource.cluster_name} ", cmd, [0, 103])
     end
 
     action :start do
-      cmd = "AdminClusterManagement.startSingleCluster('#{cluster_name}')"
-      wsadmin_exec("wasadmin start cluster: #{cluster_name} ", cmd, [0, 103])
+      cmd = "AdminClusterManagement.startSingleCluster('#{new_resource.cluster_name}')"
+      wsadmin_exec("wasadmin start cluster: #{new_resource.cluster_name} ", cmd, [0, 103])
     end
 
     action :stop do
-      cmd = "AdminClusterManagement.stopSingleCluster('#{cluster_name}')"
-      wsadmin_exec("wasadmin stop cluster: #{cluster_name} ", cmd, [0, 103])
+      cmd = "AdminClusterManagement.stopSingleCluster('#{new_resource.cluster_name}')"
+      wsadmin_exec("wasadmin stop cluster: #{new_resource.cluster_name} ", cmd, [0, 103])
     end
   end
 end

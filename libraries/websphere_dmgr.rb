@@ -1,5 +1,8 @@
-
-# Copyright (C) 2015 J Sainsburys
+#
+# Cookbook Name:: websphere
+# Resource:: websphere_dmgr
+#
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,50 +38,50 @@ module WebsphereCookbook
 
     # creates a new profile or augments/updates if profile exists.
     action :create do
-      unless run_user == 'root' || manage_user == false
-        create_service_account(run_user, run_group)
+      unless new_resource.run_user == 'root' || new_resource.manage_user == false
+        create_service_account(new_resource.run_user, new_resource.run_group)
       end
 
-      p_exists = profile_exists?(profile_name)
+      p_exists = profile_exists?(new_resource.profile_name)
       unless p_exists
-        template_path = template_lookup('dmgr', profile_templates_dir)
+        template_path = template_lookup('dmgr', new_resource.profile_templates_dir)
         management_type = management_type_lookup('dmgr')
 
-        options = " -profileName #{profile_name} -profilePath #{profile_path} -templatePath #{template_path} "\
-        "-nodeName #{node_name}"
-        options << " -cellName #{cell_name}" if cell_name
+        options = " -profileName #{new_resource.profile_name} -profilePath #{new_resource.profile_path} "\
+          "-templatePath #{template_path} -nodeName #{new_resource.node_name}"
+        options << " -cellName #{new_resource.cell_name}" if new_resource.cell_name
         options << " -serverType #{management_type}"
-        options << " -adminUserName #{admin_user} -adminPassword #{admin_password} -enableAdminSecurity true" if admin_user
+        options << " -adminUserName #{new_resource.admin_user} -adminPassword #{new_resource.admin_password} -enableAdminSecurity true" if new_resource.admin_user
         manageprofiles_exec('./manageprofiles.sh -create', options)
       end
 
       # Enable "profile_name" to use the specific "java_sdk"
-      if java_sdk
-        current_java = current_java_sdk(profile_name)
-        enable_java_sdk(java_sdk, "#{profile_path}/bin", profile_name) if p_exists && current_java != java_sdk
+      if new_resource.java_sdk
+        current_java = current_java_sdk(new_resource.profile_name)
+        enable_java_sdk(new_resource.java_sdk, "#{new_resource.profile_path}/bin", new_resource.profile_name) if p_exists && current_java != new_resource.java_sdk
       end
 
       # run dmgr as service
       # no need to do user things (if you installed was out of this cookbook by example)
-      enable_as_service(profile_name, 'dmgr', profile_path, run_user)
+      enable_as_service(new_resource.profile_name, 'dmgr', new_resource.profile_path, new_resource.run_user)
     end
 
     action :start do
-      start_manager(profile_name, profile_env, "#{profile_path}/bin")
+      start_manager(new_resource.profile_name, new_resource.profile_env, "#{new_resource.profile_path}/bin")
 
       # set attributes on dmgr
       ruby_block 'set security attributes' do
         block do
           object_id = get_id('/Security:/')
-          update_attributes(security_attributes, object_id)
+          update_attributes(new_resource.security_attributes, object_id)
         end
         action :run
-        only_if { security_attributes }
+        only_if { new_resource.security_attributes }
       end
     end
 
     action :stop do
-      service node_name do
+      service new_resource.node_name do
         action :stop
       end
     end

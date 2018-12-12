@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: websphere
-# Resource:: websphere-server
+# Resource:: websphere_vhost
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,11 +26,11 @@ module WebsphereCookbook
     property :alias_port, String, required: true
 
     action :create do
-      vhost_alias('add_alias', vhost_name, alias_host, alias_port)
+      vhost_alias('add_alias', new_resource.vhost_name, new_resource.alias_host, new_resource.alias_port)
     end
 
     action :delete do
-      vhost_alias('remove_alias', vhost_name, alias_host, alias_port)
+      vhost_alias('remove_alias', new_resource.vhost_name, new_resource.alias_host, new_resource.alias_port)
     end
 
     # need to wrap helper methods in class_eval
@@ -45,7 +45,7 @@ module WebsphereCookbook
         end
 
         cmd = "#{bin_directory}/virtual_host_alias.py #{action_to_take} '#{vhost_name}' '#{alias_host}' #{alias_port}"
-        wsadmin_exec_file("wsadmin #{action} virutal host alias to #{vhost_name}", cmd, [0])
+        wsadmin_exec_file("wsadmin #{action} virtual host alias to #{vhost_name}", cmd, [0])
       end
     end
   end
