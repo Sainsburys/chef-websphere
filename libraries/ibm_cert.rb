@@ -127,7 +127,7 @@ module WebsphereCookbook
 
         directory dir do
           recursive true
-          mode 0600
+          mode 0o600
           owner new_resource.owned_by
           action :create
         end

@@ -38,7 +38,7 @@ cookbook_file '/opt/IBM/WebSphere/Plugins/java/jre/lib/security/java.security' d
   source 'java.security'
   owner 'root'
   group 'root'
-  mode 00644
+  mode 0o644
 end
 
 user 'jim'

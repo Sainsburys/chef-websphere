@@ -10,7 +10,7 @@ describe command('/opt/IBM/WebSphere/Plugins/java/jre/bin/ikeycmd -cert -getdefa
   its(:stdout) { should match(/chef-websphere-test.com/) }
 end
 
-files = %w(keystore.kdb keystore.rdb keystore.sth mydomain.com.cer)
+files = %w[keystore.kdb keystore.rdb keystore.sth mydomain.com.cer]
 files.each do |f|
   describe file("/root/keystores/#{f}") do
     it { should exist }

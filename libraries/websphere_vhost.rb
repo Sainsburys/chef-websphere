@@ -45,7 +45,7 @@ module WebsphereCookbook
         end
 
         cmd = "#{bin_directory}/virtual_host_alias.py #{action_to_take} '#{vhost_name}' '#{alias_host}' #{alias_port}"
-        wsadmin_exec_file("wsadmin #{action} virtual host alias to #{vhost_name}", cmd, [0])
+        wsadmin_exec_file("wsadmin #{action_to_take} virtual host alias to #{vhost_name}", cmd, [0])
       end
     end
   end

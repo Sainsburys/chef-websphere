@@ -91,16 +91,14 @@ module WebsphereCookbook
       stop_profile_node(new_resource.profile_name, "#{new_resource.profile_path}/bin")
     end
 
+    # rubocop:disable Style/MultilineIfModifier
     action :delete do
       update_registry
       if profile_exists?(new_resource.profile_name)
-        Chef::Log.fatal("Refusing to delete profile #{new_resource.profile_name} node: #{new_resource.node_name} as it contains clustered servers. "\
+        Chef::Log.fatal(
+          "Refusing to delete profile #{new_resource.profile_name} node: #{new_resource.node_name} as it contains clustered servers. "\
           'Please remove clustered servers first.') if node_has_clustered_servers?(new_resource.node_name)
         federated = federated?(new_resource.profile_path, new_resource.node_name)
-        # stop_all_servers(node_name)
-        # stop_node(node_name)
-        # stop_node_agent(node_name) if federated
-        # stop_profile_node(profile_name, "#{profile_path}/bin")
         action_stop
 
         # remove_node(bin_dir) if federated?(profile_path, node_name) # this is only valid for federated appservers profiles
@@ -108,6 +106,7 @@ module WebsphereCookbook
         cleanup_node(new_resource.node_name) if federated
       end
     end
+    # rubocop:enable Style/MultilineIfModifier
 
     action :sync_and_restart do
       # syncs node config to dmgr. shutsdown servers if needed and restart node agent.
