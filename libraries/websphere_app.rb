@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: websphere
-# Resource:: websphere-server
+# Resource:: websphere_app
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,18 +37,28 @@ module WebsphereCookbook
     # After you install the application and before you save, use the edit command of the AdminApp object to add the additional mapping to the web server.
     # creates an empty cluster
     action :deploy_to_cluster do
-      unless get_id("/Deployment:#{app_name}/")
-        deploy_to_cluster(app_name, app_file, cluster_name, "[['.*', '.*', 'default_host']]")
+      unless get_id("/Deployment:#{new_resource.app_name}/")
+        deploy_to_cluster(
+          new_resource.app_name,
+          new_resource.app_file,
+          new_resource.cluster_name,
+          "[['.*', '.*', 'default_host']]"
+        )
         sleep 20
       end
     end
 
     action :deploy_to_server do
-      unless get_id("/Deployment:#{app_name}/")
-        cmd = "AdminApp.install('#{app_file}', ['-appname', '#{app_name}', '-node', '#{node_name}', '-server', '#{server_name}', '-MapWebModToVH', [['.*', '.*', 'default_host']]"
-        cmd << ", '-contextroot', '/'" if context_root
+      unless get_id("/Deployment:#{new_resource.app_name}/")
+        cmd = "AdminApp.install('#{new_resource.app_file}', ['-appname', '#{new_resource.app_name}',"\
+          " '-node', '#{new_resource.node_name}', '-server', '#{new_resource.server_name}', '-MapWebModToVH', [['.*', '.*', 'default_host']]"
+        cmd << ", '-contextroot', '/'" if new_resource.context_root
         cmd << '])'
-        wsadmin_exec("install application #{app_name} to server #{server_name}", cmd, [0])
+        wsadmin_exec(
+          "install application #{new_resource.app_name} to server #{new_resource.server_name}",
+          cmd,
+          [0]
+        )
         sleep 20
       end
     end
@@ -61,14 +71,14 @@ module WebsphereCookbook
       # give time for app to deploy
       1.upto(8) do |_n|
         sleep 20
-        break if get_id("/Deployment:#{app_name}/")
+        break if get_id("/Deployment:#{new_resource.app_name}/")
       end
-      if get_id("/Deployment:#{app_name}/")
-        cmd = "AdminApplication.startApplicationOnAllDeployedTargets('#{app_name}', '#{node_name}')"
-        cmd = "AdminApplication.startApplicationOnCluster('#{app_name}', '#{cluster_name}')" if cluster_name
-        wsadmin_exec("start application #{app_name}", cmd, [0, 103])
+      if get_id("/Deployment:#{new_resource.app_name}/")
+        cmd = "AdminApplication.startApplicationOnAllDeployedTargets('#{new_resource.app_name}', '#{new_resource.node_name}')"
+        cmd = "AdminApplication.startApplicationOnCluster('#{new_resource.app_name}', '#{new_resource.cluster_name}')" if new_resource.cluster_name
+        wsadmin_exec("start application #{new_resource.app_name}", cmd, [0, 103])
       else
-        Chef::Log.warn("Unable to start application #{app_name}. It does NOT exist.")
+        Chef::Log.warn("Unable to start application #{new_resource.app_name}. It does NOT exist.")
       end
     end
 
@@ -76,15 +86,15 @@ module WebsphereCookbook
       # give time for app to deploy
       1.upto(8) do |_n|
         sleep 20
-        break if get_id("/Deployment:#{app_name}/")
+        break if get_id("/Deployment:#{new_resource.app_name}/")
       end
       # TODO: find a way to check if app is already stopped, instead of allowing 103 return code.
-      if get_id("/Deployment:#{app_name}/")
-        cmd = "AdminApplication.stopApplicationOnAllDeployedTargets('#{app_name}', '#{node_name}')"
-        cmd = "AdminApplication.stopApplicationOnCluster('#{app_name}', '#{cluster_name}')" if cluster_name
-        wsadmin_exec("stop application #{app_name}", cmd, [0, 103])
+      if get_id("/Deployment:#{new_resource.app_name}/")
+        cmd = "AdminApplication.stopApplicationOnAllDeployedTargets('#{new_resource.app_name}', '#{new_resource.node_name}')"
+        cmd = "AdminApplication.stopApplicationOnCluster('#{new_resource.app_name}', '#{new_resource.cluster_name}')" if new_resource.cluster_name
+        wsadmin_exec("stop application #{new_resource.app_name}", cmd, [0, 103])
       else
-        Chef::Log.warn("Unable to stop application #{app_name}. It does NOT exist.")
+        Chef::Log.warn("Unable to stop application #{new_resource.app_name}. It does NOT exist.")
       end
     end
 

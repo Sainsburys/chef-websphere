@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: websphere
-# Resource:: websphere-server
+# Resource:: websphere_jms_destination
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,13 +35,13 @@ module WebsphereCookbook
 
     action :create do
       unless jms_dest_exists?
-        cmd = "AdminJMS.createGenericJMSDestinationAtScope('#{scope}', '#{jms_provider}', "\
-          "'#{jms_dest_name}',  '#{jndi_name}', '#{ext_jndi_name}', [['type', '#{type}']"
-        cmd << ", ['description', '#{description}']" if description
-        cmd << ", ['category', '#{category}']" if category
+        cmd = "AdminJMS.createGenericJMSDestinationAtScope('#{new_resource.scope}', '#{new_resource.jms_provider}', "\
+          "'#{new_resource.jms_dest_name}',  '#{new_resource.jndi_name}', '#{new_resource.ext_jndi_name}', [['type', '#{new_resource.type}']"
+        cmd << ", ['description', '#{new_resource.description}']" if new_resource.description
+        cmd << ", ['category', '#{new_resource.category}']" if new_resource.category
         cmd << '])'
 
-        wsadmin_exec("Create JMS destination #{jms_dest_name} #{type}", cmd)
+        wsadmin_exec("Create JMS destination #{new_resource.jms_dest_name} #{new_resource.type}", cmd)
       end
     end
 
@@ -49,9 +49,9 @@ module WebsphereCookbook
     # so they're available in the action.
     action_class.class_eval do
       def jms_dest_exists?
-        cmd = "-c \"AdminJMS.listGenericJMSDestinations('#{jms_dest_name}')\""
+        cmd = "-c \"AdminJMS.listGenericJMSDestinations('#{new_resource.jms_dest_name}')\""
         mycmd = wsadmin_returns(cmd)
-        return true if mycmd.stdout.include?("#{jms_dest_name}\(")
+        return true if mycmd.stdout.include?("#{new_resource.jms_dest_name}\(")
         false
       end
     end

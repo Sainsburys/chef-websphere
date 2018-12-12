@@ -1,9 +1,9 @@
 
 #
 # Cookbook Name:: websphere
-# Resource:: websphere-server
+# Resource:: websphere_wsadmin
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2018 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,32 +32,32 @@ module WebsphereCookbook
 
     action :run do
       wsadmin_cmd = './wsadmin.sh -lang jython -conntype SOAP '
-      wsadmin_cmd << "-host #{dmgr_host} " if dmgr_host
-      wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
-      wsadmin_cmd << "-user #{admin_user} -password #{admin_password} " if admin_user && admin_password
-      wsadmin_cmd << "-f #{file}" if file
-      wsadmin_cmd << "-c \"#{script}\"" if script && file.nil?
+      wsadmin_cmd << "-host #{new_resource.dmgr_host} " if new_resource.dmgr_host
+      wsadmin_cmd << "-port #{new_resource.dmgr_port} " if new_resource.dmgr_port
+      wsadmin_cmd << "-user #{new_resource.admin_user} -password #{new_resource.admin_password} " if new_resource.admin_user && new_resource.admin_password
+      wsadmin_cmd << "-f #{new_resource.file}" if new_resource.file
+      wsadmin_cmd << "-c \"#{new_resource.script}\"" if new_resource.script && new_resource.file.nil?
 
-      execute "wsadmin #{label}" do
-        cwd bin_dir
+      execute "wsadmin #{new_resource.label}" do
+        cwd new_resource.bin_dir
         command wsadmin_cmd
-        returns return_codes
-        sensitive sensitive_exec
+        returns new_resource.return_codes
+        sensitive new_resource.sensitive_exec
         action :run
       end
     end
 
     action :save do
       wsadmin_cmd = './wsadmin.sh -lang jython -conntype SOAP '
-      wsadmin_cmd << "-host #{dmgr_host} " if dmgr_host
-      wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
-      wsadmin_cmd << "-user #{admin_user} -password #{admin_password} " if admin_user && admin_password
+      wsadmin_cmd << "-host #{new_resource.dmgr_host} " if new_resource.dmgr_host
+      wsadmin_cmd << "-port #{new_resource.dmgr_port} " if new_resource.dmgr_port
+      wsadmin_cmd << "-user #{new_resource.admin_user} -password #{new_resource.admin_password} " if new_resource.admin_user && new_resource.admin_password
       wsadmin_cmd << '-c "AdminConfig.save()"'
 
-      execute "wsadmin #{label}" do
-        cwd bin_dir
+      execute "wsadmin #{new_resource.label}" do
+        cwd new_resource.bin_dir
         command wsadmin_cmd
-        sensitive sensitive_exec
+        sensitive new_resource.sensitive_exec
         action :run
       end
     end
