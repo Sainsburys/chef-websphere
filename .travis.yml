@@ -1,9 +1,6 @@
 language: ruby
 rvm: 2.2
 sudo: required
-branches:
-  only:
-  - master
 addons:
   apt:
     sources:
@@ -18,9 +15,13 @@ env:
   - INSTANCE=was-app-server-centos-6
   - INSTANCE=was-webserver-centos-6
   fast_finish: true
+  global:
+  - secure: XvpayDz0fecG9k2JvhtHgjnze3DSnxkOGp+lw4UPePDMIMB6BvNy9o2Pv5JlCmQiRhQhXGKI33oUtkL1mpRdpla2SWYZYYhit4vVp38YXqx0/FwZ+bdRiILxbBwLwEga9H0fgor3buF5xaIjPzOfe6Zf+S7ySC98c+ummIOIqFdGJndUpYtSOIoHD/K+sKEBKq/o4Kn9C6n7UbzI70l1uyBhCxWavnAXUhxrsCYCTq5DXGgd3fA/Yzul81IKFVcvfB/qqgZumy2nzOyOth318Hpp2FKChchO/ABPwRbFmrElb0QMs0ytUDH8mm0KJD0FHcgH4PXHoVeznuAyDAgZp6AAD7W0TMTHuUAF+0iMwxbIlNRrpXqRpxowpJshxPuL1q/birlvVMLx0uCvm7NrZsGzCWWyTG9BtEPxIdtkf/Q9BoJuvZBLGHMYljS8CTs4HusVFx4Bq2BEAEHRjmbMutnauZQv1yNfFLzaF321DJNARFKcVmVgpFgLxRgBwHlf1xneRiotYSXDlpmFAAJHvlZgl9P42ZEvEJ2NYb0QFrhT4ceh4eh/9HiSocmISE6RaSGkgb6bbOhEwlwDS9OazIKybkAzBhbYKEOwcTTjWarFfRopeiISSm63Dth3BdCkSK4sGLucI3/KVurXsys6igEhafbiFrCjNp+g9dcJoZM=
+  - secure: cgWtZC9p68zuD1qUJ8XfoJfg1JjzmUA4QW2QFnQPSGFi/RY6/SA59Mp7EUwsccWzTPJh9SNYT8+EXm8tGddPGXnet0UCaeGDM0MEvifQDO/CRS4+RZ9RBa8b9bvkUYWkaMv2bmmDpML1mCPkL2tLO0asMJXZ9Y2zn350dMEYh2c17KU/X0f7AfawBbCFEHPfHcrh6gfmUk+BdnrN1LQneLmLnssxMB6zSF+TPlaxsAK2fx9o4Ij9F1On7yulAWgTCDoca+CBQy+Pm/OTG2okU4uOH0AzUJ1Y4Xb0BG2FjUuv3mqcIF1ufw5yXlfLZ/XCQzAdvfFM9DfNtTvvD0LHxbF1oiX5dQIAw5Gd2t1+eu04VDH9hx9QzSSzBha6JHO3rufOi16W0OBcXwXqarYlldwpzolGR2pNe83tVSnnIH1/lq78TG04mvklehSu6JhsA5ObFt25ktwKGwwmR+etZ5DMa1fswYlMiKG0v86fAGACcUIzEcXuUCvxfF1LncOJ+nGQ/aaQ9dQpw/Vww+6QH0T0dU3/2q+EZrRWjucs3fr9oFoZFTD2vj4JWM+MxDztHlg30ou/9Sf39PWZ4Io+VTFYJB3nt7EjefvmTQFfm3qfrN7L3i6IE8DRsyf/Y2c0a8hWRkFtqz83p1VnpShZ6V3mKq1ygiYcBa9dnB8S6+0=
+  - secure: cy4eQlEmPZbOo7OpJMa4QiFqvPvlLdZvhObPkGgEIADamxvSf2SkjzJtGZ7LcnHZn+V6hEMGzIEjSwcsVNzVuqZU8nQ6KUVA1GMXIoClkL1JbzR9PoW9PDoG7EjTnKbSlQzE8cT+ZFOjy+7gtjzYu+dWuMeEkw9vaTa77SLiSrv1tXu0+PgtRKCY8I/g51cwrn/bMQC/MXjhUIZwNOhAxV5Ew2PJo+1LwZe3u1GxDpmNClNJvhE2QixE9PF5lQUDOaxL0x2DayDuit81IZrMKyNbEL0vJ0zdyqXNjMU2FeVLQ71DC4SQvx53gUVXnZ7QaoAiQ2mtTqhCynBCvF7cbxsyU0PiV0leacGL9tliObeOL1iaFmJipUc6ecgUO6MJBC0drOEEHaen48ZBtRivBFFUjDsD21CgHhdGjjb8Um3Vv1esnwXEBsxoke7Dkc0reZwjjwJ+kMFeQoh3RzyBl3IoTi+gmxcO6GxqkNrCYRy307iL6lLREyy/Cb+NCCmn1THoTmrcemWnxdw9qYH7VEs41zk8c7PBlpzuc1k7EET6m9OrfcsdWvhdLCKOVQYxAQU6JWa8yua3RxtqWvJN/7Wsd75Ntaf6Sw8z9Af7VjiirXVvJ5mcnUmyxCjS+iPDmZZy2nS9FYL4TkI0g6bNS9YDiA6b0r7aMGYSVXiftCY=
 before_script:
 - eval "$(/opt/chefdk/bin/chef shell-init bash)"
-- "/opt/chefdk/embedded/bin/chef gem install kitchen-ec2"
+- "/opt/chefdk/embedded/bin/chef gem install kitchen-ec2 kitchen-sync"
 - openssl version
 - openssl aes-256-cbc -K $encrypted_deb391b403a8_key -iv $encrypted_deb391b403a8_iv
   -in travis-ci.pem.enc -out travis-ci.pem -d
@@ -34,5 +35,5 @@ script:
 after_script:
 - cat .kitchen/logs/kitchen.log
 before_install:
-- 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then openssl aes-256-cbc -K $encrypted_deb391b403a8_key -iv $encrypted_deb391b403a8_iv
-  -in travis-ci.pem.enc -out travis-ci.pem -d; fi'
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then openssl aes-256-cbc -K $encrypted_deb391b403a8_key
+  -iv $encrypted_deb391b403a8_iv -in travis-ci.pem.enc -out travis-ci.pem -d; fi
