@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 describe 'websphere-test::was_cluster' do
   cached(:chef_run) do
     stub_commands
-    ChefSpec::ServerRunner.new(
+    ChefSpec::SoloRunner.new(
       step_into: %w[websphere_dmgr websphere_profile websphere_cluster websphere_cluster_member websphere_ihs websphere_app],
       platform: 'centos'
     ) do |node|
