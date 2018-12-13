@@ -1,13 +1,6 @@
 
 # download and extract was_nd install media from s3.
-include_recipe 'python'
-python_pip 'awscli'
-
-chef_gem 'aws-sdk' do
-  version '~> 2.2'
-  compile_time true
-  action :install
-end
+include_recipe 'cloudcli::awscli'
 
 directory node['websphere-test']['unzip_dir'] do
   recursive true
