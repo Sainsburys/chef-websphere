@@ -1,6 +1,15 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.1.0
+--------------------
+- Chef 13 deprecation fixes
+- Additional unit tests for IBM certificate library
+
+v1.0.13
+--------------------
+- Update Gem dependencies
+
 v1.0.12
 --------------------
 - Change Deployment Manager init script to use startManager.sh and stopManager.sh
