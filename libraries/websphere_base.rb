@@ -132,7 +132,7 @@ module WebsphereCookbook
         end
 
         cmd = "-f #{bin_directory}/sync_node.py #{nde_name}"
-        wsadmin_exec("wsadmin syncNode #{nde_name}", cmd, [0, 103])
+        wsadmin_exec("syncNode #{nde_name}", cmd, [0, 103])
       end
 
       # starts a dmgr node.
@@ -503,42 +503,42 @@ module WebsphereCookbook
 
       def save_config
         cmd = 'AdminConfig.save()'
-        wsadmin_exec('wsadmin save config', cmd)
+        wsadmin_exec('save config', cmd)
       end
 
       def start_server(nde_name, serv_name, return_codes = [0, 103])
         cmd = "AdminServerManagement.startSingleServer('#{nde_name}', '#{serv_name}')"
-        wsadmin_exec("wsadmin start server: #{serv_name} on node #{nde_name}", cmd, return_codes)
+        wsadmin_exec("start server: #{serv_name} on node #{nde_name}", cmd, return_codes)
       end
 
       def start_all_servers(nde_name)
         cmd = "AdminServerManagement.startAllServers('#{nde_name}')"
-        wsadmin_exec("wsadmin start all servers on node #{nde_name}", cmd, [0, 103])
+        wsadmin_exec("start all servers on node #{nde_name}", cmd, [0, 103])
       end
 
       def stop_server(nde_name, serv_name)
         cmd = "AdminServerManagement.stopSingleServer('#{nde_name}', '#{serv_name}')"
-        wsadmin_exec("wsadmin stop server: #{serv_name} on node #{nde_name}", cmd, [0, 103])
+        wsadmin_exec("stop server: #{serv_name} on node #{nde_name}", cmd, [0, 103])
       end
 
       def stop_all_servers(nde_name)
         cmd = "AdminServerManagement.stopAllServers('#{nde_name}')"
-        wsadmin_exec("wsadmin stopping all servers on node #{nde_name}", cmd, [0, 103])
+        wsadmin_exec("stopping all servers on node #{nde_name}", cmd, [0, 103])
       end
 
       def delete_server(nde_name, serv_name)
         cmd = "AdminServerManagement.deleteServer('#{nde_name}', '#{serv_name}')"
-        wsadmin_exec("wsadmin delete server: #{serv_name} on node #{nde_name}", cmd)
+        wsadmin_exec("delete server: #{serv_name} on node #{nde_name}", cmd)
       end
 
       def stop_node(nde_name)
         cmd = "AdminNodeManagement.stopNode('#{nde_name}')"
-        wsadmin_exec("wsadmin stop node: #{nde_name}", cmd, [0, 103, 1])
+        wsadmin_exec("stop node: #{nde_name}", cmd, [0, 103, 1])
       end
 
       def stop_node_agent(nde_name)
         cmd = "AdminNodeManagement.stopNode('#{nde_name}')"
-        wsadmin_exec("wsadmin stop node agent: #{nde_name}", cmd, [0, 103, 1])
+        wsadmin_exec("stop node agent: #{nde_name}", cmd, [0, 103, 1])
       end
 
       # deletes a cluster member server
@@ -547,12 +547,12 @@ module WebsphereCookbook
       def delete_cluster_member(clus_name, member_name, member_node, delete_replicator)
         cmd = "AdminTask.deleteClusterMember('[-clusterName #{clus_name} -memberNode #{member_node} "\
           "-memberName #{member_name} -replicatorEntry [-deleteEntry #{delete_replicator}]]')"
-        wsadmin_exec("wsadmin delete member: #{member_name} from cluster: #{clus_name}", cmd)
+        wsadmin_exec("delete member: #{member_name} from cluster: #{clus_name}", cmd)
       end
 
       def delete_cluster(clus_name, repl_domain = false)
         cmd = "AdminTask.deleteCluster('[-clusterName #{clus_name} -replicationDomain [-deleteRepDomain #{repl_domain}]]')"
-        wsadmin_exec("wsadmin delete cluster: #{clus_name}", cmd)
+        wsadmin_exec("delete cluster: #{clus_name}", cmd)
       end
 
       # returns the object id from a specified match string. matchen eg /Cell:MyNewCell/
@@ -584,7 +584,7 @@ module WebsphereCookbook
       def modify_object(config_id, attr_key_val_list, _bin_directory = new_resource.bin_dir)
         cmd = "AdminConfig.modify('#{config_id}', #{attr_key_val_list})"
         Chef::Log.debug("Modifying #{config_id}' to #{attr_key_val_list}")
-        wsadmin_exec("wsadmin modify config_id: #{config_id}", cmd)
+        wsadmin_exec("modify config_id: #{config_id}", cmd)
         save_config
       end
 
@@ -623,7 +623,7 @@ module WebsphereCookbook
         cmd = "AdminApp.install('#{appl_file}', ['-appname', '#{appl_name}', '-cluster', '#{clus_name}'"
         cmd << ", '-MapWebModToVH', [['.*', '.*', 'default_host']]" if map_web_mod_to_vh
         cmd << '])'
-        wsadmin_exec("wsadmin deploy #{appl_file} to cluster #{clus_name}", cmd)
+        wsadmin_exec("deploy #{appl_file} to cluster #{clus_name}", cmd)
         save_config
       end
 

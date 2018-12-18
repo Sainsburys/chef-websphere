@@ -32,7 +32,7 @@ module WebsphereCookbook
     action :create do
       unless server_exists?(new_resource.node_name, new_resource.server_name)
         cmd = "AdminTask.createApplicationServer('#{new_resource.node_name}', '[-name #{new_resource.server_name} -genUniquePorts #{new_resource.generate_unique_ports}]')"
-        wsadmin_exec("wsadmin create app server: #{new_resource.server_name} to node: #{new_resource.node_name} ", cmd)
+        wsadmin_exec("create app server: #{new_resource.server_name} to node: #{new_resource.node_name} ", cmd)
       end
 
       # set attributes on server
