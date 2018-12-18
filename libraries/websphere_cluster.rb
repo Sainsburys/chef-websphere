@@ -32,7 +32,7 @@ module WebsphereCookbook
     action :create do
       unless cluster_exists?(new_resource.cluster_name)
         cmd = "AdminClusterManagement.createClusterWithoutMember('#{new_resource.cluster_name}')"
-        wsadmin_exec("wasadmin createClusterWithoutMember #{new_resource.cluster_name}", cmd)
+        wsadmin_exec("createClusterWithoutMember #{new_resource.cluster_name}", cmd)
         save_config
       end
     end
@@ -44,17 +44,17 @@ module WebsphereCookbook
 
     action :ripple_start do
       cmd = "AdminClusterManagement.rippleStartSingleCluster('#{new_resource.cluster_name}')"
-      wsadmin_exec("wasadmin ripple_restart cluster: #{new_resource.cluster_name} ", cmd, [0, 103])
+      wsadmin_exec("ripple_restart cluster: #{new_resource.cluster_name} ", cmd, [0, 103])
     end
 
     action :start do
       cmd = "AdminClusterManagement.startSingleCluster('#{new_resource.cluster_name}')"
-      wsadmin_exec("wasadmin start cluster: #{new_resource.cluster_name} ", cmd, [0, 103])
+      wsadmin_exec("start cluster: #{new_resource.cluster_name} ", cmd, [0, 103])
     end
 
     action :stop do
       cmd = "AdminClusterManagement.stopSingleCluster('#{new_resource.cluster_name}')"
-      wsadmin_exec("wasadmin stop cluster: #{new_resource.cluster_name} ", cmd, [0, 103])
+      wsadmin_exec("stop cluster: #{new_resource.cluster_name} ", cmd, [0, 103])
     end
   end
 end
