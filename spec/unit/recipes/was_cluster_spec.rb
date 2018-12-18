@@ -16,7 +16,7 @@ describe 'websphere-test::was_cluster' do
 
   %w[
     websphere-test::was_install_basic
-    websphere-test::was_fixpack_java7
+    websphere-test::was_fixpack_java8
   ].each do |recipe|
     it "includes recipe #{recipe}" do
       expect(chef_run).to include_recipe(recipe)

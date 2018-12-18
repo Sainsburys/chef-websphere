@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 # webserver tests
 describe command('/opt/IBM/WebSphere/Toolbox/WCT/wctcmd.sh -tool pct -listDefinitionLocations') do
   its(:stdout) { should match(/Name: MyWebserver1/) }
@@ -52,6 +50,6 @@ describe service('ibm-httpd') do
   it { should be_enabled }
 end
 
-describe process('httpd') do
+describe processes('httpd') do
   it { should be_running }
 end
