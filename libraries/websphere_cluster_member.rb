@@ -31,7 +31,7 @@ module WebsphereCookbook
             " -memberWeight #{new_resource.member_weight} -genUniquePorts #{new_resource.generate_unique_ports}"\
             " -replicatorEntry #{new_resource.session_replication}]'])"
           wsadmin_exec(
-            "wsadmin add additional member: #{new_resource.server_name} to cluster: #{new_resource.cluster_name} ",
+            "add additional member: #{new_resource.server_name} to cluster: #{new_resource.cluster_name} ",
             cmd
           )
         else
@@ -49,7 +49,7 @@ module WebsphereCookbook
             cmd = "AdminClusterManagement.createFirstClusterMemberWithTemplate('#{new_resource.cluster_name}',"\
               " '#{new_resource.server_node}', '#{new_resource.server_name}', 'default')"
           end
-          wsadmin_exec("wsadmin add first cluster member: #{new_resource.server_name} to cluster: #{new_resource.cluster_name} ", cmd)
+          wsadmin_exec("add first cluster member: #{new_resource.server_name} to cluster: #{new_resource.cluster_name} ", cmd)
         end
       end
 
@@ -68,10 +68,10 @@ module WebsphereCookbook
 
     action :start do
       # it can take a minute to create the clustered server, so we need to add a delay in if it cannot find it.
-      sleep(30) if !server_exists?(new_resource.server_node, new_resource.server_name) || !member?(new_resource.cluster_name, new_resource.server_name)
-      sleep(30) if !server_exists?(new_resource.server_node, new_resource.server_name) || !member?(new_resource.cluster_name, new_resource.server_name)
+      sleep(30) if !server_exists?(new_resource.server_node, new_resource.server_name) || !member?(new_resource.cluster_name, new_resource.server_name, new_resource.server_node)
+      sleep(30) if !server_exists?(new_resource.server_node, new_resource.server_name) || !member?(new_resource.cluster_name, new_resource.server_name, new_resource.server_node)
       return unless server_exists?(new_resource.server_node, new_resource.server_name) || member?(new_resource.cluster_name, new_resource.server_name, new_resource.server_node)
-      start_server(new_resource.cluster_name, new_resource.server_name, new_resource.server_node)
+      start_server(new_resource.cluster_name, new_resource.server_name)
       node.default['websphere']['endpoints'] = get_ports
       # Chef::Log.debug("endpoints set #{node['websphere']['endpoints'][server_node][server_name]}")
     end
@@ -90,8 +90,7 @@ module WebsphereCookbook
       # delete_cluster(cluster_name) unless get_cluster_members(cluster_name).count > 0
     end
 
-    # need to wrap helper methods in class_eval
-    # so they're available in the action.
+    # need to wrap helper methods in class_eval so they're available in the action.
     action_class.class_eval do
     end
   end
