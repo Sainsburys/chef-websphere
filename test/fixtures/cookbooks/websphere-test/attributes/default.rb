@@ -15,3 +15,4 @@ default['websphere-test']['fixpack_s3_zip'] = 'ibm-install-data/WASND_v8.5.5_fix
 default['websphere-test']['fixpack_zip_file'] = '/opt/IBM/ibm-media/WASND_v8.5.5_fixpack14.zip'
 default['websphere-test']['fixpack_repo'] = '/opt/IBM/ibm-media/8.5.5-WS-WAS-FP0000014'
 default['websphere-test']['java_package'] = 'com.ibm.websphere.IBMJAVA.v80_8.0.5017.20180726_2118'
+default['websphere-test']['dmgr_timeout'] = nil

@@ -12,6 +12,7 @@ websphere_dmgr 'Dmgr01 create' do
   security_attributes ({
     'newvalue' => "[['appEnabled','true']]"
   })
+  timeout node['websphere-test']['dmgr_timeout']
   action [:create, :start]
 end
 
