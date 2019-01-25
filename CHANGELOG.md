@@ -5,6 +5,7 @@ v1.1.0
 --------------------
 - Chef 13 deprecation fixes
 - Additional unit tests for IBM certificate library
+- Add a timeout option for Deployment Manager start
 
 v1.0.13
 --------------------

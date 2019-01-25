@@ -30,5 +30,6 @@ websphere_profile 'AppProfile1 create/federate/start' do
       }
     }
   })
+  timeout node['websphere-test']['profile_timeout']
   action [:create, :federate, :start]
 end

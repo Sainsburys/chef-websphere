@@ -2,7 +2,7 @@
 # Cookbook Name:: websphere
 # Resource:: websphere_base
 #
-# Copyright (C) 2015-2018 J Sainsburys
+# Copyright (C) 2015-2019 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ module WebsphereCookbook
     property :dmgr_host, String, default: 'localhost' # dmgr host to federate to.
     property :dmgr_port, [String, nil], default: nil # dmgr port to federate to.
     property :sensitive_exec, [TrueClass, FalseClass], default: true # for debug purposes
+    property :timeout, [Integer, nil], default: nil
 
     # you need at least one action here to allow the action_class.class_eval block to work
     action :dummy do
@@ -53,7 +54,7 @@ module WebsphereCookbook
         end
       end
 
-      # returns a hash of enpoint => port for a server
+      # returns a hash of endpoint => port for a server
       # if server is nil it returns an array of all servers endpoints and ports
       # returns nil if error
       def get_ports(srvr_name = '', bin_directory = new_resource.bin_dir)
@@ -94,10 +95,13 @@ module WebsphereCookbook
       # TODO: add check if node or server are already started first.
       def start_node(profile_bin)
         # start_profile(profile_name, "#{profile_path}/bin", "./startNode.sh", [0, 255])
+        startnode = './startNode.sh'
+        startnode << " -timeout #{new_resource.timeout}" if new_resource.timeout
+
         execute "start node on profile: #{profile_bin}" do
           cwd profile_bin
           user new_resource.run_user
-          command './startNode.sh'
+          command startnode
           returns [0, 255] # ignore error if node already started.
           action :run
         end
@@ -140,11 +144,13 @@ module WebsphereCookbook
       # TODO: add check if node or server are already started first.
       def start_manager(p_name, profile_env, profile_bin = new_resource.bin_dir)
         # start_profile(profile_name, bin_dir, "./startManager.sh -profileName #{profile_name}", [0, 255])
+        startcommand = "./startManager.sh -profileName #{p_name}"
+        startcommand << " -timeout #{new_resource.timeout}" if new_resource.timeout
         execute "start dmgr profile: #{p_name}" do
           cwd profile_bin
           environment profile_env
           user new_resource.run_user
-          command "./startManager.sh -profileName #{p_name}"
+          command startcommand
           returns [0, 255] # ignore error if node already started.
           action :run
         end
