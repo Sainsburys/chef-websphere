@@ -104,6 +104,7 @@ end
 * `security_attributes`, [Hash, nil], default: nil # A hash of security attributes to apply to the dmgr
 * `manage_user`, [TrueClass, FalseClass], default: true. Should the resource create the user for you. Set to false if you have created the run_user previously in your recipe, outside of this resource.
 * `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in Chef logs.
+* `timeout`, [Integer, nil], default: nil, The timeout (in seconds) used for starting the Deployment Manager
 
 #### Actions
 
@@ -114,7 +115,7 @@ end
 
 ### websphere_profiles
 
-This resource currently only allows for appserver or custom profiles. It's best to use custom resources everywhere, and add appservers to it later with the websphere_app_server or websphere_cluster_member resources.
+This resource currently only allows for appserver or custom profiles. It's best to use custom resources everywhere, and add appservers to it later with the `websphere_app_server` or `websphere_cluster_member` resources.
 
 #### Example
 
@@ -146,6 +147,7 @@ end
 * `manage_user`, [TrueClass, FalseClass], default: true. Should the resource create the user for you. Set to false if you have created the run_user previously in your recipe, outside of this resource.
 * `manage_service`, [TrueClass, FalseClass], default: true. Should the resource create the init service for you. Set to false if you have created the service previously in your recipe, outside of this resource.
 * `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
+* `timeout`, [Integer, nil], default: nil, The timeout (in seconds) used for starting the node
 
 #### Actions
 

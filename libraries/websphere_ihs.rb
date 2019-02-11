@@ -1,3 +1,21 @@
+#
+# Cookbook Name:: websphere
+# Resource:: websphere_ihs
+#
+# Copyright (C) 2015-2019 J Sainsburys
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 module WebsphereCookbook
   class WebsphereIhs < WebsphereBase
     require_relative 'helpers'
@@ -25,7 +43,7 @@ module WebsphereCookbook
     property :ihs_admin_password, [String, nil], default: nil
     property :ihs_admin_port, String, default: '8008'
 
-    # pre-requisite: this library only supports ih webservers on managed nodes. The websphere node must already be created on the ihs node.
+    # pre-requisite: this library only supports IHS webservers on managed nodes. The websphere node must already be created on the ihs node.
     # 1. install required packages for wctcmd tool on centos 6
     # 2. install web definition by running wctcmd pct tool
     # 3. execute equivalient to contents of configure script file
@@ -33,21 +51,21 @@ module WebsphereCookbook
 
     action :create do
       if platform_family?('rhel')
-        pkgs = %w(glibc.i686 glibc libgcc.i686)
+        pkgs = %w[glibc.i686 glibc libgcc.i686]
         pkgs.each do |pkg|
           package pkg
         end
       end
 
       create_web_definition unless web_definition_exists?
-      run_configure_script unless server_exists?(node_name, webserver_name)
+      run_configure_script unless server_exists?(new_resource.node_name, new_resource.webserver_name)
 
       template '/etc/init.d/ibm-httpd' do
         mode '0755'
         source 'ihs_init.d.erb'
         cookbook 'websphere'
         variables(
-          ihs_root: ihs_install_root
+          ihs_root: new_resource.ihs_install_root
         )
       end
 
@@ -56,7 +74,7 @@ module WebsphereCookbook
       end
 
       save_config
-      sync_node_wsadmin(node_name)
+      sync_node_wsadmin(new_resource.node_name)
     end
 
     action :delete do
@@ -67,27 +85,27 @@ module WebsphereCookbook
 
     action :start do
       i = 0 # safety timeout break
-      until server_exists?(node_name, webserver_name)
+      until server_exists?(new_resource.node_name, new_resource.webserver_name)
         sleep(5) # ensure webserver has been created first
         i += 1
         break if i >= 8
       end
-      start_server(node_name, webserver_name, [0, 103])
+      start_server(new_resource.node_name, new_resource.webserver_name, [0, 103])
     end
 
     action :stop do
-      stop_server(node_name, webserver_name)
+      stop_server(new_resource.node_name, new_resource.webserver_name)
     end
 
     action :restart do
       i = 0 # safety timeout break
-      until server_exists?(node_name, webserver_name)
+      until server_exists?(new_resource.node_name, new_resource.webserver_name)
         sleep(5) # ensure webserver has been created first
         i += 1
         break if i >= 8
       end
-      stop_server(node_name, webserver_name)
-      start_server(node_name, webserver_name, [0, 103])
+      stop_server(new_resource.node_name, new_resource.webserver_name)
+      start_server(new_resource.node_name, new_resource.webserver_name, [0, 103])
     end
 
     # need to wrap helper methods in class_eval
@@ -97,7 +115,7 @@ module WebsphereCookbook
       # you can only have one per definition location
       def web_definition_exists?
         # create webserver definition
-        mycmd = Mixlib::ShellOut.new('./wctcmd.sh -tool pct -listDefinitionLocations', cwd: wct_tool_root)
+        mycmd = Mixlib::ShellOut.new('./wctcmd.sh -tool pct -listDefinitionLocations', cwd: new_resource.wct_tool_root)
         mycmd.run_command
         if mycmd.error?
           Chef::Log.warn("Error checking if web definition exists: #{mycmd.stderr}")
@@ -141,13 +159,14 @@ module WebsphereCookbook
         #     '/opt/IBM/HTTPServer/servers/Webserver01/conf/httpd-Webserver01.conf' 1143 MAP_ALL
         # '/opt/IBM/WebSphere/Plugins' managed ip-10-1-1-191_Node01 ibm-ihs-managed-centos-6 linux
 
-        configure_cmd = "#{profile_path}/bin/wsadmin.sh -profileName #{profile_name} "\
-          "-user #{admin_user} -password #{admin_password} -f '#{bin_dir}/configureWebserverDefinition.jacl' "\
-          "#{webserver_name} IHS '#{ihs_install_root}' '#{ihs_config_file}' #{ihs_port} MAP_ALL '#{plg_root}' "\
-          "managed #{node_name} #{ihs_hostname} linux"
+        configure_cmd = "#{new_resource.profile_path}/bin/wsadmin.sh -profileName #{new_resource.profile_name} "\
+          "-user #{new_resource.admin_user} -password #{new_resource.admin_password}"\
+          " -f '#{new_resource.bin_dir}/configureWebserverDefinition.jacl' "\
+          "#{new_resource.webserver_name} IHS '#{new_resource.ihs_install_root}' '#{new_resource.ihs_config_file}' #{new_resource.ihs_port} MAP_ALL '#{new_resource.plg_root}' "\
+          "managed #{new_resource.node_name} #{new_resource.ihs_hostname} linux"
 
-        execute "run webserver #{webserver_name} configure script" do
-          cwd "#{profile_path}/bin"
+        execute "run webserver #{new_resource.webserver_name} configure script" do
+          cwd "#{new_resource.profile_path}/bin"
           command configure_cmd
           sensitive true
           action :run
@@ -156,15 +175,17 @@ module WebsphereCookbook
 
       def create_web_definition
         # create webserver definition
-        cmd = "./wctcmd.sh -tool pct -createDefinition -defLocPathname #{plg_root} -defLocName #{webserver_name} "\
-          "-configType #{config_type} -enableAdminServerSupport #{enable_ihs_admin_server} -enableUserAndPass #{enable_ihs_admin_server} "\
-          "-mapWebServerToApplications #{map_to_apps} -profileName #{profile_name} -wasExistingLocation #{websphere_root} "\
-          "-webServerConfigFile1 #{ihs_config_file} -webServerDefinition #{webserver_name} -webServerPortNumber #{ihs_port} -webServerSelected ihs "\
-          "-webServerHostName #{ihs_hostname} -ihsAdminUnixUserGroup #{runas_group} -ihsAdminUnixUserID #{runas_user}"
-        cmd << " -ihsAdminUserID #{ihs_admin_user} -ihsAdminPassword #{ihs_admin_password}" if enable_ihs_admin_server && ihs_admin_user && ihs_admin_password
+        cmd = "./wctcmd.sh -tool pct -createDefinition -defLocPathname #{new_resource.plg_root} "\
+          "-defLocName #{new_resource.webserver_name} -configType #{new_resource.config_type} "\
+          "-enableAdminServerSupport #{new_resource.enable_ihs_admin_server} -enableUserAndPass #{new_resource.enable_ihs_admin_server} "\
+          "-mapWebServerToApplications #{new_resource.map_to_apps} -profileName #{new_resource.profile_name} -wasExistingLocation #{new_resource.websphere_root} "\
+          "-webServerConfigFile1 #{new_resource.ihs_config_file} -webServerDefinition #{new_resource.webserver_name} "\
+          "-webServerPortNumber #{new_resource.ihs_port} -webServerSelected ihs "\
+          "-webServerHostName #{new_resource.ihs_hostname} -ihsAdminUnixUserGroup #{new_resource.runas_group} -ihsAdminUnixUserID #{new_resource.runas_user}"
+        cmd << " -ihsAdminUserID #{new_resource.ihs_admin_user} -ihsAdminPassword #{new_resource.ihs_admin_password}" if new_resource.enable_ihs_admin_server && new_resource.ihs_admin_user && new_resource.ihs_admin_password
 
-        execute "create webserver definition: #{webserver_name}" do
-          cwd wct_tool_root
+        execute "create webserver definition: #{new_resource.webserver_name}" do
+          cwd new_resource.wct_tool_root
           command cmd
           sensitive true
           action :run
@@ -172,9 +193,9 @@ module WebsphereCookbook
       end
 
       def delete_web_definition
-        cmd = "./wctcmd.sh -tool pct -removeDefinitionLocation -defLocPathname #{plg_root}"
-        execute "delete webserver definition: #{webserver_name}" do
-          cwd wct_tool_root
+        cmd = "./wctcmd.sh -tool pct -removeDefinitionLocation -defLocPathname #{new_resource.plg_root}"
+        execute "delete webserver definition: #{new_resource.webserver_name}" do
+          cwd new_resource.wct_tool_root
           command cmd
           action :run
         end

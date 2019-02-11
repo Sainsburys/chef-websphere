@@ -21,5 +21,3 @@ def stub_commands
   # allow(File).to receive(:exist?).and_call_original
   # allow(File).to receive(:exist?).with('/opt/IBM/WebSphere/AppServer/profiles/AppProfile1/bin/setupCmdLine.sh').and_return(true)
 end
-
-at_exit { ChefSpec::Coverage.report! }

@@ -2,7 +2,7 @@
 # Cookbook Name:: websphere
 # Resource:: websphere_base
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2019 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ module WebsphereCookbook
     property :dmgr_host, String, default: 'localhost' # dmgr host to federate to.
     property :dmgr_port, [String, nil], default: nil # dmgr port to federate to.
     property :sensitive_exec, [TrueClass, FalseClass], default: true # for debug purposes
+    property :timeout, [Integer, nil], default: nil
 
     # you need at least one action here to allow the action_class.class_eval block to work
     action :dummy do
@@ -43,20 +44,20 @@ module WebsphereCookbook
       def manageprofiles_exec(cmd, options)
         command = "#{cmd} #{options}"
 
-        execute "manage_profiles #{cmd} #{profile_name}" do
-          cwd bin_dir
-          user run_user
-          group run_group
+        execute "manage_profiles #{cmd} #{new_resource.profile_name}" do
+          cwd new_resource.bin_dir
+          user new_resource.run_user
+          group new_resource.run_group
           command command
-          sensitive sensitive_exec
+          sensitive new_resource.sensitive_exec
           action :run
         end
       end
 
-      # returns a hash of enpoint => port for a server
+      # returns a hash of endpoint => port for a server
       # if server is nil it returns an array of all servers endpoints and ports
       # returns nil if error
-      def get_ports(srvr_name = '', bin_directory = bin_dir)
+      def get_ports(srvr_name = '', bin_directory = new_resource.bin_dir)
         cookbook_file "#{bin_directory}/server_ports.py" do
           cookbook 'websphere'
           source 'server_ports.py'
@@ -77,14 +78,14 @@ module WebsphereCookbook
       # returns 246 if already stopped
       def stop_profile_node(p_name, profile_bin)
         cmd = "./stopNode.sh -profileName #{p_name} -stopservers"
-        cmd << " -username #{admin_user} -password #{admin_password}" if admin_user && admin_password
+        cmd << " -username #{new_resource.admin_user} -password #{new_resource.admin_password}" if new_resource.admin_user && new_resource.admin_password
 
         execute "stop #{p_name}" do
           cwd profile_bin
-          user run_user
+          user new_resource.run_user
           command cmd
           returns [0, 246, 255]
-          sensitive sensitive_exec
+          sensitive new_resource.sensitive_exec
           action :run
         end
       end
@@ -94,10 +95,13 @@ module WebsphereCookbook
       # TODO: add check if node or server are already started first.
       def start_node(profile_bin)
         # start_profile(profile_name, "#{profile_path}/bin", "./startNode.sh", [0, 255])
+        startnode = './startNode.sh'
+        startnode << " -timeout #{new_resource.timeout}" if new_resource.timeout
+
         execute "start node on profile: #{profile_bin}" do
           cwd profile_bin
-          user run_user
-          command './startNode.sh'
+          user new_resource.run_user
+          command startnode
           returns [0, 255] # ignore error if node already started.
           action :run
         end
@@ -107,23 +111,23 @@ module WebsphereCookbook
       # stops all servers if stop_servers=true
       # restarts nodeagent if restart=true
       def sync_node_sh(profile_bin, stop_servers, restart)
-        cmd = "./syncNode.sh #{dmgr_host}"
-        cmd << " #{dmgr_port}" if dmgr_port
-        cmd << " -username #{admin_user} -password #{admin_password}" if admin_user && admin_password
+        cmd = "./syncNode.sh #{new_resource.dmgr_host}"
+        cmd << " #{new_resource.dmgr_port}" if new_resource.dmgr_port
+        cmd << " -username #{new_resource.admin_user} -password #{new_resource.admin_password}" if new_resource.admin_user && new_resource.admin_password
         cmd << ' -stopservers' if stop_servers
         cmd << ' -restart' if restart
 
         execute "sync node on profile: #{profile_bin}" do
           cwd profile_bin
-          user run_user
+          user new_resource.run_user
           command cmd
           returns [0]
           action :run
-          sensitive sensitive_exec
+          sensitive new_resource.sensitive_exec
         end
       end
 
-      def sync_node_wsadmin(nde_name = 'all', bin_directory = '/opt/IBM/WebSphere/AppServer/bin')
+      def sync_node_wsadmin(nde_name = 'all', bin_directory = new_resource.bin_dir)
         cookbook_file "#{bin_directory}/sync_node.py" do
           cookbook 'websphere'
           source 'sync_node.py'
@@ -132,19 +136,21 @@ module WebsphereCookbook
         end
 
         cmd = "-f #{bin_directory}/sync_node.py #{nde_name}"
-        wsadmin_exec("wsadmin syncNode #{nde_name}", cmd, [0, 103])
+        wsadmin_exec("syncNode #{nde_name}", cmd, [0, 103])
       end
 
       # starts a dmgr node.
       # requires path to profiles own bin dir
       # TODO: add check if node or server are already started first.
-      def start_manager(p_name, profile_env, profile_bin = bin_dir)
+      def start_manager(p_name, profile_env, profile_bin = new_resource.bin_dir)
         # start_profile(profile_name, bin_dir, "./startManager.sh -profileName #{profile_name}", [0, 255])
+        startcommand = "./startManager.sh -profileName #{p_name}"
+        startcommand << " -timeout #{new_resource.timeout}" if new_resource.timeout
         execute "start dmgr profile: #{p_name}" do
           cwd profile_bin
           environment profile_env
-          user run_user
-          command "./startManager.sh -profileName #{p_name}"
+          user new_resource.run_user
+          command startcommand
           returns [0, 255] # ignore error if node already started.
           action :run
         end
@@ -154,7 +160,7 @@ module WebsphereCookbook
       # server_name should be 'dmgr' or 'nodeagent'
       def enable_as_service(service_name, srvr_name, prof_path, runas = '')
         # if dplymgr user and password set, then add as additional args for stop.
-        stop_args = admin_user && admin_password ? "-username #{admin_user} -password #{admin_password}" : ''
+        stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
         # admin_user && admin_password ? start_args = "-username #{admin_user} -password #{admin_password}" : start_args = ''
 
         template "/etc/init.d/#{service_name}" do
@@ -165,7 +171,7 @@ module WebsphereCookbook
             service_name: service_name,
             server_name: srvr_name,
             profile_path: prof_path,
-            was_root: bin_dir,
+            was_root: new_resource.bin_dir,
             stop_args: stop_args,
             start_args: '',
             runas_user: runas
@@ -201,7 +207,7 @@ module WebsphereCookbook
 
         # there's no perfect way to chown in chef without being explicit for each dir with the directory resource.
         execute 'chown websphere root for service account' do
-          command "chown -R #{user}:#{group} #{websphere_root}"
+          command "chown -R #{user}:#{group} #{new_resource.websphere_root}"
           action :run
         end
       end
@@ -209,16 +215,16 @@ module WebsphereCookbook
       # federates a node to a dmgr.
       # requires path to profiles own bin dir
       def add_node(profile_bin_dir)
-        cmd = "./addNode.sh #{dmgr_host}"
-        cmd << " #{dmgr_port}" if dmgr_port
+        cmd = "./addNode.sh #{new_resource.dmgr_host}"
+        cmd << " #{new_resource.dmgr_port}" if new_resource.dmgr_port
         cmd << ' -includeapps'
-        cmd << " -username #{admin_user} -password #{admin_password}" if admin_user && admin_password
+        cmd << " -username #{new_resource.admin_user} -password #{new_resource.admin_password}" if new_resource.admin_user && new_resource.admin_password
 
         execute "addNode #{profile_bin_dir}" do
           cwd profile_bin_dir
-          user run_user
+          user new_resource.run_user
           command cmd
-          sensitive sensitive_exec
+          sensitive new_resource.sensitive_exec
           action :run
         end
         save_config
@@ -230,42 +236,42 @@ module WebsphereCookbook
       # only use remove_node if you intend to keep the appservers rather than delete them.
       def remove_node
         cmd = './removeNode.sh'
-        cmd << " -username #{admin_user} -password #{admin_password}" if admin_user && admin_password
+        cmd << " -username #{new_resource.admin_user} -password #{new_resource.admin_password}" if new_resource.admin_user && new_resource.admin_password
 
         execute "removeNode #{profile_bin_dir}" do
-          cwd bin_dir
-          user run_user
+          cwd new_resource.bin_dir
+          user new_resource.run_user
           command cmd
-          sensitive sensitive_exec
+          sensitive new_resource.sensitive_exec
           action :run
         end
       end
 
       # run after deleting a federated profile/node
       def cleanup_node(nde_name)
-        cmd = "./cleanupNode.sh #{nde_name} #{dmgr_host}"
-        cmd << " #{dmgr_port}" if dmgr_port
-        cmd << " -username #{admin_user} -password #{admin_password}" if admin_user && admin_password
-        execute "cleanupNode node: #{nde_name} dmgr: #{dmgr_host}" do
-          cwd bin_dir
-          user run_user
+        cmd = "./cleanupNode.sh #{nde_name} #{new_resource.dmgr_host}"
+        cmd << " #{new_resource.dmgr_port}" if new_resource.dmgr_port
+        cmd << " -username #{new_resource.admin_user} -password #{new_resource.admin_password}" if new_resource.admin_user && new_resource.admin_password
+        execute "cleanupNode node: #{nde_name} dmgr: #{new_resource.dmgr_host}" do
+          cwd new_resource.bin_dir
+          user new_resource.run_user
           command cmd
-          sensitive sensitive_exec
+          sensitive new_resource.sensitive_exec
           action :run
         end
       end
 
       def update_registry
         execute 'update profile registry' do
-          cwd bin_dir
-          user run_user
+          cwd new_resource.bin_dir
+          user new_resource.run_user
           command './manageprofiles.sh -validateAndUpdateRegistry'
           action :run
         end
       end
 
       def profile_exists?(p_name)
-        mycmd = Mixlib::ShellOut.new('./manageprofiles.sh -listProfiles', cwd: bin_dir)
+        mycmd = Mixlib::ShellOut.new('./manageprofiles.sh -listProfiles', cwd: new_resource.bin_dir)
         mycmd.run_command
         return false if mycmd.error?
         # ./manageprofiles.sh -listProfiles example output: [Dmgr01, AppSrv01, AppSrv02]
@@ -283,8 +289,8 @@ module WebsphereCookbook
 
       def delete_profile(p_name, p_path)
         execute "delete #{p_name}" do
-          cwd bin_dir
-          user run_user
+          cwd new_resource.bin_dir
+          user new_resource.run_user
           command "./manageprofiles.sh -delete -profileName #{p_name} && "\
             './manageprofiles.sh -validateAndUpdateRegistry'
           returns [0, 2]
@@ -302,10 +308,10 @@ module WebsphereCookbook
       # java sdk must already be installed with ibm-installmgr cookbook
       def enable_java_sdk(sdk_name, profile_bin, profile_name)
         cmd = "./managesdk.sh -enableProfile -profileName #{profile_name} -sdkname #{sdk_name} -verbose -enableServers"
-        cmd << " -user #{admin_user} -password #{admin_password}" if admin_user && admin_password
+        cmd << " -user #{new_resource.admin_user} -password #{new_resource.admin_password}" if new_resource.admin_user && new_resource.admin_password
         execute "enable java #{sdk_name} on profile: #{profile_name}" do
           cwd profile_bin
-          user run_user
+          user new_resource.run_user
           command cmd
           action :run
         end
@@ -315,11 +321,11 @@ module WebsphereCookbook
       # executes wsadmin commands and captures stdout, return values, errors etc.
       # returns  Mixlib::ShellOut with the stdout, stderror and exitcodes populated.
       # command needs to include the -f of -c flag for file or command string
-      def wsadmin_returns(cmd, bin_directory = bin_dir)
+      def wsadmin_returns(cmd, bin_directory = new_resource.bin_dir)
         wsadmin_cmd = './wsadmin.sh -lang jython -conntype SOAP '
-        wsadmin_cmd << "-host #{dmgr_host} " if dmgr_host
-        wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
-        wsadmin_cmd << "-user #{admin_user} -password #{admin_password} " if admin_user && admin_password
+        wsadmin_cmd << "-host #{new_resource.dmgr_host} " if new_resource.dmgr_host
+        wsadmin_cmd << "-port #{new_resource.dmgr_port} " if new_resource.dmgr_port
+        wsadmin_cmd << "-user #{new_resource.admin_user} -password #{new_resource.admin_password} " if new_resource.admin_user && new_resource.admin_password
         wsadmin_cmd << cmd
         mycmd = Mixlib::ShellOut.new(wsadmin_cmd, cwd: bin_directory)
         mycmd.run_command
@@ -332,7 +338,7 @@ module WebsphereCookbook
       # "[node", "AppServer10_node]", "[server", "AppServer10_server]"]
       # returns an empty array if server doesn't exit.
       def server_info(serv_name)
-        cmd = " -c \"AdminServerManagement.showServerInfo('#{node_name}', '#{serv_name}')\""
+        cmd = " -c \"AdminServerManagement.showServerInfo('#{new_resource.node_name}', '#{serv_name}')\""
         mycmd = wsadmin_returns(cmd)
         return [] if mycmd.error?
         str = result.stdout.match(/\['(.*?)'\]/).captures.first # match everything between ['']
@@ -348,7 +354,7 @@ module WebsphereCookbook
       end
 
       # returns true if server name is a member of specified cluster for a specified node.
-      def member?(clus_name, serv_name, serv_node, bin_directory = bin_dir)
+      def member?(clus_name, serv_name, serv_node, bin_directory = new_resource.bin_dir)
         # Get all server members from the cluster
         cookbook_file "#{bin_directory}/cluster_member_exists.py" do
           cookbook 'websphere'
@@ -422,7 +428,7 @@ module WebsphereCookbook
       end
 
       # returns true if server exists on node.
-      def server_exists?(nde_name, serv_name, profile_bin_dir = bin_dir)
+      def server_exists?(nde_name, serv_name, profile_bin_dir = new_resource.bin_dir)
         cmd = "-c \"AdminServerManagement.checkIfServerExists('#{nde_name}', '#{serv_name}')\""
         mycmd = wsadmin_returns(cmd, profile_bin_dir)
         return true if mycmd.stdout.include?("\n'true'\n")
@@ -465,80 +471,80 @@ module WebsphereCookbook
       end
 
       # executes wsadmin commands. Doesn't capture any stdout.
-      def wsadmin_exec(label, cmd, return_codes = [0], bin_directory = bin_dir)
+      def wsadmin_exec(label, cmd, return_codes = [0], bin_directory = new_resource.bin_dir)
         wsadmin_cmd = './wsadmin.sh -lang jython -conntype SOAP '
-        wsadmin_cmd << "-host #{dmgr_host} " if dmgr_host
-        wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
-        wsadmin_cmd << "-user #{admin_user} -password #{admin_password} " if admin_user && admin_password
+        wsadmin_cmd << "-host #{new_resource.dmgr_host} " if new_resource.dmgr_host
+        wsadmin_cmd << "-port #{new_resource.dmgr_port} " if new_resource.dmgr_port
+        wsadmin_cmd << "-user #{new_resource.admin_user} -password #{new_resource.admin_password} " if new_resource.admin_user && new_resource.admin_password
         wsadmin_cmd << "-c \"#{cmd}\""
         Chef::Log.debug("wsadmin_exec running cmd: #{wsadmin_cmd} return_codes #{return_codes}")
 
         execute "wsadmin #{label}" do
           cwd bin_directory
-          user run_user
+          user new_resource.run_user
           command wsadmin_cmd
           returns return_codes
-          sensitive sensitive_exec
+          sensitive new_resource.sensitive_exec
           action :run
         end
       end
 
-      def wsadmin_exec_file(label, cmd, return_codes = [0], bin_directory = bin_dir)
+      def wsadmin_exec_file(label, cmd, return_codes = [0], bin_directory = new_resource.bin_dir)
         wsadmin_cmd = './wsadmin.sh -lang jython -conntype SOAP '
-        wsadmin_cmd << "-host #{dmgr_host} " if dmgr_host
-        wsadmin_cmd << "-port #{dmgr_port} " if dmgr_port
-        wsadmin_cmd << "-user #{admin_user} -password #{admin_password} " if admin_user && admin_password
+        wsadmin_cmd << "-host #{new_resource.dmgr_host} " if new_resource.dmgr_host
+        wsadmin_cmd << "-port #{new_resource.dmgr_port} " if new_resource.dmgr_port
+        wsadmin_cmd << "-user #{new_resource.admin_user} -password #{new_resource.admin_password} " if new_resource.admin_user && new_resource.admin_password
         wsadmin_cmd << "-f #{cmd}"
         Chef::Log.debug("wsadmin_exec running cmd: #{wsadmin_cmd}")
 
         execute "wsadmin #{label}" do
           cwd bin_directory
-          user run_user
+          user new_resource.run_user
           command wsadmin_cmd
           returns return_codes
-          sensitive sensitive_exec
+          sensitive new_resource.sensitive_exec
           action :run
         end
       end
 
       def save_config
         cmd = 'AdminConfig.save()'
-        wsadmin_exec('wsadmin save config', cmd)
+        wsadmin_exec('save config', cmd)
       end
 
       def start_server(nde_name, serv_name, return_codes = [0, 103])
         cmd = "AdminServerManagement.startSingleServer('#{nde_name}', '#{serv_name}')"
-        wsadmin_exec("wsadmin start server: #{serv_name} on node #{nde_name}", cmd, return_codes)
+        wsadmin_exec("start server: #{serv_name} on node #{nde_name}", cmd, return_codes)
       end
 
       def start_all_servers(nde_name)
         cmd = "AdminServerManagement.startAllServers('#{nde_name}')"
-        wsadmin_exec("wsadmin start all servers on node #{nde_name}", cmd, [0, 103])
+        wsadmin_exec("start all servers on node #{nde_name}", cmd, [0, 103])
       end
 
       def stop_server(nde_name, serv_name)
         cmd = "AdminServerManagement.stopSingleServer('#{nde_name}', '#{serv_name}')"
-        wsadmin_exec("wsadmin stop server: #{serv_name} on node #{nde_name}", cmd, [0, 103])
+        wsadmin_exec("stop server: #{serv_name} on node #{nde_name}", cmd, [0, 103])
       end
 
       def stop_all_servers(nde_name)
         cmd = "AdminServerManagement.stopAllServers('#{nde_name}')"
-        wsadmin_exec("wsadmin stopping all servers on node #{nde_name}", cmd, [0, 103])
+        wsadmin_exec("stopping all servers on node #{nde_name}", cmd, [0, 103])
       end
 
       def delete_server(nde_name, serv_name)
         cmd = "AdminServerManagement.deleteServer('#{nde_name}', '#{serv_name}')"
-        wsadmin_exec("wsadmin delete server: #{serv_name} on node #{nde_name}", cmd)
+        wsadmin_exec("delete server: #{serv_name} on node #{nde_name}", cmd)
       end
 
       def stop_node(nde_name)
         cmd = "AdminNodeManagement.stopNode('#{nde_name}')"
-        wsadmin_exec("wsadmin stop node: #{nde_name}", cmd, [0, 103, 1])
+        wsadmin_exec("stop node: #{nde_name}", cmd, [0, 103, 1])
       end
 
       def stop_node_agent(nde_name)
         cmd = "AdminNodeManagement.stopNode('#{nde_name}')"
-        wsadmin_exec("wsadmin stop node agent: #{nde_name}", cmd, [0, 103, 1])
+        wsadmin_exec("stop node agent: #{nde_name}", cmd, [0, 103, 1])
       end
 
       # deletes a cluster member server
@@ -547,18 +553,18 @@ module WebsphereCookbook
       def delete_cluster_member(clus_name, member_name, member_node, delete_replicator)
         cmd = "AdminTask.deleteClusterMember('[-clusterName #{clus_name} -memberNode #{member_node} "\
           "-memberName #{member_name} -replicatorEntry [-deleteEntry #{delete_replicator}]]')"
-        wsadmin_exec("wsadmin delete member: #{member_name} from cluster: #{clus_name}", cmd)
+        wsadmin_exec("delete member: #{member_name} from cluster: #{clus_name}", cmd)
       end
 
       def delete_cluster(clus_name, repl_domain = false)
         cmd = "AdminTask.deleteCluster('[-clusterName #{clus_name} -replicationDomain [-deleteRepDomain #{repl_domain}]]')"
-        wsadmin_exec("wsadmin delete cluster: #{clus_name}", cmd)
+        wsadmin_exec("delete cluster: #{clus_name}", cmd)
       end
 
       # returns the object id from a specified match string. matchen eg /Cell:MyNewCell/
       # eg result: 'MyNewCell(cells/MyNewCell|cell.xml#Cell_1)'
       # returns nil if error or no result.
-      def get_id(matcher, bin_directory = bin_dir)
+      def get_id(matcher, bin_directory = new_resource.bin_dir)
         cmd = "-c \"AdminConfig.getid('#{matcher}')\""
         mycmd = wsadmin_returns(cmd, bin_directory)
         return nil if mycmd.error?
@@ -570,7 +576,7 @@ module WebsphereCookbook
       # returns the top level attributes object id for a given object id.
       # eg object_id 'MyNewCell(cells/MyNewCell|cell.xml#Cell_1)'
       # eg returns '(cells/MyNewCell|cell.xml#MonitoredDirectoryDeployment_1)'
-      def get_attribute_id(object_id, attr_name, bin_directory = bin_dir)
+      def get_attribute_id(object_id, attr_name, bin_directory = new_resource.bin_dir)
         cmd = "-c \"AdminConfig.showAttribute('#{object_id}', '#{attr_name}')\""
         mycmd = wsadmin_returns(cmd, bin_directory)
         return nil if mycmd.error?
@@ -581,10 +587,10 @@ module WebsphereCookbook
 
       # modifies the specified attribues associated with a given config_id
       # attr_key_val_list is a string with key, value pairs eg: "[['userID', 'newID'], ['password', 'newPW']]"
-      def modify_object(config_id, attr_key_val_list, _bin_directory = bin_dir)
+      def modify_object(config_id, attr_key_val_list, _bin_directory = new_resource.bin_dir)
         cmd = "AdminConfig.modify('#{config_id}', #{attr_key_val_list})"
         Chef::Log.debug("Modifying #{config_id}' to #{attr_key_val_list}")
-        wsadmin_exec("wsadmin modify config_id: #{config_id}", cmd)
+        wsadmin_exec("modify config_id: #{config_id}", cmd)
         save_config
       end
 
@@ -623,7 +629,7 @@ module WebsphereCookbook
         cmd = "AdminApp.install('#{appl_file}', ['-appname', '#{appl_name}', '-cluster', '#{clus_name}'"
         cmd << ", '-MapWebModToVH', [['.*', '.*', 'default_host']]" if map_web_mod_to_vh
         cmd << '])'
-        wsadmin_exec("wsadmin deploy #{appl_file} to cluster #{clus_name}", cmd)
+        wsadmin_exec("deploy #{appl_file} to cluster #{clus_name}", cmd)
         save_config
       end
 

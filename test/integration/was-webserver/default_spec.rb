@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 # webserver tests
 describe command('/opt/IBM/WebSphere/Toolbox/WCT/wctcmd.sh -tool pct -listDefinitionLocations') do
   its(:stdout) { should match(/Name: MyWebserver1/) }
@@ -20,13 +18,13 @@ describe file('/opt/IBM/WebSphere/Plugins/logs/config/installIHSPlugin.log') do
 end
 
 ## plugin config has propogated
-cfg_files = %w(
+cfg_files = %w[
   /opt/IBM/WebSphere/Plugins/config/MyWebserver1/plugin-cfg.xml
   /opt/IBM/WebSphere/Plugins/config/templates/plugin-cfg.xml
   /opt/IBM/WebSphere/AppServer/profiles/Dmgr01/config/cells/MyNewCell/nodes/Custom01_node/servers/MyWebserver1/plugin-cfg.xml
   /opt/IBM/WebSphere/AppServer/profiles/Custom01/config/cells/plugin-cfg.xml
   /opt/IBM/WebSphere/AppServer/profiles/Dmgr01/config/cells/plugin-cfg.xml
-)
+]
 
 cfg_files.each do |f|
   describe file(f) do
@@ -52,6 +50,6 @@ describe service('ibm-httpd') do
   it { should be_enabled }
 end
 
-describe process('httpd') do
+describe processes('httpd') do
   it { should be_running }
 end
