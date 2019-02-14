@@ -43,7 +43,6 @@ module WebsphereCookbook
     action_class.class_eval do
       def manageprofiles_exec(cmd, options)
         command = "#{cmd} #{options}"
-
         execute "manage_profiles #{cmd} #{new_resource.profile_name}" do
           cwd new_resource.bin_dir
           user new_resource.run_user
@@ -271,7 +270,7 @@ module WebsphereCookbook
       end
 
       def profile_exists?(p_name)
-        mycmd = Mixlib::ShellOut.new('./manageprofiles.sh -listProfiles', cwd: new_resource.bin_dir)
+        mycmd = Mixlib::ShellOut.new('./manageprofiles.sh -listProfiles', cwd: new_resource.bin_dir, user: new_resource.run_user)
         mycmd.run_command
         return false if mycmd.error?
         # ./manageprofiles.sh -listProfiles example output: [Dmgr01, AppSrv01, AppSrv02]
