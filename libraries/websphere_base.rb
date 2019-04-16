@@ -155,26 +155,41 @@ module WebsphereCookbook
         end
       end
 
-      # use to setup a nodeagent or dmgr as an init.d service
+      # use to setup a nodeagent or dmgr as a service
       # server_name should be 'dmgr' or 'nodeagent'
       def enable_as_service(service_name, srvr_name, prof_path, runas = '')
         # if dplymgr user and password set, then add as additional args for stop.
         stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
         # admin_user && admin_password ? start_args = "-username #{admin_user} -password #{admin_password}" : start_args = ''
-
-        template "/etc/init.d/#{service_name}" do
-          mode '0755'
-          source srvr_name == 'dmgr' ? 'dmgr_init.d.erb' : 'node_service_init.d.erb'
-          cookbook 'websphere'
-          variables(
-            service_name: service_name,
-            server_name: srvr_name,
-            profile_path: prof_path,
-            was_root: new_resource.bin_dir,
-            stop_args: stop_args,
-            start_args: '',
-            runas_user: runas
-          )
+        if platform_version.to_i == 6
+          template "/etc/init.d/#{service_name}" do
+            mode '0755'
+            source srvr_name == 'dmgr' ? 'dmgr_init.d.erb' : 'node_service_init.d.erb'
+            cookbook 'websphere'
+            variables(
+              service_name: service_name,
+              server_name: srvr_name,
+              profile_path: prof_path,
+              was_root: new_resource.bin_dir,
+              stop_args: stop_args,
+              start_args: '',
+              runas_user: runas
+            )
+          end
+        else
+          template "/etc/systemd/system/#{service_name}.service" do
+            mode '0755'
+            source srvr_name == 'dmgr' ? 'dmgr_systemd.erb' : 'node_service_systemd.erb'
+            cookbook 'websphere'
+            variables(
+              service_name: service_name,
+              server_name: srvr_name,
+              profile_path: prof_path,
+              stop_args: stop_args,
+              start_args: '',
+              runas_user: runas
+            )
+          end
         end
 
         service service_name do
