@@ -180,7 +180,7 @@ module WebsphereCookbook
           end
         else
           template "/etc/systemd/system/#{service_name}.service" do
-            mode '0755'
+            mode '0644'
             source srvr_name == 'dmgr' ? 'dmgr_systemd.erb' : 'node_service_systemd.erb'
             cookbook 'websphere'
             variables(
