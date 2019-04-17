@@ -88,8 +88,11 @@ describe 'websphere-test::was_cluster' do
     end
 
     it 'creates a Deployment Manager systemd script with attributes' do
-      expect(chef_run).to create_template('/etc/systemd/system/Dmgr01.service').with(
-        profile_path: '/opt/IBM/WebSphere/AppServer/profiles/Dmgr01'
+      expect(chef_run).to render_file('/etc/systemd/system/Dmgr01.service').with_content(
+        'ExecStop=/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/bin/stopManager.sh -username admin -password admin'
+      )
+      expect(chef_run).to render_file('/etc/systemd/system/Dmgr01.service').with_content(
+        'TimeoutSec=300'
       )
     end
   end
