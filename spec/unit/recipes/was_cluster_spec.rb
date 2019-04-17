@@ -73,4 +73,27 @@ describe 'websphere-test::was_cluster' do
       )
     end
   end
+
+  context 'Running on EL7' do
+    cached(:chef_run) do
+      stub_commands
+      ChefSpec::SoloRunner.new(
+        step_into: %w[websphere_dmgr websphere_profile],
+        platform: 'redhat',
+        version: '7.3'
+      ) do |node|
+        node.automatic['websphere-test']['passport_advantage']['user'] = 'dummyuser'
+        node.automatic['websphere-test']['passport_advantage']['password'] = 'dummypw'
+      end.converge('websphere-test::was_cluster')
+    end
+
+    it 'creates a Deployment Manager systemd script with attributes' do
+      expect(chef_run).to render_file('/etc/systemd/system/Dmgr01.service').with_content(
+        'ExecStop=/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/bin/stopManager.sh -username admin -password admin'
+      )
+      expect(chef_run).to render_file('/etc/systemd/system/Dmgr01.service').with_content(
+        'TimeoutSec=300'
+      )
+    end
+  end
 end

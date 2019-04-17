@@ -1,0 +1,11 @@
+[Unit]
+Description=IBM WebSphere Application Server Node Service
+
+[Service]
+ExecStart=<%= @profile_path %>/bin/startServer.sh <%= @server_name %> <%= @start_args %>
+ExecStop=<%= @profile_path %>/bin/stopServer.sh <%= @server_name %> <%= @stop_args %>
+User=<%= @runas_user != '' ? @runas_user : 'root' %>
+TimeoutSec=<%= @svc_timeout %>
+
+[Install]
+WantedBy=multi-user.target

@@ -105,6 +105,7 @@ end
 * `manage_user`, [TrueClass, FalseClass], default: true. Should the resource create the user for you. Set to false if you have created the run_user previously in your recipe, outside of this resource.
 * `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in Chef logs.
 * `timeout`, [Integer, nil], default: nil, The timeout (in seconds) used for starting the Deployment Manager
+* `dmgr_svc_timeout`, [Integer, nil], default: 300, The timeout (in seconds) used for starting the Systemd Deployment Manager service
 
 #### Actions
 
@@ -148,6 +149,8 @@ end
 * `manage_service`, [TrueClass, FalseClass], default: true. Should the resource create the init service for you. Set to false if you have created the service previously in your recipe, outside of this resource.
 * `sensitive_exec`, [TrueClass, FalseClass], default: true # set to false for debug purposes to show stdout in chef logs.
 * `timeout`, [Integer, nil], default: nil, The timeout (in seconds) used for starting the node
+* `dmgr_svc_timeout`, [Integer, nil], default: 300, The timeout (in seconds) used for starting the Systemd Deployment Manager service
+* `node_svc_timeout`, [Integer, nil], default: 180, The timeout (in seconds) used for starting the Systemd Node agent service
 
 #### Actions
 
