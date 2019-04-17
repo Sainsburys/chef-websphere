@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.1.1
+--------------------
+- Add Systemd services for Deployment Manager and Node Agent
+
 v1.1.0
 --------------------
 - Chef 13 deprecation fixes
