@@ -30,8 +30,10 @@ module WebsphereCookbook
     property :admin_password, [String, nil], default: nil
     property :dmgr_host, String, default: 'localhost' # dmgr host to federate to.
     property :dmgr_port, [String, nil], default: nil # dmgr port to federate to.
+    property :dmgr_svc_timeout, [Integer, nil], default: 300 # systemd timeoutsec defaults.
     property :sensitive_exec, [TrueClass, FalseClass], default: true # for debug purposes
     property :timeout, [Integer, nil], default: nil
+    property :node_svc_timeout, [Integer, nil], default: 180 # systemd timeoutsec defaults.
 
     # you need at least one action here to allow the action_class.class_eval block to work
     action :dummy do
@@ -187,6 +189,7 @@ module WebsphereCookbook
               profile_path: prof_path,
               stop_args: stop_args,
               start_args: '',
+              svc_timeout: srvr_name == 'dmgr' ? new_resource.dmgr_svc_timeout : new_resource.node_svc_timeout,
               runas_user: runas
             )
           end
