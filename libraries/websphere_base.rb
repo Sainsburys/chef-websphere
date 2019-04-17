@@ -163,7 +163,7 @@ module WebsphereCookbook
         # if dplymgr user and password set, then add as additional args for stop.
         stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
         # admin_user && admin_password ? start_args = "-username #{admin_user} -password #{admin_password}" : start_args = ''
-        if platform_version.to_i == 6
+        if node['platform_version'].to_i == 6
           template "/etc/init.d/#{service_name}" do
             mode '0755'
             source srvr_name == 'dmgr' ? 'dmgr_init.d.erb' : 'node_service_init.d.erb'
