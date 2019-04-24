@@ -87,7 +87,7 @@ describe 'websphere-test::was_cluster' do
       end.converge('websphere-test::was_cluster')
     end
 
-    it 'creates a Deployment Manager systemd script with attributes' do
+    it 'creates a Deployment Manager runit script with attributes' do
       expect(chef_run).to render_file('/etc/systemd/system/Dmgr01.service').with_content(
         'ExecStop=/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/bin/stopManager.sh -username admin -password admin'
       )

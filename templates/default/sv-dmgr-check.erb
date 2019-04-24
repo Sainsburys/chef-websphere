@@ -1,0 +1,4 @@
+#!/bin/sh
+
+ps ax | grep -v grep | grep "<%= @options[:profile_path] %>" \
+ | grep "<%= @options[:server_name] %>"

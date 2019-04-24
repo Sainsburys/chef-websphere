@@ -1,0 +1,10 @@
+#!/bin/sh
+startScript=startManager.sh
+
+exec 2>&1
+
+exec chpst \
+    -u <%= @options[:runas_user] %> \
+    -l <%= @options[:profile_path] %>/logs/<%= @options[:server_name] %>.lock \
+    <%= @options[:profile_path] %>/bin/${startScript} \
+    <%= @options[:start_args] %>

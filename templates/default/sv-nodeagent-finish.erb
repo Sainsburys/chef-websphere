@@ -1,0 +1,6 @@
+stopScript=stopServer.sh
+
+exec chpst \
+    -u <%= @options[:runas_user] %> \
+    <%= @options[:profile_path] %>/bin/${stopScript} \
+    <%= @options[:stop_args] %>

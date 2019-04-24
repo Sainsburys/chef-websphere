@@ -30,7 +30,7 @@ module WebsphereCookbook
     property :admin_password, [String, nil], default: nil
     property :dmgr_host, String, default: 'localhost' # dmgr host to federate to.
     property :dmgr_port, [String, nil], default: nil # dmgr port to federate to.
-    property :dmgr_svc_timeout, [Integer, nil], default: 300 # systemd timeoutsec defaults.
+    property :dmgr_svc_timeout, [Integer, nil], default: 300 # runit timeoutsec defaults.
     property :sensitive_exec, [TrueClass, FalseClass], default: true # for debug purposes
     property :timeout, [Integer, nil], default: nil
     property :node_svc_timeout, [Integer, nil], default: 180 # systemd timeoutsec defaults.
@@ -159,44 +159,48 @@ module WebsphereCookbook
 
       # use to setup a nodeagent or dmgr as a service
       # server_name should be 'dmgr' or 'nodeagent'
+      # On RHEL7+ use runit since systemd and WebSphere do not Play Nice together
       def enable_as_service(service_name, srvr_name, prof_path, runas = '')
-        # if dplymgr user and password set, then add as additional args for stop.
         stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
         # admin_user && admin_password ? start_args = "-username #{admin_user} -password #{admin_password}" : start_args = ''
-        if node['platform_version'].to_i == 6
+        if node['platform_version'].to_i == 6 && platform_family?('rhel')
           template "/etc/init.d/#{service_name}" do
-            mode '0755'
+            mode 0o755
             source srvr_name == 'dmgr' ? 'dmgr_init.d.erb' : 'node_service_init.d.erb'
             cookbook 'websphere'
             variables(
               service_name: service_name,
               server_name: srvr_name,
               profile_path: prof_path,
-              was_root: new_resource.bin_dir,
               stop_args: stop_args,
-              start_args: '',
+              start_args: new_resource.timeout ? "-timeout #{new_resource.timeout}" : '',
               runas_user: runas
             )
+          end
+
+          service service_name do
+            action :enable
           end
         else
-          template "/etc/systemd/system/#{service_name}.service" do
-            mode '0644'
-            source srvr_name == 'dmgr' ? 'dmgr_systemd.erb' : 'node_service_systemd.erb'
+          runit_service service_name do
             cookbook 'websphere'
-            variables(
-              service_name: service_name,
-              server_name: srvr_name,
+            sv_timeout srvr_name == 'dmgr' ? new_resource.dmgr_svc_timeout : new_resource.node_svc_timeout
+            run_template_name srvr_name
+            check_script_template_name srvr_name
+            finish_script_template_name srvr_name
+            check true
+            finish true
+            options(
               profile_path: prof_path,
-              stop_args: stop_args,
-              start_args: '',
-              svc_timeout: srvr_name == 'dmgr' ? new_resource.dmgr_svc_timeout : new_resource.node_svc_timeout,
-              runas_user: runas
+              server_name: srvr_name,
+              runas_user: runas,
+              start_args: new_resource.timeout ? "-timeout #{new_resource.timeout}" : '',
+              stop_args: stop_args
             )
+            default_logger true
+            restart_on_update false
+            action :enable
           end
-        end
-
-        service service_name do
-          action :enable
         end
       end
 

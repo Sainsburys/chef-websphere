@@ -9,6 +9,7 @@ supports 'redhat'
 supports 'centos'
 
 depends 'ibm-installmgr'
+depends 'runit', '~> 4.3'
 
 source_url 'https://github.com/sainsburys/websphere'
 issues_url 'https://github.com/sainsburys/websphere/issues'
