@@ -38,14 +38,14 @@ module WebsphereCookbook
         options << " -serverName '#{new_resource.server_name}'" if new_resource.profile_type == 'appserver' && !new_resource.server_name.nil?
         options << " -cellName '#{new_resource.cell_name}'" if new_resource.cell_name
 
-        cmd = "./manageprofiles.sh -create #{options}"
+        cmd = "export DisableWASDesktopIntegration=false && ./manageprofiles.sh -create #{options}"
 
         execute "manage_profiles -create #{new_resource.profile_name}" do
           cwd new_resource.bin_dir
           command cmd
           user new_resource.run_user
           group new_resource.run_group
-          sensitive true
+          sensitive new_resource.sensitive_exec
           action :run
         end
 
@@ -64,7 +64,21 @@ module WebsphereCookbook
         unless new_resource.run_user == 'root' || new_resource.manage_user == false
           create_service_account(new_resource.run_user, new_resource.run_group)
         end
-        enable_as_service(new_resource.node_name, 'nodeagent', new_resource.profile_path, new_resource.run_user) if new_resource.manage_service == true
+        if new_resource.manage_service == true
+          enable_as_service(new_resource.profile_name + '_node', 'nodeagent', new_resource.profile_path, new_resource.run_user)
+          # the addNode command will start a node agent process which upsets systemd
+          if node['init_package'] == 'systemd'
+            stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
+            execute 'stop nodeagent' do
+              cwd "#{new_resource.profile_path}/bin"
+              command "./stopNodeSystemd.sh #{stop_args}"
+              user new_resource.run_user
+              group new_resource.run_group
+              sensitive new_resource.sensitive_exec
+              action :run
+            end
+          end
+        end
       end
 
       # set attributes on server
@@ -116,6 +130,30 @@ module WebsphereCookbook
     action :sync do
       # syncs nodes without restarting nodeagent or servers
       sync_node_wsadmin(new_resource.node_name, "#{new_resource.profile_path}/bin")
+    end
+
+    action :enable_as_service do
+      federated = federated?(new_resource.profile_path, new_resource.node_name)
+      if profile_exists?(new_resource.profile_name) && federated
+        unless new_resource.run_user == 'root' || new_resource.manage_user == false
+          create_service_account(new_resource.run_user, new_resource.run_group)
+        end
+        if new_resource.manage_service == true
+          enable_as_service(new_resource.profile_name + '_node', 'nodeagent', new_resource.profile_path, new_resource.run_user)
+          # the addNode command will start a node agent process which upsets systemd
+          if node['init_package'] == 'systemd'
+            stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
+            execute 'stop nodeagent' do
+              cwd "#{new_resource.profile_path}/bin"
+              command "./stopNodeSystemd.sh #{stop_args}"
+              user new_resource.run_user
+              group new_resource.run_group
+              sensitive new_resource.sensitive_exec
+              action :run
+            end
+          end
+        end
+      end
     end
 
     action :start_all_servers do

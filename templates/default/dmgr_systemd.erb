@@ -2,10 +2,11 @@
 Description=IBM WebSphere Application Server Deployment Manager Service
 
 [Service]
-ExecStart=<%= @profile_path %>/bin/startManager.sh <%= @start_args %>
-ExecStop=<%= @profile_path %>/bin/stopManager.sh <%= @stop_args %>
+ExecStart=<%= @profile_path %>/bin/startManagerSystemd.sh <%= @start_args %>
+ExecStop=<%= @profile_path %>/bin/stopManagerSystemd.sh <%= @stop_args %>
 User=<%= @runas_user != '' ? @runas_user : 'root' %>
 TimeoutSec=<%= @svc_timeout %>
+Type=forking
 
 [Install]
 WantedBy=multi-user.target

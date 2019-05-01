@@ -62,7 +62,7 @@ module WebsphereCookbook
         cookbook_file "#{bin_directory}/server_ports.py" do
           cookbook 'websphere'
           source 'server_ports.py'
-          mode '0755'
+          mode '0o755'
           action :create
         end
 
@@ -132,7 +132,7 @@ module WebsphereCookbook
         cookbook_file "#{bin_directory}/sync_node.py" do
           cookbook 'websphere'
           source 'sync_node.py'
-          mode '0755'
+          mode '0o755'
           action :create
         end
 
@@ -163,24 +163,46 @@ module WebsphereCookbook
         # if dplymgr user and password set, then add as additional args for stop.
         stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
         # admin_user && admin_password ? start_args = "-username #{admin_user} -password #{admin_password}" : start_args = ''
-        if platform_version.to_i == 6
-          template "/etc/init.d/#{service_name}" do
-            mode '0755'
-            source srvr_name == 'dmgr' ? 'dmgr_init.d.erb' : 'node_service_init.d.erb'
-            cookbook 'websphere'
-            variables(
-              service_name: service_name,
-              server_name: srvr_name,
-              profile_path: prof_path,
-              was_root: new_resource.bin_dir,
-              stop_args: stop_args,
-              start_args: '',
-              runas_user: runas
-            )
+        if node['init_package'] == 'systemd'
+          node_srvc = srvr_name == 'dmgr' ? 'Manager' : 'Node'
+          # execute blocks are used here rather than file resources, as using a file resource breaks the library in odd unrelated ways
+          # Create the new stop start scripts for the nodeagent
+          %w[
+            stop
+            start
+          ].each do |action|
+            ruby_block "rename #{action} control service script" do
+              block do
+                ::File.rename("#{prof_path}/../../bin/#{action}#{node_srvc}.sh", "#{prof_path}/../../bin/#{action}#{node_srvc}Systemd.sh")
+              end
+              not_if { ::File.exist?("#{prof_path}/../../bin/#{action}#{node_srvc}Systemd.sh") }
+            end
+
+            cookbook_file "#{prof_path}/../../bin/#{action}#{node_srvc}.sh" do
+              mode '0o755'
+              owner runas
+              group runas
+              source "#{action}#{node_srvc}Service.sh"
+              cookbook 'websphere'
+            end
+
+            cookbook_file "#{prof_path}/bin/#{action}#{node_srvc}Systemd.sh" do
+              mode '0o755'
+              owner runas
+              group runas
+              source "profile_#{action}#{node_srvc}Service.sh"
+              cookbook 'websphere'
+            end
           end
-        else
+
+          execute 'daemon_reload' do
+            command 'systemctl daemon-reload'
+            action :nothing
+            subscribes :run, "template[/etc/systemd/system/#{service_name}.service]", :immediate
+          end
+
           template "/etc/systemd/system/#{service_name}.service" do
-            mode '0644'
+            mode '0o644'
             source srvr_name == 'dmgr' ? 'dmgr_systemd.erb' : 'node_service_systemd.erb'
             cookbook 'websphere'
             variables(
@@ -190,6 +212,21 @@ module WebsphereCookbook
               stop_args: stop_args,
               start_args: '',
               svc_timeout: srvr_name == 'dmgr' ? new_resource.dmgr_svc_timeout : new_resource.node_svc_timeout,
+              runas_user: runas
+            )
+          end
+        else
+          template "/etc/init.d/#{service_name}" do
+            mode '0o755'
+            source srvr_name == 'dmgr' ? 'dmgr_init.d.erb' : 'node_service_init.d.erb'
+            cookbook 'websphere'
+            variables(
+              service_name: service_name,
+              server_name: srvr_name,
+              profile_path: prof_path,
+              was_root: new_resource.bin_dir,
+              stop_args: stop_args,
+              start_args: new_resource.timeout ? "-timeout #{new_resource.timeout}" : '',
               runas_user: runas
             )
           end
@@ -216,7 +253,7 @@ module WebsphereCookbook
         directory "/home/#{user}" do
           owner user
           group group
-          mode '0750'
+          mode '0o750'
           recursive true
           action :create
           not_if { user == 'root' }
@@ -376,7 +413,7 @@ module WebsphereCookbook
         cookbook_file "#{bin_directory}/cluster_member_exists.py" do
           cookbook 'websphere'
           source 'cluster_member_exists.py'
-          mode '0755'
+          mode '0o755'
           action :create
         end
         Chef::Log.info("Checking for: #{clus_name} #{serv_node} #{serv_name}")
