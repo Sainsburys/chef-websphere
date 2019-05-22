@@ -180,16 +180,16 @@ module WebsphereCookbook
 
             cookbook_file "#{prof_path}/../../bin/#{action}#{node_srvc}.sh" do
               mode '0o755'
-              owner runas
-              group runas
+              owner new_resource.runas
+              group new_resource.runas
               source "#{action}#{node_srvc}Service.sh"
               cookbook 'websphere'
             end
 
             cookbook_file "#{prof_path}/bin/#{action}#{node_srvc}Systemd.sh" do
               mode '0o755'
-              owner runas
-              group runas
+              owner new_resource.runas
+              group new_resource.runas
               source "profile_#{action}#{node_srvc}Service.sh"
               cookbook 'websphere'
             end
@@ -212,7 +212,7 @@ module WebsphereCookbook
               stop_args: stop_args,
               start_args: '',
               svc_timeout: srvr_name == 'dmgr' ? new_resource.dmgr_svc_timeout : new_resource.node_svc_timeout,
-              runas_user: runas
+              runas_user: new_resource.runas
             )
           end
         else
@@ -227,7 +227,7 @@ module WebsphereCookbook
               was_root: new_resource.bin_dir,
               stop_args: stop_args,
               start_args: new_resource.timeout ? "-timeout #{new_resource.timeout}" : '',
-              runas_user: runas
+              runas_user: new_resource.runas
             )
           end
         end
