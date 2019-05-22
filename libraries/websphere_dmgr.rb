@@ -52,7 +52,7 @@ module WebsphereCookbook
         options << " -cellName #{new_resource.cell_name}" if new_resource.cell_name
         options << " -serverType #{management_type}"
         options << " -adminUserName #{new_resource.admin_user} -adminPassword #{new_resource.admin_password} -enableAdminSecurity true" if new_resource.admin_user
-        manageprofiles_exec('./manageprofiles.sh -create', options)
+        manageprofiles_exec('export DisableWASDesktopIntegration=false && ./manageprofiles.sh -create', options)
       end
 
       # Enable "profile_name" to use the specific "java_sdk"
