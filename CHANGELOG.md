@@ -1,6 +1,14 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.1.3
+--------------------
+- Bug fix for `websphere_base`:`enable_as_service` function
+
+v1.1.2
+--------------------
+- Enhance SystemD operations and make it more generic
+
 v1.1.1
 --------------------
 - Add Systemd services for Deployment Manager and Node Agent
