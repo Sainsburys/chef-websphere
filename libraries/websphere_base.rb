@@ -159,7 +159,7 @@ module WebsphereCookbook
 
       # use to setup a nodeagent or dmgr as a service
       # server_name should be 'dmgr' or 'nodeagent'
-      def enable_as_service(service_name, srvr_name, prof_path, runas = '')
+      def enable_as_service(service_name, srvr_name, prof_path, runas = 'root')
         # if dplymgr user and password set, then add as additional args for stop.
         stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
         # admin_user && admin_password ? start_args = "-username #{admin_user} -password #{admin_password}" : start_args = ''
@@ -180,16 +180,16 @@ module WebsphereCookbook
 
             cookbook_file "#{prof_path}/../../bin/#{action}#{node_srvc}.sh" do
               mode '0o755'
-              owner new_resource.runas
-              group new_resource.runas
+              owner runas
+              group runas
               source "#{action}#{node_srvc}Service.sh"
               cookbook 'websphere'
             end
 
             cookbook_file "#{prof_path}/bin/#{action}#{node_srvc}Systemd.sh" do
               mode '0o755'
-              owner new_resource.runas
-              group new_resource.runas
+              owner runas
+              group runas
               source "profile_#{action}#{node_srvc}Service.sh"
               cookbook 'websphere'
             end
@@ -212,7 +212,7 @@ module WebsphereCookbook
               stop_args: stop_args,
               start_args: '',
               svc_timeout: srvr_name == 'dmgr' ? new_resource.dmgr_svc_timeout : new_resource.node_svc_timeout,
-              runas_user: new_resource.runas
+              runas_user: runas
             )
           end
         else
@@ -227,7 +227,7 @@ module WebsphereCookbook
               was_root: new_resource.bin_dir,
               stop_args: stop_args,
               start_args: new_resource.timeout ? "-timeout #{new_resource.timeout}" : '',
-              runas_user: new_resource.runas
+              runas_user: runas
             )
           end
         end
