@@ -44,7 +44,7 @@ module WebsphereCookbook
     # so they're available in the action.
     action_class.class_eval do
       def manageprofiles_exec(cmd, options)
-        command = "#{cmd} #{options}"
+        command = "export DisableWASDesktopIntegration=false && #{cmd} #{options}"
         execute "manage_profiles #{cmd} #{new_resource.profile_name}" do
           cwd new_resource.bin_dir
           user new_resource.run_user
