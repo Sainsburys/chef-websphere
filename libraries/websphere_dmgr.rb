@@ -38,9 +38,7 @@ module WebsphereCookbook
 
     # creates a new profile or augments/updates if profile exists.
     action :create do
-      unless new_resource.run_user == 'root' || new_resource.manage_user == false
-        create_service_account(new_resource.run_user, new_resource.run_group)
-      end
+      create_service_account(new_resource.run_user, new_resource.run_group) unless new_resource.run_user == 'root' || new_resource.manage_user == false
 
       p_exists = profile_exists?(new_resource.profile_name)
       unless p_exists

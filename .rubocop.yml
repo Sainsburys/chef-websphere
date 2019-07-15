@@ -24,7 +24,10 @@ Metrics/MethodLength:
   Max: 20
 
 # Easier for diff, but not common enough
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
   Enabled: false
 
 # Ruby 3

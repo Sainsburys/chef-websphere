@@ -91,5 +91,10 @@ module WebsphereCookbook
       end
       attribute_str
     end
+
+    def check_admin_args(admin_user = nil, admin_pass = nil)
+      return "-username #{admin_user} -password #{admin_pass}" if admin_user && admin_pass
+      ''
+    end
   end
 end
