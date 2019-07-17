@@ -479,6 +479,7 @@ module WebsphereCookbook
           members << server
         end
         Chef::Log.debug("get_cluster_members() result #{members}")
+        members
       end
 
       # returns true if server exists on node.

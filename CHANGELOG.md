@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.1.4
+--------------------
+- Bug fix for `websphere_base`:`get_cluster_members` function, did not return successful output previously
+
 v1.1.3
 --------------------
 - Bug fix for `websphere_base`:`enable_as_service` function
