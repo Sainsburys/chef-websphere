@@ -544,6 +544,24 @@ module WebsphereCookbook
         end
       end
 
+      def wsadmin_multi_command_exec(label, cmd, return_codes = [0], bin_directory = new_resource.bin_dir)
+        wsadmin_cmd = './wsadmin.sh -lang jython -conntype SOAP '
+        wsadmin_cmd << "-host #{new_resource.dmgr_host} " if new_resource.dmgr_host
+        wsadmin_cmd << "-port #{new_resource.dmgr_port} " if new_resource.dmgr_port
+        wsadmin_cmd << "-user #{new_resource.admin_user} -password #{new_resource.admin_password} " if new_resource.admin_user && new_resource.admin_password
+        wsadmin_cmd << "#{cmd}"
+        Chef::Log.debug("wsadmin_exec running cmd: #{wsadmin_cmd} return_codes #{return_codes}")
+
+        execute "wsadmin #{label}" do
+          cwd bin_directory
+          user new_resource.run_user
+          command wsadmin_cmd
+          returns return_codes
+          sensitive new_resource.sensitive_exec
+          action :run
+        end
+      end
+
       def wsadmin_exec_file(label, cmd, return_codes = [0], bin_directory = new_resource.bin_dir)
         wsadmin_cmd = './wsadmin.sh -lang jython -conntype SOAP '
         wsadmin_cmd << "-host #{new_resource.dmgr_host} " if new_resource.dmgr_host
