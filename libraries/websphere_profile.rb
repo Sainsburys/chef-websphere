@@ -68,7 +68,7 @@ module WebsphereCookbook
           enable_as_service(new_resource.profile_name + '_node', 'nodeagent', new_resource.profile_path, new_resource.run_user)
           # the addNode command will start a node agent process which upsets systemd
           if node['init_package'] == 'systemd'
-            stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
+            stop_args = check_admin_args(new_resource.admin_user, new_resource.admin_password)
             execute 'stop nodeagent' do
               cwd "#{new_resource.profile_path}/bin"
               command "./stopNodeSystemd.sh #{stop_args}"
@@ -140,7 +140,7 @@ module WebsphereCookbook
           enable_as_service(new_resource.profile_name + '_node', 'nodeagent', new_resource.profile_path, new_resource.run_user)
           # the addNode command will start a node agent process which upsets systemd
           if node['init_package'] == 'systemd'
-            stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
+            stop_args = check_admin_args(new_resource.admin_user, new_resource.admin_password)
             execute 'stop nodeagent' do
               cwd "#{new_resource.profile_path}/bin"
               command "./stopNodeSystemd.sh #{stop_args}"
