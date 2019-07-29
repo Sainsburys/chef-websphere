@@ -105,7 +105,6 @@ module WebsphereCookbook
       stop_profile_node(new_resource.profile_name, "#{new_resource.profile_path}/bin")
     end
 
-    # rubocop:disable Style/MultilineIfModifier
     action :delete do
       update_registry
       if profile_exists?(new_resource.profile_name)
@@ -120,7 +119,6 @@ module WebsphereCookbook
         cleanup_node(new_resource.node_name) if federated
       end
     end
-    # rubocop:enable Style/MultilineIfModifier
 
     action :sync_and_restart do
       # syncs node config to dmgr. shutsdown servers if needed and restart node agent.

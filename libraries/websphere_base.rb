@@ -549,7 +549,7 @@ module WebsphereCookbook
         wsadmin_cmd << "-host #{new_resource.dmgr_host} " if new_resource.dmgr_host
         wsadmin_cmd << "-port #{new_resource.dmgr_port} " if new_resource.dmgr_port
         wsadmin_cmd << "-user #{new_resource.admin_user} -password #{new_resource.admin_password} " if new_resource.admin_user && new_resource.admin_password
-        wsadmin_cmd << "#{cmd}"
+        wsadmin_cmd << cmd.to_s
         Chef::Log.debug("wsadmin_exec running cmd: #{wsadmin_cmd} return_codes #{return_codes}")
 
         execute "wsadmin #{label}" do
