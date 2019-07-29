@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.2.0
+--------------------
+- Add ability to add multiple servers in a single call to wsadmin
+
 v1.1.4
 --------------------
 - Bug fix for `websphere_base`:`get_cluster_members` function, did not return successful output previously
