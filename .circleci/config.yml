@@ -1,0 +1,22 @@
+version: 2.1
+executors:
+  chef:
+    docker:
+      - image: chef/chefdk:3.11.3
+
+jobs:
+  stylecheck:
+    executor: chef
+    steps:
+      - checkout
+      - run:
+          name: Run style and unit tests
+          command: |
+            cookstyle .
+            foodcritic .
+            chef exec rspec
+workflows:
+  version: 2
+  "Style and Unit Tests":
+    jobs:
+      - stylecheck
