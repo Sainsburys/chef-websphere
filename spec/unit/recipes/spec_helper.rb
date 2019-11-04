@@ -3,7 +3,7 @@ require 'chefspec/berkshelf'
 
 RSpec.configure do |config|
   config.platform = 'centos'
-  config.version = '6.8'
+  config.version = '6.10'
   config.log_level = :error
   # Prohibit using the should syntax
   config.expect_with :rspec do |spec|

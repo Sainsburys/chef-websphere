@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.2.1
+--------------------
+- Update the SystemD functions to use `systemd_unit` rather than templates and execute calls to daemon-reload.
+
 v1.2.0
 --------------------
 - Add multiple cluster members in a single wsadmin update, rather than separate calls for each.
