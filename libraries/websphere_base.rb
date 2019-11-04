@@ -195,25 +195,27 @@ module WebsphereCookbook
             end
           end
 
-          execute 'daemon_reload' do
-            command 'systemctl daemon-reload'
-            action :nothing
-            subscribes :run, "template[/etc/systemd/system/#{service_name}.service]", :immediate
-          end
+          systemd_contents = {
+            Unit: {
+              Description: "IBM WebSphere Application Server #{srvr_name == 'dmgr' ? 'Deployment Manager' : 'Node'} Service",
+              After: 'network.target'
+            },
+            Service: {
+              Type: 'forking',
+              ExecStart: "#{prof_path}/bin/start#{node_srvc}Systemd.sh",
+              ExecStop: "#{prof_path}/bin/stop#{node_srvc}Systemd.sh #{stop_args}",
+              TimeoutSec: srvr_name == 'dmgr' ? new_resource.dmgr_svc_timeout : new_resource.node_svc_timeout,
+              User: runas
+            },
+            Install: {
+              WantedBy: 'multi-user.target'
+            }
+          }
+          systemd_contents[:Service][:SuccessExitStatus] = 143 if srvr_name != 'dmgr'
 
-          template "/etc/systemd/system/#{service_name}.service" do
-            mode '0o644'
-            source srvr_name == 'dmgr' ? 'dmgr_systemd.erb' : 'node_service_systemd.erb'
-            cookbook 'websphere'
-            variables(
-              service_name: service_name,
-              server_name: srvr_name,
-              profile_path: prof_path,
-              stop_args: stop_args,
-              start_args: '',
-              svc_timeout: srvr_name == 'dmgr' ? new_resource.dmgr_svc_timeout : new_resource.node_svc_timeout,
-              runas_user: runas
-            )
+          systemd_unit "#{service_name}.service" do
+            content(systemd_contents)
+            action :create
           end
         else
           template "/etc/init.d/#{service_name}" do

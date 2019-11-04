@@ -25,7 +25,7 @@ describe 'websphere-test::was_cluster' do
     end
 
     it 'creates Dmgr01 profile with manageprofiles.sh' do
-      expect(chef_run).to run_execute('manage_profiles ./manageprofiles.sh -create Dmgr01').with(
+      expect(chef_run).to run_execute('manage_profiles export DisableWASDesktopIntegration=false && ./manageprofiles.sh -create Dmgr01').with(
         sensitive: true
       )
     end
@@ -88,18 +88,12 @@ describe 'websphere-test::was_cluster' do
     end
 
     it 'creates a Deployment Manager systemd script with attributes' do
-      expect(chef_run).to render_file('/etc/systemd/system/Dmgr01.service').with_content(
-        'ExecStop=/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/bin/stopManagerSystemd.sh -username admin -password admin'
-      )
-      expect(chef_run).to render_file('/etc/systemd/system/Dmgr01.service').with_content(
-        'TimeoutSec=300'
-      )
-    end
-
-    it 'creates a Deployment Manager startNode.sh wrapper script' do
-      expect(chef_run).to render_file('/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/bin/stopManager.sh').with_content(
-        'sudo systemctl stop Dmgr01'
-      )
+      expect(chef_run).to create_systemd_unit('Dmgr01.service').with_content(hash_including({
+        Service: hash_including({
+          ExecStart: '/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/bin/startManagerSystemd.sh',
+          ExecStop: '/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/bin/stopManagerSystemd.sh -username admin -password admin'
+        })
+      }))
     end
   end
 end
