@@ -159,7 +159,7 @@ module WebsphereCookbook
 
       # use to setup a nodeagent or dmgr as a service
       # server_name should be 'dmgr' or 'nodeagent'
-      def enable_as_service(service_name, srvr_name, prof_path, runas = 'root')
+      def enable_as_service(service_name, srvr_name, prof_path, runas = 'root', dependent_service = nil)
         # if dplymgr user and password set, then add as additional args for stop.
         stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
         # admin_user && admin_password ? start_args = "-username #{admin_user} -password #{admin_password}" : start_args = ''
@@ -212,7 +212,8 @@ module WebsphereCookbook
               stop_args: stop_args,
               start_args: '',
               svc_timeout: srvr_name == 'dmgr' ? new_resource.dmgr_svc_timeout : new_resource.node_svc_timeout,
-              runas_user: runas
+              runas_user: runas,
+              dependent_service: dependent_service
             )
           end
         else
