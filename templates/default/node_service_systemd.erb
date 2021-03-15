@@ -1,5 +1,8 @@
 [Unit]
 Description=IBM WebSphere Application Server Node Service
+<% unless @dependent_service.nil? -%>
+Before=<%= @dependent_service %>
+<% end -%>
 
 [Service]
 ExecStart=<%= @profile_path %>/bin/startNodeSystemd.sh <%= @start_args %>
@@ -11,3 +14,6 @@ SuccessExitStatus=143
 
 [Install]
 WantedBy=multi-user.target
+<% unless @dependent_service.nil? -%>
+WantedBy=<%= @dependent_service %>
+<% end -%>
