@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.2.1
+--------------------
+- Allow dependent services e.g. node agents to start first.
+
 v1.2.0
 --------------------
 - Add multiple cluster members in a single wsadmin update, rather than separate calls for each.

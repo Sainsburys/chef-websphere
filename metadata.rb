@@ -1,10 +1,9 @@
 name 'websphere'
-maintainer 'JS Sainsburys'
+maintainer 'J Sainsburys Plc.'
 maintainer_email 'GOL.CloudEngineering@sainsburys.co.uk'
 license 'Apache-2.0'
-description 'Installs/Configures IBM Websphere'
-long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version '1.2.0'
+description 'Installs/Configures IBM WebSphere'
+version '1.2.1'
 supports 'redhat'
 supports 'centos'
 
