@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.2.2
+--------------------
+- Fix incorrect call for dependent services breaking federation.
+
 v1.2.1
 --------------------
 - Allow dependent services e.g. node agents to start first.
