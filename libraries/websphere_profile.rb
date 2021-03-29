@@ -65,7 +65,7 @@ module WebsphereCookbook
           create_service_account(new_resource.run_user, new_resource.run_group)
         end
         if new_resource.manage_service == true
-          enable_as_service(new_resource.profile_name + '_node', 'nodeagent', new_resource.profile_path, new_resource.run_user, new_resource.profile_name, new_resource.profile_name + '.service')
+          enable_as_service(new_resource.profile_name + '_node', 'nodeagent', new_resource.profile_path, new_resource.run_user, new_resource.profile_name + '.service')
           # the addNode command will start a node agent process which upsets systemd
           if node['init_package'] == 'systemd'
             stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
