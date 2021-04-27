@@ -54,6 +54,16 @@ describe 'websphere-test::was_cluster' do
         user: 'was'
       )
     end
+
+    it 'creates the cluster' do
+      expect(chef_run).to run_execute('wsadmin createClusterWithoutMember MyCluster').with(
+        user: 'was'
+      )
+    end
+
+    it 'runs the cluster server attribute settings' do
+      expect(chef_run).to run_ruby_block('set clustered server attributes')
+    end
   end
   context 'add timeout for DMgr startup' do
     cached(:chef_run) do
@@ -93,12 +103,6 @@ describe 'websphere-test::was_cluster' do
       )
       expect(chef_run).to render_file('/etc/systemd/system/Dmgr01.service').with_content(
         'TimeoutSec=300'
-      )
-    end
-
-    it 'creates a Deployment Manager startNode.sh wrapper script' do
-      expect(chef_run).to render_file('/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/bin/stopManager.sh').with_content(
-        'sudo systemctl stop Dmgr01'
       )
     end
   end

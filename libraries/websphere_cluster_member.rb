@@ -1,6 +1,6 @@
 #
 # Cookbook:: websphere
-# Resource:: websphere_cluster
+# Resource:: websphere_cluster_member
 #
 # Copyright:: 2015-2021 J Sainsburys
 #
