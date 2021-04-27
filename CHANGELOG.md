@@ -1,6 +1,86 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.2.2
+--------------------
+- Fix incorrect call for dependent services breaking federation.
+
+v1.2.1
+--------------------
+- Allow dependent services e.g. node agents to start first.
+
+v1.2.0
+--------------------
+- Add multiple cluster members in a single wsadmin update, rather than separate calls for each.
+
+v1.1.4
+--------------------
+- Bug fix for `websphere_base`:`get_cluster_members` function, did not return successful output previously
+
+v1.1.3
+--------------------
+- Bug fix for `websphere_base`:`enable_as_service` function
+
+v1.1.2
+--------------------
+- Enhance SystemD operations and make it more generic
+
+v1.1.1
+--------------------
+- Add Systemd services for Deployment Manager and Node Agent
+
+v1.1.0
+--------------------
+- Chef 13 deprecation fixes
+- Additional unit tests for IBM certificate library
+- Add a timeout option for Deployment Manager start
+
+v1.0.13
+--------------------
+- Update Gem dependencies
+
+v1.0.12
+--------------------
+- Change Deployment Manager init script to use startManager.sh and stopManager.sh
+- Allow use of environment variables with the dmgr profile
+
+v1.0.11
+--------------------
+- update README docs with WAS ND 7.0
+
+v1.0.10
+--------------------
+- use pure wsadmin to determine cluster membership
+
+v1.0.9
+--------------------
+- add ability to specify a template for new cluster member
+
+v1.0.8
+--------------------
+- Don't add a new cluster template if one exists
+
+v1.0.7
+--------------------
+- Update to allow setting of attributes against a JMS provider
+
+v1.0.6
+--------------------
+- Fix fingerprint call and make update more idempotent (and faster)
+
+v1.0.5
+--------------------
+- add update action for IBM certificate import
+
+v1.0.4
+--------------------
+- add user parameter to commands so files are not owned by root in contexts where we are running as user
+
+v1.0.3
+--------------------
+- ensure server members with the same name on different nodes do not clash on cluster member checks
+- add group setting to certain commands
+
 v1.0.2
 --------------------
 - use cookstyle for style check

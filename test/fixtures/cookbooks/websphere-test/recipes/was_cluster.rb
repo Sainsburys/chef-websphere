@@ -1,45 +1,31 @@
 include_recipe 'websphere-test::was_install_basic'
-include_recipe 'websphere-test::was_fixpack_java7'
+include_recipe 'websphere-test::was_fixpack_java8'
 
-websphere_dmgr 'Dmgr01' do
+# JAVA SDK version found with bin/managesdk.sh -listAvailable -verbose
+websphere_dmgr 'Dmgr01 create' do
+  profile_name 'Dmgr01'
   cell_name 'MyNewCell'
+  node_name 'MyNewNode'
   admin_user 'admin'
   admin_password 'admin'
+  java_sdk '1.8_64'
   security_attributes ({
     'newvalue' => "[['appEnabled','true']]"
   })
+  timeout node['websphere-test']['dmgr_timeout']
   action [:create, :start]
-end
-
-# App server profile tests
-## Create, federate, start and set custom attributes
-## Create, start, federate
-## delete, create, federate, and set custom attributes start with same name
-websphere_profile 'AppProfile1' do
-  admin_user 'admin'
-  admin_password 'admin'
-  attributes ({
-    'processDefinitions' => {
-      'monitoringPolicy' => {
-        'newvalue' => "[['maximumStartupAttempts', '2'], ['pingTimeout', '99'], ['pingInterval', '666'], ['autoRestart', 'false'], ['nodeRestartState', 'RUNNING']]"
-      },
-      'jvmEntries' => {
-        'newvalue' => "[['debugMode', 'true']], [['systemProperties',[['name','my_system_property'],['value','testing123']]]"
-      }
-    }
-  })
-  action [:create, :federate, :start]
 end
 
 # Custom profile tests
 ## create two Custom Nodes to use in cluster
 ## create, federate both nodes.
 ## delete, create, federate one of the nodes custom nodes with same name
-websphere_profile 'CustomProfile1' do
+websphere_profile 'CustomProfile1 create/federate' do
+  profile_name 'CustomProfile1'
   profile_type 'custom'
   admin_user 'admin'
   admin_password 'admin'
-  java_sdk '1.7.1_64'
+  java_sdk '1.8_64'
   action [:create, :federate]
 end
 
@@ -53,7 +39,10 @@ end
 
 websphere_cluster_member 'ClusterServer1' do
   cluster_name 'MyCluster'
+  server_name 'ClusterServer1-node'
   server_node 'CustomProfile1_node'
+  run_user 'was'
+  run_group 'was'
   admin_user 'admin'
   admin_password 'admin'
   member_weight 15

@@ -1,16 +1,21 @@
 {
-  "_comments": "Packer Template for Identity base Centos image",
+  "_comments": "Packer Template for WebSphere Cookbook testing - base CentOS image",
   "variables": {
     "aws_access_key_id": "{{env `AWS_ACCESS_KEY_ID`}}",
     "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
     "env_home": "{{env `HOME`}}",
-    "chef_version": "12.10.24",
+    "chef_version": "13.10.0",
     "env_passport_adv_user": "{{env `PASSPORTADV_USER`}}",
-    "env_passport_adv_pass": "{{env `PASSPORTADV_PW`}}"
+    "env_passport_adv_pass": "{{env `PASSPORTADV_PW`}}",
+    "tag_owner": "{{env `TAG_OWNER`}}",
+    "tag_email": "{{env `TAG_EMAIL`}}",
+    "tag_costcentre": "{{env `TAG_COSTCENTRE`}}",
+    "tag_environment": "{{env `TAG_ENVIRONMENT`}}",
+    "tag_project": "{{env `TAG_PROJECT`}}"
   },
-
   "builders": [
-  { "type": "amazon-ebs",
+    {
+      "type": "amazon-ebs",
       "communicator": "ssh",
       "ssh_keypair_name": "travis-ci",
       "ssh_private_key_file": "{{user `env_home`}}/.ssh/travis-ci.pem",
@@ -28,25 +33,52 @@
       "security_group_id": "sg-abfe3ecc",
       "tags": {
         "Name": "chef-websphere-cookbook-{{timestamp}}",
-        "Description": "CentOS 6.7 HVM base image with growable root and websphere media baked in for use in CI testing"
+        "Description": "CentOS 6.10 HVM base image with growable root and websphere media baked in for use in CI testing",
+        "owner": "{{user `tag_owner`}}",
+        "email": "{{user `tag_email`}}",
+        "costcentre": "{{user `tag_costcentre`}}",
+        "live": "no",
+        "environment": "{{user `tag_environment`}}",
+        "project": "{{user `tag_project`}}"
+      },
+      "run_tags": {
+        "Name": "chef-websphere-cookbook-{{timestamp}}",
+        "Description": "CentOS 6.10 HVM base image with growable root and websphere media baked in for use in CI testing",
+        "owner": "{{user `tag_owner`}}",
+        "email": "{{user `tag_email`}}",
+        "costcentre": "{{user `tag_costcentre`}}",
+        "live": "no",
+        "environment": "{{user `tag_environment`}}",
+        "project": "{{user `tag_project`}}"
+      },
+      "run_volume_tags": {
+        "Name": "chef-websphere-cookbook-{{timestamp}}",
+        "Description": "CentOS 6.10 HVM base image with growable root and websphere media baked in for use in CI testing",
+        "owner": "{{user `tag_owner`}}",
+        "email": "{{user `tag_email`}}",
+        "costcentre": "{{user `tag_costcentre`}}",
+        "live": "no",
+        "environment": "{{user `tag_environment`}}",
+        "project": "{{user `tag_project`}}"
       },
       "launch_block_device_mappings": [
-      {
+        {
           "device_name": "/dev/sda1",
-          "volume_size": "20",
+          "volume_size": "30",
           "volume_type": "gp2",
           "delete_on_termination": true
         }
       ]
     }
   ],
-
-  "provisioners" : [
-    { "type": "file",
+  "provisioners": [
+    {
+      "type": "file",
       "source": "scripts/cloud-init-growpart",
       "destination": "/tmp/06-growpart.cfg"
     },
-    { "type": "shell",
+    {
+      "type": "shell",
       "inline": [
         "sleep 30",
         "sudo yum install -y epel-release",
@@ -64,12 +96,17 @@
         "sudo yum -y update",
         "sudo reboot -fv"
       ],
-      "only": [ "amazon-ebs" ]
+      "only": [
+        "amazon-ebs"
+      ]
     },
     {
       "type": "chef-solo",
       "pause_before": "6m",
-      "cookbook_paths": ["../../../", "berks-cookbooks"],
+      "cookbook_paths": [
+        "../../../",
+        "berks-cookbooks"
+      ],
       "run_list": [
         "recipe[websphere-test::was_media_cli]"
       ],
@@ -92,7 +129,9 @@
       "inline": [
         "sudo reboot -pf"
       ],
-      "only": [ "amazon-ebs" ]
+      "only": [
+        "amazon-ebs"
+      ]
     }
   ]
 }

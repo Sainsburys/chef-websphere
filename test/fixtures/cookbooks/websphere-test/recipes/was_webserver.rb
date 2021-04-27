@@ -2,7 +2,8 @@
 include_recipe 'websphere-test::was_install_basic'
 include_recipe 'websphere-test::ihs_install'
 
-websphere_dmgr 'Dmgr01' do
+websphere_dmgr 'Dmgr01 create' do
+  profile_name 'Dmgr01'
   cell_name 'MyNewCell'
   admin_user 'admin'
   admin_password 'admin'
@@ -10,7 +11,8 @@ websphere_dmgr 'Dmgr01' do
 end
 
 # create additional Custom Node to use in cluster
-websphere_profile 'Custom01' do
+websphere_profile 'Custom01 create/federate' do
+  profile_name 'Custom01'
   profile_type 'custom'
   admin_user 'admin'
   admin_password 'admin'

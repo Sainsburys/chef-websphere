@@ -1,5 +1,5 @@
 
-include_recipe 'chef-sugar'
+include_recipe 'websphere-test::was_media' unless vagrant?
 # include_recipe 'websphere-test::was_media_cli' unless vagrant?
 
 # install for RHEL 6 based on
@@ -8,7 +8,7 @@ package ['glibc', 'compat-libstdc++-33', 'compat-db']
 include_recipe 'build-essential'
 
 install_mgr 'ibm-im install' do
-  install_package "#{node['websphere-test']['unzip_dir']}/agent.installer.linux.gtk.x86_64_1.8.4000.20151125_0201.zip"
+  install_package "#{node['websphere-test']['agent_unzip_dir']}/agent.installer.linux.gtk.x86_64_1.8.4000.20151125_0201.zip"
   # install_package_sha256 '28f5279abc28695c0b99ae0c3fdee26bfec131186f2ca7e41d1317e303adb12e'
   package_name 'com.ibm.cic.agent'
   ibm_root_dir '/opt/IBM'

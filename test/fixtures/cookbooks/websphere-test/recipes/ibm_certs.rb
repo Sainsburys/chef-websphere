@@ -38,7 +38,7 @@ cookbook_file '/opt/IBM/WebSphere/Plugins/java/jre/lib/security/java.security' d
   source 'java.security'
   owner 'root'
   group 'root'
-  mode 00644
+  mode 0o644
 end
 
 user 'jim'
@@ -80,5 +80,5 @@ ibm_cert 'chef-websphere-test.com' do
   import_password 'password'
   sensitive_exec false
   ikeycmd '/opt/IBM/WebSphere/Plugins/java/jre/bin/ikeycmd'
-  action [:import, :set_default]
+  action [:import, :set_default, :update]
 end

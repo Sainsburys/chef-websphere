@@ -3,7 +3,7 @@ require 'chefspec/berkshelf'
 
 RSpec.configure do |config|
   config.platform = 'centos'
-  config.version = '6.6'
+  config.version = '6.8'
   config.log_level = :error
   # Prohibit using the should syntax
   config.expect_with :rspec do |spec|
@@ -19,7 +19,5 @@ end
 def stub_commands
   stub_command('which sudo').and_return('/usr/bin/sudo')
   # allow(File).to receive(:exist?).and_call_original
-  # allow(File).to receive(:exist?).with('/opt/IBM/WebSphere/AppServer/profiles/AppProfile1/config/cells').and_return(true)
+  # allow(File).to receive(:exist?).with('/opt/IBM/WebSphere/AppServer/profiles/AppProfile1/bin/setupCmdLine.sh').and_return(true)
 end
-
-at_exit { ChefSpec::Coverage.report! }

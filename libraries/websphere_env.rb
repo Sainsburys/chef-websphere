@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: websphere
-# Resource:: websphere-server
+# Resource:: websphere_env
 #
-# Copyright (C) 2015 J Sainsburys
+# Copyright (C) 2015-2019 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,13 +29,14 @@ module WebsphereCookbook
     property :value, [String, nil], default: nil
 
     action :set do
-      cmd = "AdminTask.setVariable('[ -scope #{scope} -variableName \\'#{variable_name}\\' -variableValue \\'#{value}\\']')"
-      wsadmin_exec("Set websphere env variable #{variable_name}", cmd)
+      cmd = "AdminTask.setVariable('[ -scope #{new_resource.scope} "\
+        "-variableName \\'#{new_resource.variable_name}\\' -variableValue \\'#{new_resource.value}\\']')"
+      wsadmin_exec("Set websphere env variable #{new_resource.variable_name}", cmd)
     end
 
     action :remove do
-      cmd = "AdminTask.removeVariable('[ -scope #{scope} -variableName \\'#{variable_name}\\']')"
-      wsadmin_exec("Remove websphere env variable #{variable_name}", cmd)
+      cmd = "AdminTask.removeVariable('[ -scope #{new_resource.scope} -variableName \\'#{new_resource.variable_name}\\']')"
+      wsadmin_exec("Remove websphere env variable #{new_resource.variable_name}", cmd)
     end
   end
 end

@@ -1,7 +1,8 @@
 
 include_recipe 'websphere-test::was_install_basic'
 
-websphere_dmgr 'Dmgr01' do
+websphere_dmgr 'Dmgr01 create' do
+  profile_name 'Dmgr01'
   cell_name 'MyNewCell'
   admin_user 'admin'
   admin_password 'admin'

@@ -1,0 +1,19 @@
+[Unit]
+Description=IBM WebSphere Application Server Node Service
+<% unless @dependent_service.nil? -%>
+Before=<%= @dependent_service %>
+<% end -%>
+
+[Service]
+ExecStart=<%= @profile_path %>/bin/startNodeSystemd.sh <%= @start_args %>
+ExecStop=<%= @profile_path %>/bin/stopNodeSystemd.sh <%= @stop_args %>
+User=<%= @runas_user != '' ? @runas_user : 'root' %>
+TimeoutSec=<%= @svc_timeout %>
+Type=forking
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
+<% unless @dependent_service.nil? -%>
+WantedBy=<%= @dependent_service %>
+<% end -%>
