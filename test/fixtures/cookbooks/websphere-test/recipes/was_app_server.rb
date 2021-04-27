@@ -22,16 +22,18 @@ websphere_app_server 'app_server1' do
   node_name 'Custom_node'
   admin_user 'admin'
   admin_password 'admin'
+  # rubocop:disable Lint/ParenthesesAsGroupedExpression
   attributes ({
     'processDefinitions' => {
       'monitoringPolicy' => {
-        'newvalue' => "[['maximumStartupAttempts', '2'], ['pingInterval', '222'], ['autoRestart', 'true'], ['nodeRestartState', 'PREVIOUS']]"
+        'newvalue' => "[['maximumStartupAttempts', '2'], ['pingInterval', '222'], ['autoRestart', 'true'], ['nodeRestartState', 'PREVIOUS']]",
       },
       'jvmEntries' => {
-        'newvalue' => "[['debugMode', 'true'], ['initialHeapSize', 1024], ['maximumHeapSize', 3072], ['systemProperties',[[['name','my_system_property'],['value','testing123']]]]]"
-      }
-    }
+        'newvalue' => "[['debugMode', 'true'], ['initialHeapSize', 1024], ['maximumHeapSize', 3072], ['systemProperties',[[['name','my_system_property'],['value','testing123']]]]]",
+      },
+    },
   })
+  # rubocop:enable Lint/ParenthesesAsGroupedExpression
   sensitive_exec false
   action [:create, :start]
 end
@@ -44,7 +46,7 @@ websphere_app_server 'app_server2' do
   action [:create, :start, :delete]
 end
 
-remote_file '/tmp/sample.war' do
+remote_file File.join(Chef::Config[:file_cache_path], 'sample.war') do
   source 'https://s3-eu-west-1.amazonaws.com/jsidentity/was_sample_apps/sample.war'
   mode '0755'
   action :create
@@ -53,7 +55,7 @@ end
 # deploy an unclustered application on the managed appserver
 # start it and stop it. start it again.
 websphere_app 'sample_app' do
-  app_file '/tmp/sample.war'
+  app_file File.join(Chef::Config[:file_cache_path], 'sample.war')
   server_name 'app_server1'
   node_name 'Custom_node'
   admin_user 'admin'

@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: websphere_app
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ module WebsphereCookbook
 
     resource_name :websphere_app
     property :app_name, String, name_property: true
-    property :app_file, [String, nil], default: nil, required: true
-    property :server_name, [String, nil], default: nil
-    property :node_name, [String, nil], default: nil
-    property :cluster_name, [String, nil], default: nil
-    property :context_root, [String, nil], default: nil
+    property :app_file, [String, nil], required: true
+    property :server_name, [String, nil]
+    property :node_name, [String, nil]
+    property :cluster_name, [String, nil]
+    property :context_root, [String, nil]
 
     # TODO: Add support for web server and add save functionality
     # If you want to deploy an application and specify the HTTP server during the deployment so that the application

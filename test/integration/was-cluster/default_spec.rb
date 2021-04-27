@@ -29,7 +29,7 @@ describe command('/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -lang jython -conn
   its(:stdout) { should match(/true/) }
 end
 
-services = %w[Dmgr01 CustomProfile1_node]
+services = %w(Dmgr01 CustomProfile1_node)
 services.each do |service|
   describe service(service) do
     it { should be_enabled }
@@ -56,7 +56,7 @@ describe file('/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/config/cells/MyNewCe
   its(:content) { should match(/systemProperties.*name="my_system_property" value="testing123"/) }
 end
 
-ports = %w[9043 8879]
+ports = %w(9043 8879)
 ports.each do |p|
   describe port(p) do
     it { should be_listening }

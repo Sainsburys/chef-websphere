@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: websphere_profile
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ module WebsphereCookbook
 
     resource_name :websphere_profile
     property :profile_type, String, default: 'custom', regex: /^(appserver|custom)$/
-    property :attributes, [Hash, nil], default: nil # these are only set if the node is federated.
-    property :server_name, [String, nil], default: nil
-    property :manage_user, [TrueClass, FalseClass], default: true
-    property :manage_service, [TrueClass, FalseClass], default: true
+    property :attributes, [Hash, nil] # these are only set if the node is federated.
+    property :server_name, [String, nil]
+    property :manage_user, [true, false], default: true
+    property :manage_service, [true, false], default: true
 
     # creates a new profile or augments/updates if profile exists.
     action :create do
@@ -61,14 +61,12 @@ module WebsphereCookbook
       federated = federated?(new_resource.profile_path, new_resource.node_name)
       if profile_exists?(new_resource.profile_name) && !federated
         add_node("#{new_resource.profile_path}/bin")
-        unless new_resource.run_user == 'root' || new_resource.manage_user == false
-          create_service_account(new_resource.run_user, new_resource.run_group)
-        end
+        create_service_account(new_resource.run_user, new_resource.run_group) unless new_resource.run_user == 'root' || new_resource.manage_user == false
         if new_resource.manage_service == true
           enable_as_service(new_resource.profile_name + '_node', 'nodeagent', new_resource.profile_path, new_resource.run_user, new_resource.profile_name + '.service')
           # the addNode command will start a node agent process which upsets systemd
           if node['init_package'] == 'systemd'
-            stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
+            stop_args = check_admin_args(new_resource.admin_user, new_resource.admin_password)
             execute 'stop nodeagent' do
               cwd "#{new_resource.profile_path}/bin"
               command "./stopNodeSystemd.sh #{stop_args}"
@@ -105,7 +103,6 @@ module WebsphereCookbook
       stop_profile_node(new_resource.profile_name, "#{new_resource.profile_path}/bin")
     end
 
-    # rubocop:disable Style/MultilineIfModifier
     action :delete do
       update_registry
       if profile_exists?(new_resource.profile_name)
@@ -120,7 +117,6 @@ module WebsphereCookbook
         cleanup_node(new_resource.node_name) if federated
       end
     end
-    # rubocop:enable Style/MultilineIfModifier
 
     action :sync_and_restart do
       # syncs node config to dmgr. shutsdown servers if needed and restart node agent.
@@ -135,14 +131,12 @@ module WebsphereCookbook
     action :enable_as_service do
       federated = federated?(new_resource.profile_path, new_resource.node_name)
       if profile_exists?(new_resource.profile_name) && federated
-        unless new_resource.run_user == 'root' || new_resource.manage_user == false
-          create_service_account(new_resource.run_user, new_resource.run_group)
-        end
+        create_service_account(new_resource.run_user, new_resource.run_group) unless new_resource.run_user == 'root' || new_resource.manage_user == false
         if new_resource.manage_service == true
           enable_as_service(new_resource.profile_name + '_node', 'nodeagent', new_resource.profile_path, new_resource.run_user, new_resource.profile_name + '.service')
           # the addNode command will start a node agent process which upsets systemd
           if node['init_package'] == 'systemd'
-            stop_args = new_resource.admin_user && new_resource.admin_password ? "-username #{new_resource.admin_user} -password #{new_resource.admin_password}" : ''
+            stop_args = check_admin_args(new_resource.admin_user, new_resource.admin_password)
             execute 'stop nodeagent' do
               cwd "#{new_resource.profile_path}/bin"
               command "./stopNodeSystemd.sh #{stop_args}"

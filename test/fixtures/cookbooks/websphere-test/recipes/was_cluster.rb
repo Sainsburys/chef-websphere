@@ -9,9 +9,11 @@ websphere_dmgr 'Dmgr01 create' do
   admin_user 'admin'
   admin_password 'admin'
   java_sdk '1.8_64'
+  # rubocop:disable Lint/ParenthesesAsGroupedExpression
   security_attributes ({
-    'newvalue' => "[['appEnabled','true']]"
+    'newvalue' => "[['appEnabled','true']]",
   })
+  # rubocop:enable Lint/ParenthesesAsGroupedExpression
   timeout node['websphere-test']['dmgr_timeout']
   action [:create, :start]
 end
@@ -46,30 +48,32 @@ websphere_cluster_member 'ClusterServer1' do
   admin_user 'admin'
   admin_password 'admin'
   member_weight 15
+  # rubocop:disable Lint/ParenthesesAsGroupedExpression
   attributes ({
     'processDefinitions' => {
       'monitoringPolicy' => {
-        'newvalue' => "[['maximumStartupAttempts', '2'], ['pingInterval', '222'], ['autoRestart', 'true'], ['nodeRestartState', 'PREVIOUS']]"
+        'newvalue' => "[['maximumStartupAttempts', '2'], ['pingInterval', '222'], ['autoRestart', 'true'], ['nodeRestartState', 'PREVIOUS']]",
       },
       'jvmEntries' => {
-        'newvalue' => "[['debugMode', 'true'], ['initialHeapSize', 1024], ['maximumHeapSize', 3072], ['systemProperties',[[['name','my_system_property'],['value','testing123']]]]]"
-      }
-    }
+        'newvalue' => "[['debugMode', 'true'], ['initialHeapSize', 1024], ['maximumHeapSize', 3072], ['systemProperties',[[['name','my_system_property'],['value','testing123']]]]]",
+      },
+    },
   })
+  # rubocop:enable Lint/ParenthesesAsGroupedExpression
   action [:create, :start]
 end
 
 # deploy an application on the cluster
 # start it, stop it, start it again.
 # Stop it when it's already stopped.
-remote_file '/tmp/sample.war' do
+remote_file File.join(Chef::Config[:file_cache_path], 'sample.war') do
   source 'https://s3-eu-west-1.amazonaws.com/jsidentity/was_sample_apps/sample.war'
   mode '0755'
   action :create
 end
 
 websphere_app 'sample_app_cluster' do
-  app_file '/tmp/sample.war'
+  app_file File.join(Chef::Config[:file_cache_path], 'sample.war')
   cluster_name 'MyCluster'
   admin_user 'admin'
   admin_password 'admin'

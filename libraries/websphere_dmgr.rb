@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: websphere_dmgr
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,18 +29,16 @@ module WebsphereCookbook
     property :profile_name, String, required: true
     property :profile_path, String, default: lazy { "#{websphere_root}/profiles/#{profile_name}" }
     property :node_name, String, default: lazy { "#{profile_name}_node" }
-    property :cell_name, [String, nil], default: nil
+    property :cell_name, [String, nil]
     property :profile_templates_dir, String, default: lazy { "#{websphere_root}/profileTemplates" }
-    property :java_sdk, [String, nil], default: nil # javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
-    property :security_attributes, [Hash, nil], default: nil # these are set when the Dmgr is started
-    property :manage_user, [TrueClass, FalseClass], default: true
-    property :profile_env, [Hash, nil], default: nil # start/stop environment parameters
+    property :java_sdk, [String, nil] # javasdk version must be already be installed using ibm-installmgr cookbook. If none is specified the embedded default is used
+    property :security_attributes, [Hash, nil] # these are set when the Dmgr is started
+    property :manage_user, [true, false], default: true
+    property :profile_env, [Hash, nil] # start/stop environment parameters
 
     # creates a new profile or augments/updates if profile exists.
     action :create do
-      unless new_resource.run_user == 'root' || new_resource.manage_user == false
-        create_service_account(new_resource.run_user, new_resource.run_group)
-      end
+      create_service_account(new_resource.run_user, new_resource.run_group) unless new_resource.run_user == 'root' || new_resource.manage_user == false
 
       p_exists = profile_exists?(new_resource.profile_name)
       unless p_exists

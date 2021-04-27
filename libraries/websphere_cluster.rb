@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: websphere_cluster
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ module WebsphereCookbook
 
     resource_name :websphere_cluster
     property :cluster_name, String, name_property: true
-    property :prefer_local, [TrueClass, FalseClass], default: true
-    property :cluster_type, String, required: true, default: 'APPLICATION_SERVER', regex: /^(APPLICATION_SERVER|PROXY_SERVER)$/
+    property :prefer_local, [true, false], default: true
+    property :cluster_type, String, default: 'APPLICATION_SERVER', regex: /^(APPLICATION_SERVER|PROXY_SERVER)$/
 
     # creates an empty cluster
     action :create do

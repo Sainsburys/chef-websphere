@@ -361,7 +361,6 @@ PLATFORMS
 
 DEPENDENCIES
   berkshelf (~> 4)
-  chef (~> 12.8)
   chefspec
   cookstyle
   kitchen-dokken

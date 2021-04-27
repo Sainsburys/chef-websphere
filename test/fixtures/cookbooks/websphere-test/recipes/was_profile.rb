@@ -6,9 +6,11 @@ websphere_dmgr 'Dmgr01 create' do
   node_name 'MyNewNode'
   admin_user 'admin'
   admin_password 'admin'
+  # rubocop:disable Lint/ParenthesesAsGroupedExpression
   security_attributes ({
-    'newvalue' => "[['appEnabled','true']]"
+    'newvalue' => "[['appEnabled','true']]",
   })
+  # rubocop:enable Lint/ParenthesesAsGroupedExpression
   action [:create, :start]
 end
 
@@ -20,16 +22,18 @@ websphere_profile 'AppProfile1 create/federate/start' do
   profile_name 'AppProfile1'
   admin_user 'admin'
   admin_password 'admin'
+  # rubocop:disable Lint/ParenthesesAsGroupedExpression
   attributes ({
     'processDefinitions' => {
       'monitoringPolicy' => {
-        'newvalue' => "[['maximumStartupAttempts', '2'], ['pingTimeout', '99'], ['pingInterval', '666'], ['autoRestart', 'false'], ['nodeRestartState', 'RUNNING']]"
+        'newvalue' => "[['maximumStartupAttempts', '2'], ['pingTimeout', '99'], ['pingInterval', '666'], ['autoRestart', 'false'], ['nodeRestartState', 'RUNNING']]",
       },
       'jvmEntries' => {
-        'newvalue' => "[['debugMode', 'true']], [['systemProperties',[['name','my_system_property'],['value','testing123']]]"
-      }
-    }
+        'newvalue' => "[['debugMode', 'true']], [['systemProperties',[['name','my_system_property'],['value','testing123']]]",
+      },
+    },
   })
+  # rubocop:enable Lint/ParenthesesAsGroupedExpression
   timeout node['websphere-test']['profile_timeout']
   action [:create, :federate, :start]
 end
