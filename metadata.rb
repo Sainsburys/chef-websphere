@@ -3,7 +3,7 @@ maintainer 'J Sainsburys Plc.'
 maintainer_email 'Digital.CloudEng@sainsburys.co.uk'
 license 'Apache-2.0'
 description 'Installs/Configures IBM WebSphere'
-version '1.2.2'
+version '1.2.3'
 supports 'redhat'
 supports 'centos'
 

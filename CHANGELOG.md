@@ -1,6 +1,10 @@
 IBM Websphere Cookbook CHANGELOG
 ========================
 
+v1.2.3
+--------------------
+- cookstyle fixes and unit test updates
+
 v1.2.2
 --------------------
 - Fix incorrect call for dependent services breaking federation.
