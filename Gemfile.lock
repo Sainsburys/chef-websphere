@@ -115,7 +115,7 @@ GEM
       train (~> 1.4)
     ipaddress (0.8.3)
     jmespath (1.4.0)
-    json (2.1.0)
+    json (2.5.1)
     kitchen-dokken (2.6.7)
       docker-api (~> 1.33)
       lockfile (~> 2.1)
