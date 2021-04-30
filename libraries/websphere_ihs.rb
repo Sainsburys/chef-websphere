@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: websphere_ihs
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,17 +30,17 @@ module WebsphereCookbook
     property :profile_name, String, required: false # only valid for local_distributed installations
     property :node_name, String, required: true
     property :profile_path, String, default: lazy { "#{websphere_root}/profiles/#{profile_name}" }
-    property :map_to_apps, [TrueClass, FalseClass], default: false
-    property :ihs_hostname, [String],  default: lazy { node.hostname }
+    property :map_to_apps, [true, false], default: false
+    property :ihs_hostname, [String], default: lazy { node['hostname'] }
     property :ihs_port, String, default: '80'
     property :ihs_install_root, default: '/opt/IBM/HTTPServer'
     property :ihs_config_file, String, default: lazy { "#{ihs_install_root}/conf/httpd.conf" }
     property :install_arch, String, default: '64'
     property :runas_user, String, default: 'root'
     property :runas_group, String, default: 'root'
-    property :enable_ihs_admin_server, [TrueClass, FalseClass], default: false
-    property :ihs_admin_user, [String, nil], default: nil
-    property :ihs_admin_password, [String, nil], default: nil
+    property :enable_ihs_admin_server, [true, false], default: false
+    property :ihs_admin_user, [String, nil]
+    property :ihs_admin_password, [String, nil]
     property :ihs_admin_port, String, default: '8008'
 
     # pre-requisite: this library only supports IHS webservers on managed nodes. The websphere node must already be created on the ihs node.
@@ -51,7 +51,7 @@ module WebsphereCookbook
 
     action :create do
       if platform_family?('rhel')
-        pkgs = %w[glibc.i686 glibc libgcc.i686]
+        pkgs = %w(glibc.i686 glibc libgcc.i686)
         pkgs.each do |pkg|
           package pkg
         end

@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: ibm_cert
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,16 +25,16 @@ module WebsphereCookbook
     property :kdb_password, String, required: true
     property :algorithm, String, default: 'SHA256WithRSA'
     property :size, String, default: '2048', regex: /^(2048|1024|512)$/
-    property :expire, String, default: '3600', required: true
+    property :expire, String, default: '3600'
     property :expire_kdb, String, default: '7300', required: false
     property :extract_to, String, default: lazy { "#{::File.dirname(kdb)}/#{label}.cer" } # used by the extract action only. extracts to given file in ascii format
-    property :add_cert, [String, nil], default: nil # path to certificate to add/import to kdb, only used in add/import.
+    property :add_cert, [String, nil] # path to certificate to add/import to kdb, only used in add/import.
     property :kdb_type, String, default: 'pkcs12' # type of key database
-    property :import_password, [String, nil], default: nil # password for import database, only used in import
+    property :import_password, [String, nil] # password for import database, only used in import
     property :default_cert, String, default: 'no', regex: /^(yes|no)$/
     property :ikeycmd, String, default: lazy { '/opt/IBM/WebSphere/AppServer/java/jre/bin/ikeycmd' }
     property :owned_by, String, default: 'root'
-    property :sensitive_exec, [TrueClass, FalseClass], default: true # for debug purposes
+    property :sensitive_exec, [true, false], default: true # for debug purposes
 
     action :create do
       create_kdb
@@ -127,7 +127,7 @@ module WebsphereCookbook
 
         directory dir do
           recursive true
-          mode 0o600
+          mode '0600'
           owner new_resource.owned_by
           action :create
         end

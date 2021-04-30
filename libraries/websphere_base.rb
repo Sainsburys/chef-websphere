@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: websphere_base
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,13 +26,13 @@ module WebsphereCookbook
     property :bin_dir, String, default: lazy { "#{websphere_root}/bin" }
     property :run_user, String, default: 'was'
     property :run_group, String, default: 'was'
-    property :admin_user, [String, nil], default: nil
-    property :admin_password, [String, nil], default: nil
+    property :admin_user, [String, nil]
+    property :admin_password, [String, nil]
     property :dmgr_host, String, default: 'localhost' # dmgr host to federate to.
-    property :dmgr_port, [String, nil], default: nil # dmgr port to federate to.
+    property :dmgr_port, [String, nil] # dmgr port to federate to.
     property :dmgr_svc_timeout, [Integer, nil], default: 300 # systemd timeoutsec defaults.
-    property :sensitive_exec, [TrueClass, FalseClass], default: true # for debug purposes
-    property :timeout, [Integer, nil], default: nil
+    property :sensitive_exec, [true, false], default: true # for debug purposes
+    property :timeout, [Integer, nil]
     property :node_svc_timeout, [Integer, nil], default: 180 # systemd timeoutsec defaults.
 
     # you need at least one action here to allow the action_class.class_eval block to work
@@ -62,7 +62,7 @@ module WebsphereCookbook
         cookbook_file "#{bin_directory}/server_ports.py" do
           cookbook 'websphere'
           source 'server_ports.py'
-          mode '0o755'
+          mode '0755'
           action :create
         end
 
@@ -132,7 +132,7 @@ module WebsphereCookbook
         cookbook_file "#{bin_directory}/sync_node.py" do
           cookbook 'websphere'
           source 'sync_node.py'
-          mode '0o755'
+          mode '0755'
           action :create
         end
 
@@ -167,10 +167,10 @@ module WebsphereCookbook
           node_srvc = srvr_name == 'dmgr' ? 'Manager' : 'Node'
           # execute blocks are used here rather than file resources, as using a file resource breaks the library in odd unrelated ways
           # Create the new stop start scripts for the nodeagent
-          %w[
+          %w(
             stop
             start
-          ].each do |action|
+          ).each do |action|
             ruby_block "rename #{action} control service script" do
               block do
                 ::File.rename("#{prof_path}/../../bin/#{action}#{node_srvc}.sh", "#{prof_path}/../../bin/#{action}#{node_srvc}Systemd.sh")
@@ -179,7 +179,7 @@ module WebsphereCookbook
             end
 
             cookbook_file "#{prof_path}/../../bin/#{action}#{node_srvc}.sh" do
-              mode '0o755'
+              mode '0755'
               owner runas
               group runas
               source "#{action}#{node_srvc}Service.sh"
@@ -187,7 +187,7 @@ module WebsphereCookbook
             end
 
             cookbook_file "#{prof_path}/bin/#{action}#{node_srvc}Systemd.sh" do
-              mode '0o755'
+              mode '0755'
               owner runas
               group runas
               source "profile_#{action}#{node_srvc}Service.sh"
@@ -202,7 +202,7 @@ module WebsphereCookbook
           end
 
           template "/etc/systemd/system/#{service_name}.service" do
-            mode '0o644'
+            mode '0644'
             source srvr_name == 'dmgr' ? 'dmgr_systemd.erb' : 'node_service_systemd.erb'
             cookbook 'websphere'
             variables(
@@ -218,7 +218,7 @@ module WebsphereCookbook
           end
         else
           template "/etc/init.d/#{service_name}" do
-            mode '0o755'
+            mode '0755'
             source srvr_name == 'dmgr' ? 'dmgr_init.d.erb' : 'node_service_init.d.erb'
             cookbook 'websphere'
             variables(
@@ -254,7 +254,7 @@ module WebsphereCookbook
         directory "/home/#{user}" do
           owner user
           group group
-          mode '0o750'
+          mode '0750'
           recursive true
           action :create
           not_if { user == 'root' }
@@ -414,7 +414,7 @@ module WebsphereCookbook
         cookbook_file "#{bin_directory}/cluster_member_exists.py" do
           cookbook 'websphere'
           source 'cluster_member_exists.py'
-          mode '0o755'
+          mode '0755'
           action :create
         end
         Chef::Log.info("Checking for: #{clus_name} #{serv_node} #{serv_name}")
@@ -550,7 +550,7 @@ module WebsphereCookbook
         wsadmin_cmd << "-host #{new_resource.dmgr_host} " if new_resource.dmgr_host
         wsadmin_cmd << "-port #{new_resource.dmgr_port} " if new_resource.dmgr_port
         wsadmin_cmd << "-user #{new_resource.admin_user} -password #{new_resource.admin_password} " if new_resource.admin_user && new_resource.admin_password
-        wsadmin_cmd << "#{cmd}"
+        wsadmin_cmd << cmd.to_s
         Chef::Log.debug("wsadmin_exec running cmd: #{wsadmin_cmd} return_codes #{return_codes}")
 
         execute "wsadmin #{label}" do

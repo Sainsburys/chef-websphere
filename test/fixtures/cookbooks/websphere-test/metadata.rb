@@ -1,8 +1,7 @@
 name 'websphere-test'
-version '0.0.3'
+version '0.1.0'
 
 depends 'aws', '~> 7.1'
-depends 'build-essential'
 depends 'chef-sugar'
 depends 'cloudcli'
 depends 'hostname'

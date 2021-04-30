@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: websphere_jms_provider
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ module WebsphereCookbook
     resource_name :websphere_jms_provider
     property :provider_name, String, name_property: true
     property :scope, String, required: true # eg 'Cell=Cell1'
-    property :context_factory, [String, nil], default: nil
-    property :url, [String, nil], default: nil
-    property :classpath_jars, [Array, nil], default: nil # full path to each jar
-    property :description, [String, nil], default: nil
+    property :context_factory, [String, nil]
+    property :url, [String, nil]
+    property :classpath_jars, [Array, nil] # full path to each jar
+    property :description, [String, nil]
     property :attributes, [Hash, nil], default: {} # Generic hash holding attributes for the provider - see : https://www.ibm.com/support/knowledgecenter/en/SS7K4U_7.0.0/com.ibm.websphere.zseries.doc/info/zseries/ae/rxml_7adminjms.html (ignore that it's for zOS)
     action :create do
       unless jms_provider_exists?

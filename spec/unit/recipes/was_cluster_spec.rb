@@ -7,7 +7,7 @@ describe 'websphere-test::was_cluster' do
     cached(:chef_run) do
       stub_commands
       ChefSpec::SoloRunner.new(
-        step_into: %w[websphere_dmgr websphere_profile websphere_cluster websphere_cluster_member websphere_ihs websphere_app websphere_base],
+        step_into: %w(websphere_dmgr websphere_profile websphere_cluster websphere_cluster_member websphere_ihs websphere_app websphere_base),
         platform: 'centos'
       ) do |node|
         node.automatic['websphere-test']['passport_advantage']['user'] = 'dummyuser'
@@ -15,17 +15,17 @@ describe 'websphere-test::was_cluster' do
       end.converge('websphere-test::was_cluster')
     end
 
-    %w[
+    %w(
       websphere-test::was_install_basic
       websphere-test::was_fixpack_java8
-    ].each do |recipe|
+    ).each do |recipe|
       it "includes recipe #{recipe}" do
         expect(chef_run).to include_recipe(recipe)
       end
     end
 
     it 'creates Dmgr01 profile with manageprofiles.sh' do
-      expect(chef_run).to run_execute('manage_profiles ./manageprofiles.sh -create Dmgr01').with(
+      expect(chef_run).to run_execute('manage_profiles export DisableWASDesktopIntegration=false && ./manageprofiles.sh -create Dmgr01').with(
         sensitive: true
       )
     end
@@ -54,12 +54,22 @@ describe 'websphere-test::was_cluster' do
         user: 'was'
       )
     end
+
+    it 'creates the cluster' do
+      expect(chef_run).to run_execute('wsadmin createClusterWithoutMember MyCluster').with(
+        user: 'was'
+      )
+    end
+
+    it 'runs the cluster server attribute settings' do
+      expect(chef_run).to run_ruby_block('set clustered server attributes')
+    end
   end
   context 'add timeout for DMgr startup' do
     cached(:chef_run) do
       stub_commands
       ChefSpec::SoloRunner.new(
-        step_into: %w[websphere_dmgr]
+        step_into: %w(websphere_dmgr)
       ) do |node|
         node.automatic['websphere-test']['passport_advantage']['user'] = 'dummyuser'
         node.automatic['websphere-test']['passport_advantage']['password'] = 'dummypw'
@@ -78,9 +88,9 @@ describe 'websphere-test::was_cluster' do
     cached(:chef_run) do
       stub_commands
       ChefSpec::SoloRunner.new(
-        step_into: %w[websphere_dmgr websphere_profile],
+        step_into: %w(websphere_dmgr websphere_profile),
         platform: 'redhat',
-        version: '7.3'
+        version: '7'
       ) do |node|
         node.automatic['websphere-test']['passport_advantage']['user'] = 'dummyuser'
         node.automatic['websphere-test']['passport_advantage']['password'] = 'dummypw'
@@ -93,12 +103,6 @@ describe 'websphere-test::was_cluster' do
       )
       expect(chef_run).to render_file('/etc/systemd/system/Dmgr01.service').with_content(
         'TimeoutSec=300'
-      )
-    end
-
-    it 'creates a Deployment Manager startNode.sh wrapper script' do
-      expect(chef_run).to render_file('/opt/IBM/WebSphere/AppServer/profiles/Dmgr01/bin/stopManager.sh').with_content(
-        'sudo systemctl stop Dmgr01'
       )
     end
   end

@@ -5,11 +5,13 @@ ibm_package 'PLG Plugins install' do
   install_dir '/opt/IBM/WebSphere/Plugins'
   repositories [node['websphere-test']['suppl_repo']]
   # repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.PLG.v85']
+  # rubocop:disable Lint/ParenthesesAsGroupedExpression
   properties ({
     'eclipseLocation' => '/opt/ibm/WebSphere/Plugins',
     'user.import.profile' => 'false',
-    'cic.selector.nl' => 'en'
+    'cic.selector.nl' => 'en',
   })
+  # rubocop:enable Lint/ParenthesesAsGroupedExpression
   # master_pw_file '/root/MyMasterPassFile'
   # secure_storage_file '/root/MySecureStorageFile'
   action :install
@@ -20,17 +22,19 @@ ibm_package 'IHS install' do
   package 'com.ibm.websphere.IHS.v85,core.feature,arch.64bit'
   install_dir '/opt/IBM/HTTPServer'
   repositories [node['websphere-test']['suppl_repo']]
+  # rubocop:disable Lint/ParenthesesAsGroupedExpression
   properties ({
     'eclipseLocation' => '/opt/IBM/HTTPServer',
     'user.import.profile' => 'false',
     'user.ihs.httpPort' => '80',
     'user.ihs.installHttpService' => 'true',
     'user.ihs.allowNonRootSilentInstall' => 'true',
-    'cic.selector.nl' => 'en'
+    'cic.selector.nl' => 'en',
   })
   preferences ({
-    'com.ibm.cic.common.core.preferences.preserveDownloadedArtifacts' => 'true'
+    'com.ibm.cic.common.core.preferences.preserveDownloadedArtifacts' => 'true',
   })
+  # rubocop:enable Lint/ParenthesesAsGroupedExpression
   # repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.IHS.v85']
   # master_pw_file '/root/MyMasterPassFile'
   # secure_storage_file '/root/MySecureStorageFile'
@@ -54,12 +58,14 @@ ibm_package 'WCT Toolbox install' do
   install_dir '/opt/IBM/WebSphere/Toolbox'
   # repositories ['/opt/ibm-media/WASND_SUPPL']
   repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.WCT.v85']
+  # rubocop:disable Lint/ParenthesesAsGroupedExpression
   properties ({
     'eclipseLocation' => '/opt/IBM/WebSphere/Toolbox',
     'user.import.profile' => 'false',
     'user.select.64bit.image.com.ibm.websphere.WCT.v85' => 'true',
-    'cic.selector.nl' => 'en'
+    'cic.selector.nl' => 'en',
   })
+  # rubocop:enable Lint/ParenthesesAsGroupedExpression
   master_pw_file '/root/MyMasterPassFile'
   secure_storage_file '/root/MySecureStorageFile'
   sensitive_exec false

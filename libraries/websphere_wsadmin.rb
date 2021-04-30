@@ -1,9 +1,9 @@
 
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: websphere_wsadmin
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ module WebsphereCookbook
 
     resource_name :websphere_wsadmin
     property :label, String, name_property: true # just a label to make the execue resource name unique
-    property :script, [String, nil], default: nil
-    property :file, [String, nil], default: nil
+    property :script, [String, nil]
+    property :file, [String, nil]
     property :return_codes, Array, default: [0]
 
     action :run do

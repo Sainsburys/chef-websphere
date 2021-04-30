@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: websphere_env
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ module WebsphereCookbook
     resource_name :websphere_env
     property :variable_name, String, name_property: true
     property :scope, String, required: true # eg 'Cell=Cell1'
-    property :value, [String, nil], default: nil
+    property :value, [String, nil]
 
     action :set do
       cmd = "AdminTask.setVariable('[ -scope #{new_resource.scope} "\

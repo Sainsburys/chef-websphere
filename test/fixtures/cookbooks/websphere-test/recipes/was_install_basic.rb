@@ -5,7 +5,6 @@ include_recipe 'websphere-test::was_media' unless vagrant?
 # install for RHEL 6 based on
 # http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.installation.nd.doc/ae/tins_linuxsetup_rhel6.html?cp=SSAW57_8.5.5%2F1-5-0-4-2-2
 package ['glibc', 'compat-libstdc++-33', 'compat-db']
-include_recipe 'build-essential'
 
 install_mgr 'ibm-im install' do
   install_package "#{node['websphere-test']['agent_unzip_dir']}/agent.installer.linux.gtk.x86_64_1.8.4000.20151125_0201.zip"

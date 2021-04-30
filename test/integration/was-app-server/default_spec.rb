@@ -6,7 +6,7 @@ describe command('/opt/IBM/WebSphere/AppServer/bin/wsadmin.sh -lang jython -conn
   its(:stdout) { should_not match(%r{app_server2\(cells/MyNewCell/nodes/Custom_node/servers/app_server2}) }
 end
 
-services = %w[Dmgr01 Custom_node]
+services = %w(Dmgr01 Custom_node)
 services.each do |service|
   describe service(service) do
     it { should be_enabled }

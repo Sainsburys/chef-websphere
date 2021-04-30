@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: websphere_app_server
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ module WebsphereCookbook
 
     resource_name :websphere_app_server
     property :server_name, String, name_property: true
-    property :node_name, [String, nil], default: nil, required: true
-    property :generate_unique_ports, [TrueClass, FalseClass], default: true
-    property :attributes, [Hash, nil], default: nil
+    property :node_name, [String, nil], required: true
+    property :generate_unique_ports, [true, false], default: true
+    property :attributes, [Hash, nil]
 
     action :create do
       unless server_exists?(new_resource.node_name, new_resource.server_name)

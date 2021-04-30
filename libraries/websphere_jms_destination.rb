@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: websphere_jms_destination
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ module WebsphereCookbook
     property :scope, String, required: true # eg 'Cell=MyCell,Cluster=MyCluster'
     property :jms_provider, String, required: true
     property :type, String, required: true, regex: /^(QUEUE|TOPIC|UNIFIED)$/
-    property :description, [String, nil], default: nil
-    property :category, [String, nil], default: nil
+    property :description, [String, nil]
+    property :category, [String, nil]
 
     action :create do
       unless jms_dest_exists?

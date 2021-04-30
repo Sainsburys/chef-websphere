@@ -22,11 +22,13 @@ ibm_package 'PLG Plugins install' do
   install_dir '/opt/IBM/WebSphere/Plugins'
   # repositories ['/opt/ibm-media/WASND_SUPPL']
   repositories ['http://www.ibm.com/software/repositorymanager/com.ibm.websphere.PLG.v85']
+  # rubocop:disable Lint/ParenthesesAsGroupedExpression
   properties ({
     'eclipseLocation' => '/opt/ibm/WebSphere/Plugins',
     'user.import.profile' => 'false',
-    'cic.selector.nl' => 'en'
+    'cic.selector.nl' => 'en',
   })
+  # rubocop:enable Lint/ParenthesesAsGroupedExpression
   master_pw_file '/root/MyMasterPassFile'
   secure_storage_file '/root/MySecureStorageFile'
   action :install
@@ -38,7 +40,7 @@ cookbook_file '/opt/IBM/WebSphere/Plugins/java/jre/lib/security/java.security' d
   source 'java.security'
   owner 'root'
   group 'root'
-  mode 0o644
+  mode '0644'
 end
 
 user 'jim'

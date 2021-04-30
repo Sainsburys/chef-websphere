@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: websphere
+# Cookbook:: websphere
 # Resource:: websphere_jms_conn_factory
 #
-# Copyright (C) 2015-2019 J Sainsburys
+# Copyright:: 2015-2021 J Sainsburys
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ module WebsphereCookbook
     property :ext_jndi_name, String, required: true
     property :jms_provider, String, required: true
     property :type, String, required: true, regex: /^(QUEUE|TOPIC|UNIFIED)$/
-    property :description, [String, nil], default: nil
-    property :category, [String, nil], default: nil
+    property :description, [String, nil]
+    property :category, [String, nil]
     property :conn_pool_timeout, String, default: '180'
     property :conn_pool_min, String, default: '1'
     property :conn_pool_max, String, default: '10'

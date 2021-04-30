@@ -43,7 +43,7 @@ module WebsphereCookbook
         'appserver' => "#{profile_templates_dir}/default",
         'dmgr' => "#{profile_templates_dir}/management",
         'job' => "#{profile_templates_dir}/management",
-        'custom' => "#{profile_templates_dir}/managed"
+        'custom' => "#{profile_templates_dir}/managed",
       }
       templates[profle_type]
     end
@@ -51,7 +51,7 @@ module WebsphereCookbook
     def management_type_lookup(profle_type)
       mgmttype = {
         'dmgr' => 'DEPLOYMENT_MANAGER',
-        'job' => 'JOB_MANAGER'
+        'job' => 'JOB_MANAGER',
       }
       mgmttype[profle_type]
     end
@@ -90,6 +90,11 @@ module WebsphereCookbook
         end
       end
       attribute_str
+    end
+
+    def check_admin_args(admin_user = nil, admin_pass = nil)
+      return "-username #{admin_user} -password #{admin_pass}" if admin_user && admin_pass
+      ''
     end
   end
 end
