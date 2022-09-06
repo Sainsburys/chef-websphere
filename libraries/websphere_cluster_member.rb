@@ -1,20 +1,8 @@
 #
 # Cookbook:: websphere
 # Resource:: websphere_cluster_member
-#
-# Copyright:: 2015-2021 J Sainsburys
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright:: 2015-2022 J Sainsburys
+# License:: Apache License, Version 2.0
 
 require_relative 'websphere_cluster'
 
@@ -24,6 +12,7 @@ module WebsphereCookbook
     include WebsphereHelpers
 
     resource_name :websphere_cluster_member
+    provides :websphere_cluster_member
     property :server_name, String, name_property: true
     property :server_names, [Array, nil], required: false
     property :server_node, [String, nil], required: true

@@ -1,0 +1,21 @@
+name: Style & Lint
+on: [pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Chef
+        uses: actionshub/chef-install@main
+        with:
+          channel: stable
+          version: 21.4.365
+      - name: Chef formatting
+        run: |
+          cookstyle --version
+          cookstyle
+      - name: Unit Tests
+        run: |
+          CHEF_LICENSE="accept-silent" chef exec rspec spec
+
