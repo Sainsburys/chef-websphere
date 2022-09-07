@@ -5,6 +5,7 @@ v1.2.4
 --------------------
 
 - add provides to the LWRPs to allow them to work in Chef 16+
+- do not require `dn` as a parameter for `ibm_cert` as this isn't required for the `add`/`extract`/`import` etc. actions
 - add GitHub Action CI checks
 
 v1.2.3
