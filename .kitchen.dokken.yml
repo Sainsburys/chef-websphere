@@ -1,0 +1,58 @@
+driver:
+  name: dokken
+  privileged: true # because Docker and SystemD/Upstart
+
+verifier:
+  root_path: '/opt/verifier'
+  sudo: false
+
+transport:
+  name: dokken
+
+provisioner:
+  name: dokken
+
+platforms:
+  - name: centos-6
+    driver:
+      image: dokken/centos-6
+      pid_one_command: /sbin/init
+  - name: centos-7
+    driver:
+      image: dokken/centos-7
+      intermediate_instructions:
+        - RUN systemctl unmask network.service
+        - RUN /usr/bin/echo 'NETWORKING=yes' > /etc/sysconfig/network
+      pid_one_command: /usr/lib/systemd/systemd
+      privileged: true
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro # required by systemd
+  - name: ubuntu-20.04
+    driver:
+      image: dokken/ubuntu-20.04
+      pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update    
+  - name: ubuntu-22.10
+    driver:
+      image: dokken/ubuntu-22.10
+      pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
+
+suites:
+  - name: was-cluster
+    run_list:
+      - recipe[websphere-test::was_cluster]
+  - name: ibm-certs
+    run_list:
+      - recipe[websphere-test::ibm_certs]
+  - name: was-jms-env-vhost
+    run_list:
+      - recipe[websphere-test::was_jms_env_vhost]
+  - name: was-app-server
+    run_list:
+      - recipe[websphere-test::was_app_server]
+  - name: was-webserver
+    run_list:
+      - recipe[websphere-test::was_webserver]

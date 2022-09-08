@@ -1,20 +1,8 @@
 #
 # Cookbook:: websphere
 # Resource:: websphere_base
-#
-# Copyright:: 2015-2021 J Sainsburys
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright:: 2015-2022 J Sainsburys
+# License:: Apache License, Version 2.0
 
 module WebsphereCookbook
   class WebsphereBase < Chef::Resource
@@ -22,6 +10,7 @@ module WebsphereCookbook
     include WebsphereHelpers
 
     resource_name :websphere_base
+    provides :websphere_base
     property :websphere_root, String, default: '/opt/IBM/WebSphere/AppServer'
     property :bin_dir, String, default: lazy { "#{websphere_root}/bin" }
     property :run_user, String, default: 'was'
@@ -37,7 +26,7 @@ module WebsphereCookbook
 
     # you need at least one action here to allow the action_class.class_eval block to work
     action :dummy do
-      Chef::Application.fatal!('There is no default action for this resource. You must explicitly specify an action!!!')
+      raise('There is no default action for this resource. You must explicitly specify an action!!!')
     end
 
     # need to wrap helper methods in class_eval
@@ -68,12 +57,11 @@ module WebsphereCookbook
 
         cmd = "-f server_ports.py #{srvr_name}"
         mycmd = wsadmin_returns(cmd)
-        return nil if mycmd.error?
+        return if mycmd.error?
         str = mycmd.stdout.match(/===(.*?)===/m)
-        return nil if str.nil?
+        return if str.nil?
         json_str = str[1].strip.tr("'", '"') # strip and replace ' with " so it's a valid json str
-        endpoints = JSON.parse(json_str)
-        endpoints
+        JSON.parse(json_str)
       end
 
       # returns 246 if already stopped
@@ -397,8 +385,7 @@ module WebsphereCookbook
         mycmd = wsadmin_returns(cmd)
         return [] if mycmd.error?
         str = result.stdout.match(/\['(.*?)'\]/).captures.first # match everything between ['']
-        info_array = str.chomp.split("', '")
-        info_array
+        str.chomp.split("', '")
       end
 
       def cluster_exists?(clus_name)
@@ -517,13 +504,14 @@ module WebsphereCookbook
       # If a nodeagent/server.xml file exists then it is assumed the node is already federated
       def federated?(p_path, node_name1)
         current_cell = profile_cell(p_path)
+        returnval = true
         if ::File.exist?("#{p_path}/config/cells/#{current_cell}/nodes/#{node_name1}/servers/nodeagent/server.xml")
           Chef::Log.debug("#{node_name1} is federated")
-          return true
         else
           Chef::Log.debug("#{node_name1} is NOT federated")
-          return false
+          returnval = false
         end
+        returnval
       end
 
       # executes wsadmin commands. Doesn't capture any stdout.
@@ -641,9 +629,9 @@ module WebsphereCookbook
       def get_id(matcher, bin_directory = new_resource.bin_dir)
         cmd = "-c \"AdminConfig.getid('#{matcher}')\""
         mycmd = wsadmin_returns(cmd, bin_directory)
-        return nil if mycmd.error?
+        return if mycmd.error?
         str = mycmd.stdout.match(/\n'(.*?)'\n/) # match everything between \n'capture this'\n
-        return nil if str.nil? || str.captures.first == ''
+        return if str.nil? || str.captures.first == ''
         str.captures.first
       end
 
@@ -653,9 +641,9 @@ module WebsphereCookbook
       def get_attribute_id(object_id, attr_name, bin_directory = new_resource.bin_dir)
         cmd = "-c \"AdminConfig.showAttribute('#{object_id}', '#{attr_name}')\""
         mycmd = wsadmin_returns(cmd, bin_directory)
-        return nil if mycmd.error?
+        return if mycmd.error?
         str = mycmd.stdout.match(/\n'(.*?)'\n/) # match everything between \n'capture this'\n
-        return nil if str.nil?
+        return if str.nil?
         str.captures.first
       end
 

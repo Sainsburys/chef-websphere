@@ -1,6 +1,6 @@
 
 # download and extract was_nd install media from s3.
-include_recipe 'cloudcli::awscli'
+include_recipe 'websphere-test::aws_cli'
 
 directory node['websphere-test']['unzip_dir'] do
   recursive true

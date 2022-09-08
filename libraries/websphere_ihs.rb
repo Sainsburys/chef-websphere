@@ -1,20 +1,8 @@
 #
 # Cookbook:: websphere
 # Resource:: websphere_ihs
-#
-# Copyright:: 2015-2021 J Sainsburys
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright:: 2015-2022 J Sainsburys
+# License:: Apache License, Version 2.0
 
 module WebsphereCookbook
   class WebsphereIhs < WebsphereBase
@@ -22,6 +10,7 @@ module WebsphereCookbook
     include WebsphereHelpers
 
     resource_name :websphere_ihs
+    provides :websphere_ihs
     property :webserver_name, String, name_property: true
     property :plg_root, String, default: '/opt/IBM/WebSphere/Plugins'
     property :wct_root, String, default: '/opt/IBM/WebSphere/Toolbox'
@@ -33,7 +22,7 @@ module WebsphereCookbook
     property :map_to_apps, [true, false], default: false
     property :ihs_hostname, [String], default: lazy { node['hostname'] }
     property :ihs_port, String, default: '80'
-    property :ihs_install_root, default: '/opt/IBM/HTTPServer'
+    property :ihs_install_root, String, default: '/opt/IBM/HTTPServer'
     property :ihs_config_file, String, default: lazy { "#{ihs_install_root}/conf/httpd.conf" }
     property :install_arch, String, default: '64'
     property :runas_user, String, default: 'root'

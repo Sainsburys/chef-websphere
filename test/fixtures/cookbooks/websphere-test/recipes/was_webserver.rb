@@ -28,10 +28,9 @@ websphere_ihs 'MyWebserver1' do
   admin_user 'admin'
   admin_password 'admin'
   action [:create, :start]
+  notifies :run, 'notify_group[test restarting webserver]', :immediately
 end
 
-log 'test restarting webserver' do
-  message 'test restarting webserver'
-  level :info
+notify_group 'test restarting webserver' do
   notifies :restart, 'websphere_ihs[MyWebserver1]', :immediately
 end

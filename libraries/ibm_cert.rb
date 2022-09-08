@@ -1,26 +1,15 @@
 #
 # Cookbook:: websphere
 # Resource:: ibm_cert
-#
-# Copyright:: 2015-2021 J Sainsburys
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright:: 2015-2022 J Sainsburys
+# License:: Apache License, Version 2.0
 
 module WebsphereCookbook
   class WebsphereKdb < Chef::Resource
     resource_name :ibm_cert
+    provides :ibm_cert
     property :label, String, name_property: true
-    property :dn, String, required: true # eg "CN=mydomain.com,O=MyOrg,C=UK"
+    property :dn, String # eg "CN=mydomain.com,O=MyOrg,C=UK"
     property :kdb, String, required: true, regex: /.*(\.kdb|\.p12)/ # path to keystore file. Will create if it doesn't exist. File must end in .kdb or .p12
     property :kdb_password, String, required: true
     property :algorithm, String, default: 'SHA256WithRSA'
@@ -161,13 +150,14 @@ module WebsphereCookbook
         cmd = "#{new_resource.ikeycmd} -cert -list -pw #{new_resource.kdb_password} -label #{new_resource.label} -db #{new_resource.kdb}"
         mycmd = Mixlib::ShellOut.new(cmd, cwd: ::File.dirname(new_resource.kdb))
         mycmd.run_command
+        returnval = true
         if mycmd.stdout.include?("doesn't contain an entry with label") || mycmd.error?
           Chef::Log.warn("certificate #{new_resource.label} not found in #{new_resource.kdb}")
-          return false
+          returnval = false
         else
           Chef::Log.warn("certificate #{new_resource.label} already exists in #{new_resource.kdb}")
-          return true
         end
+        returnval
       end
 
       # return true if the SHA256 fingerprint matches the certificate in the keystore

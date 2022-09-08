@@ -62,11 +62,10 @@ websphere_app 'sample_app' do
   admin_password 'admin'
   sensitive_exec false
   action [:deploy_to_server, :start]
+  notifies :run, 'notify_group[test restarting app]', :immediately
 end
 
-log 'test restarting app' do
-  message 'test restarting app'
-  level :info
+notify_group 'test restarting app' do
   notifies :stop, 'websphere_app[sample_app]', :immediately
   notifies :start, 'websphere_app[sample_app]', :immediately
 end
